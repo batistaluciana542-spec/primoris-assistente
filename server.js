@@ -477,8 +477,8 @@ app.use((req, res) => {
    INICIAR SERVIDOR
 ========================= */
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(
-    `PRIMORIS rodando em http://localhost:${PORT}`
+    `PRIMORIS rodando na porta ${PORT}`
   );
 });
