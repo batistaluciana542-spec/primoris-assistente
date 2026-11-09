@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<meta name="description" content="PRIMORIS — Assistente Pessoal">
+<title>PRIMORIS — Assistente Pessoal</title>
+<style>
+:root{--bg:#09090a;--panel:#111113;--panel2:#171719;--line:#29292d;--text:#f3f0e8;--muted:#99979a;--gold:#d7b56d;--gold2:#a98743;--danger:#e56b6f;--ok:#7fc89b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,textarea,select{font:inherit}
+button{cursor:pointer}.app{min-height:100vh;display:flex}.sidebar{width:245px;background:#0d0d0f;border-right:1px solid var(--line);padding:22px 14px;position:fixed;inset:0 auto 0 0}.brand{font-weight:800;letter-spacing:.18em;font-size:19px;padding:8px 12px 25px}.brand small{display:block;color:var(--gold);font-size:9px;letter-spacing:.25em;margin-top:7px}.nav{display:grid;gap:6px}.nav button,.tabbar button{border:0;background:transparent;color:#aaa;text-align:left;padding:12px;border-radius:10px}.nav button:hover,.nav button.active,.tabbar button.active{background:#1a1a1d;color:var(--gold)}.main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1500px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:24px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.title{font-size:30px;font-weight:800;margin:6px 0}.subtitle{color:var(--muted)}.clock{border:1px solid var(--line);background:var(--panel);padding:12px 15px;border-radius:12px;text-align:right}.page{display:none}.page.active{display:block}.grid{display:grid;gap:14px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{background:linear-gradient(180deg,#141416,#101012);border:1px solid var(--line);border-radius:16px;padding:18px}.card h3{margin:0 0 10px}.muted{color:var(--muted)}.stat{font-size:30px;font-weight:800}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.stack{display:grid;gap:10px}.btn{border:1px solid var(--line);background:#19191c;color:var(--text);padding:10px 14px;border-radius:10px}.btn.primary{background:var(--gold);color:#16130d;border-color:var(--gold)}.btn.danger{border-color:#593033;color:#ff9b9f}.btn:active{transform:translateY(1px)}input,textarea,select{width:100%;background:#0b0b0d;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px;outline:none}textarea{min-height:100px;resize:vertical}.form{display:grid;gap:10px}.list{display:grid;gap:8px}.item{border:1px solid var(--line);background:#0f0f11;border-radius:12px;padding:12px}.badge{display:inline-block;border:1px solid #4a4030;color:var(--gold);padding:4px 7px;border-radius:999px;font-size:11px}.empty{padding:24px;text-align:center;color:var(--muted)}.chat{height:420px;overflow:auto;background:#0b0b0d;border:1px solid var(--line);border-radius:14px;padding:14px}.bubble{max-width:85%;padding:10px 12px;border-radius:12px;margin:7px 0;white-space:pre-wrap}.user{margin-left:auto;background:#29251b}.bot{background:#171719}.news{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.news a{color:inherit;text-decoration:none}.mobileOnly{display:none}.tabbar{display:none}
+@media(max-width:980px){.sidebar{display:none}.main{margin:0;width:100%;padding:18px 15px 90px}.top{align-items:flex-start}.clock{display:none}.grid2,.grid3,.news{grid-template-columns:1fr}.mobileOnly{display:block}.tabbar{position:fixed;z-index:20;left:8px;right:8px;bottom:8px;display:flex;gap:4px;overflow-x:auto;background:#111113dd;backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:16px;padding:6px}.tabbar button{flex:0 0 auto;text-align:center;font-size:10px;padding:9px 10px;min-width:64px}.title{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar"><div class="brand">PRIMORIS<small>PERSONAL ASSISTANT</small></div><nav class="nav">
+<button data-page="today" class="active">Hoje</button><button data-page="assistant">Assistente</button><button data-page="agenda">Agenda</button><button data-page="studies">Estudos</button><button data-page="opportunities">Oportunidades</button><button data-page="news">Informações</button><button data-page="markets">Mercados</button><button data-page="memory">Memória</button><button data-page="integrations">Integrações</button><button data-page="settings">Configurações</button>
+</nav></aside>
+<main class="main">
+<header class="top"><div><div class="eyebrow">Sistema pessoal</div><div class="title">PRIMORIS</div><div class="subtitle">Seu painel pessoal, sem firula desnecessária.</div></div><div class="clock" id="clock">--:--</div></header>
+
+<section id="page-today" class="page active"><div class="grid grid3">
+<div class="card"><div class="muted">Tarefas abertas</div><div class="stat" id="taskCount">0</div></div>
+<div class="card"><div class="muted">Eventos hoje</div><div class="stat" id="eventCount">0</div></div>
+<div class="card"><div class="muted">Prioridade</div><div class="stat" id="priorityCount">0</div></div></div>
+<div class="grid grid2" style="margin-top:14px"><div class="card"><h3>Resumo do dia</h3><div id="brief" class="muted">Nenhuma tarefa cadastrada.</div></div><div class="card"><h3>Nova tarefa</h3><form id="taskForm" class="form"><input id="taskTitle" placeholder="Ex.: estudar matemática"><select id="taskPriority"><option value="normal">Normal</option><option value="alta">Alta</option></select><button class="btn primary">Adicionar</button></form></div></div></section>
+
+<section id="page-assistant" class="page"><div class="card"><h3>Assistente</h3><div id="chat" class="chat"><div class="bubble bot">PRIMORIS online. Pergunte algo. Se a IA externa estiver configurada, eu uso ela; caso contrário, entro no modo local.</div></div><form id="chatForm" class="row" style="margin-top:10px"><input id="chatInput" placeholder="Digite sua mensagem..."><button class="btn primary">Enviar</button></form></div></section>
+
+<section id="page-agenda" class="page"><div class="grid grid2"><div class="card"><h3>Agenda local</h3><form id="eventForm" class="form"><input id="eventTitle" placeholder="Título"><input id="eventDate" type="datetime-local"><button class="btn primary">Adicionar evento</button></form></div><div class="card"><h3>Eventos</h3><div id="eventsList" class="list"></div></div></div></section>
+
+<section id="page-studies" class="page"><div class="card"><h3>Estudos</h3><form id="studyForm" class="form"><input id="studySubject" placeholder="Matéria"><input id="studyMinutes" type="number" min="1" placeholder="Minutos"><button class="btn primary">Registrar estudo</button></form><div id="studyList" class="list" style="margin-top:12px"></div></div></section>
+
+<section id="page-opportunities" class="page"><div class="card"><h3>Oportunidades</h3><form id="oppForm" class="form"><input id="oppTitle" placeholder="Ex.: curso, projeto, oportunidade"><textarea id="oppNote" placeholder="Observação"></textarea><button class="btn primary">Salvar</button></form><div id="oppList" class="list" style="margin-top:12px"></div></div></section>
+
+<section id="page-news" class="page"><div class="row"><div><h2>Informações</h2><div class="muted">Notícias carregadas pelo servidor.</div></div><button class="btn" onclick="loadNews()">Atualizar</button></div><div id="newsList" class="news" style="margin-top:15px"></div></section>
+
+<section id="page-markets" class="page"><div class="card"><h3>Mercados</h3><p class="muted">Dados de mercado exigem um provedor externo configurado. O PRIMORIS não inventará cotações para parecer inteligente.</p></div></section>
+
+<section id="page-memory" class="page"><div class="card"><h3>Memória</h3><textarea id="memoryText" placeholder="Preferências e informações que você quer manter no navegador."></textarea><button class="btn primary" style="margin-top:10px" onclick="saveMemory()">Salvar memória</button><p id="memoryStatus" class="muted"></p></div></section>
+
+<section id="page-integrations" class="page"><div class="grid grid2"><div class="card"><h3>Google Calendar</h3><p class="muted">Conecte sua conta para sincronizar eventos.</p><button class="btn primary" onclick="location.href='/auth/google'">Conectar Google Calendar</button><button class="btn" onclick="syncCalendar()" style="margin-left:6px">Sincronizar</button><div id="calendarStatus" class="muted" style="margin-top:10px"></div></div><div class="card"><h3>Inteligência artificial</h3><p class="muted">Teste a conexão com o backend.</p><button class="btn" onclick="testAI()">Testar IA</button><div id="aiStatus" class="muted" style="margin-top:10px"></div></div><div class="card"><h3>Google News</h3><p class="muted">Notícias reais via Google News RSS.</p><button class="btn" onclick="loadNews()">Atualizar notícias</button></div></div></section>
+
+<section id="page-settings" class="page"><div class="card"><h3>Configurações</h3><button class="btn" onclick="exportData()">Exportar dados</button><label class="btn" style="display:inline-block;margin-left:6px">Importar <input id="importFile" type="file" accept=".json" hidden></label><button class="btn danger" style="margin-left:6px" onclick="clearData()">Apagar dados locais</button></div></section>
+</main>
+</div>
+<nav class="tabbar">
+<button data-page="today" class="active">Hoje</button><button data-page="assistant">Assistente</button><button data-page="agenda">Agenda</button><button data-page="studies">Estudos</button><button data-page="news">Info</button><button data-page="integrations">Integrações</button><button data-page="settings">Config.</button>
+</nav>
+<script>
+const KEY='primoris_cesar_v2';
+let data=JSON.parse(localStorage.getItem(KEY)||'{"tasks":[],"events":[],"studies":[],"opportunities":[],"memory":""}');
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const $=id=>document.getElementById(id);
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));window.scrollTo(0,0)}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function render(){ $('taskCount').textContent=data.tasks.filter(x=>!x.done).length;$('eventCount').textContent=data.events.length;$('priorityCount').textContent=data.tasks.filter(x=>x.priority==='alta'&&!x.done).length;
+$('brief').innerHTML=data.tasks.length?data.tasks.map((x,i)=>`<div class="item row"><span>${x.title}${x.priority==='alta'?' <span class="badge">ALTA</span>':''}</span><button class="btn" onclick="toggleTask(${i})">${x.done?'Reabrir':'Concluir'}</button></div>`).join(''):'Nenhuma tarefa cadastrada.';
+$('eventsList').innerHTML=data.events.length?data.events.map((x,i)=>`<div class="item row"><span><b>${x.title}</b><br><small class="muted">${new Date(x.date).toLocaleString('pt-BR')}</small></span><button class="btn danger" onclick="del('events',${i})">×</button></div>`).join(''):'<div class="empty">Sem eventos.</div>';
+$('studyList').innerHTML=data.studies.map(x=>`<div class="item">${x.subject} · ${x.minutes} min · ${new Date(x.created).toLocaleDateString('pt-BR')}</div>`).join('')||'<div class="empty">Nenhum estudo registrado.</div>';
+$('oppList').innerHTML=data.opportunities.map((x,i)=>`<div class="item"><b>${x.title}</b><p class="muted">${x.note||''}</p><button class="btn danger" onclick="del('opportunities',${i})">Excluir</button></div>`).join('')||'<div class="empty">Nenhuma oportunidade.</div>';
+$('memoryText').value=data.memory;save()}
+function toggleTask(i){data.tasks[i].done=!data.tasks[i].done;render()}
+function del(k,i){data[k].splice(i,1);render()}
+$('taskForm').onsubmit=e=>{e.preventDefault();if(!$('taskTitle').value.trim())return;data.tasks.push({title:$('taskTitle').value.trim(),priority:$('taskPriority').value,done:false});$('taskTitle').value='';render()}
+$('eventForm').onsubmit=e=>{e.preventDefault();if(!$('eventTitle').value)return;data.events.push({title:$('eventTitle').value,date:$('eventDate').value});$('eventTitle').value='';$('eventDate').value='';render()}
+$('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({subject:$('studySubject').value,minutes:Number($('studyMinutes').value)||0,created:Date.now()});$('studySubject').value='';$('studyMinutes').value='';render()}
+$('oppForm').onsubmit=e=>{e.preventDefault();data.opportunities.push({title:$('oppTitle').value,note:$('oppNote').value});$('oppTitle').value='';$('oppNote').value='';render()}
+function saveMemory(){data.memory=$('memoryText').value;save();$('memoryStatus').textContent='Memória salva localmente.'}
+$('chatForm').onsubmit=async e=>{e.preventDefault();let q=$('chatInput').value.trim();if(!q)return;addChat(q,'user');$('chatInput').value='';try{let r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,context:data})});let j=await r.json();addChat(j.text||'Não consegui responder.', 'bot')}catch{addChat('Backend indisponível. Estou no modo local. Tente comandos como “mostrar minhas tarefas”.','bot')}}
+function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+async function loadNews(){let box=$('newsList');box.innerHTML='<div class="card">Carregando...</div>';try{let r=await fetch('/api/news');let j=await r.json();box.innerHTML=(j.items||[]).map(n=>`<a class="card" href="${n.link}" target="_blank"><span class="badge">${n.category||'Notícia'}</span><h3>${escapeHtml(n.title)}</h3><p class="muted">${escapeHtml(n.source||'Google News')}</p></a>`).join('')||'<div class="card">Nenhuma notícia disponível.</div>'}catch{box.innerHTML='<div class="card">Não foi possível carregar as notícias agora.</div>'}}
+async function syncCalendar(){let s=$('calendarStatus');s.textContent='Sincronizando...';try{let r=await fetch('/api/calendar/events');let j=await r.json();if(!r.ok)throw Error();data.events=(j.events||[]).map(e=>({title:e.summary||'Evento',date:e.start?.dateTime||e.start?.date}));render();s.textContent=`${data.events.length} eventos sincronizados.`}catch{s.textContent='Conecte o Google Calendar primeiro.'}}
+async function testAI(){let s=$('aiStatus');s.textContent='Testando...';try{let r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'Responda apenas: PRIMORIS online.'})});let j=await r.json();s.textContent=j.text||'Conectado.'}catch{s.textContent='Backend/IA indisponível.'}}
+function exportData(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='primoris-backup.json';a.click()}
+$('importFile').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);render();alert('Backup importado.')}catch{alert('Arquivo inválido.')}};r.readAsText(f)}
+function clearData(){if(confirm('Apagar todos os dados locais?')){data={tasks:[],events:[],studies:[],opportunities:[],memory:''};render()}}
+function clock(){let d=new Date();$('clock').textContent=d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}setInterval(clock,1000);clock();render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
