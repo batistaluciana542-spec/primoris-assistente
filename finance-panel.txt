@@ -1,0 +1,18 @@
+<section id="finance-panel" class="page-section" style="display:none">
+<div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p>Seu dinheiro em uma visão rápida.</p></div></div>
+<div class="finance-grid">
+<div class="finance-card"><span>💰 Tenho</span><strong id="finTenho">R$ 0,00</strong></div>
+<div class="finance-card"><span>📉 Gastei</span><strong id="finGastei">R$ 0,00</strong></div>
+<div class="finance-card"><span>🟢 Posso gastar</span><strong id="finPosso">R$ 0,00</strong></div>
+<div class="finance-card"><span>🔴 Devo</span><strong id="finDevo">R$ 0,00</strong></div>
+</div>
+<div class="finance-actions"><button onclick="editarFinancas()">Editar valores</button></div>
+</section>
+<script>
+const FIN_KEY="primoris_financas_v1";
+function finLoad(){return JSON.parse(localStorage.getItem(FIN_KEY)||'{"tenho":0,"gastei":0,"posso":0,"devo":0}')}
+function finMoney(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function renderFinancas(){const d=finLoad();finTenho.textContent=finMoney(d.tenho);finGastei.textContent=finMoney(d.gastei);finPosso.textContent=finMoney(d.posso);finDevo.textContent=finMoney(d.devo)}
+function editarFinancas(){const d=finLoad();const n=k=>{let x=prompt("Digite o valor de "+k+":",d[k]);return x===null?d[k]:Number(String(x).replace(",","."))||0};localStorage.setItem(FIN_KEY,JSON.stringify({tenho:n("tenho"),gastei:n("gastei"),posso:n("posso"),devo:n("devo")}));renderFinancas()}
+renderFinancas();
+</script>

@@ -1,0 +1,7 @@
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-flash-latest
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=https://primoris-assistente.onrender.com/auth/google/callback
+SESSION_SECRET=troque-por-uma-frase-secreta
+NODE_ENV=production
