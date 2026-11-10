@@ -273,72 +273,135 @@ app.post("/api/ai", async (req, res) => {
     }
 
     /* =========================
-       AGENDA
-    ========================= */
+   AGENDA INTELIGENTE
+========================= */
 
-    else if (
-      texto.includes("agenda") ||
-      texto.includes("compromisso") ||
-      texto.includes("compromissos") ||
-      texto.includes("calendario") ||
-      texto.includes("calendario") ||
-      texto.includes("tenho algo marcado") ||
-      texto.includes("o que tenho hoje") ||
-      texto.includes("o que tem hoje")
-    ) {
-      const eventos = Array.isArray(context.calendar)
-        ? context.calendar
-        : [];
+else if (
+  texto.includes("agenda") ||
+  texto.includes("calendario") ||
+  texto.includes("compromisso") ||
+  texto.includes("compromissos") ||
+  texto.includes("evento") ||
+  texto.includes("eventos") ||
+  texto.includes("marcado") ||
+  texto.includes("marcados") ||
+  texto.includes("programado") ||
+  texto.includes("programados") ||
+  texto.includes("programacao") ||
+  texto.includes("o que tenho") ||
+  texto.includes("o que tem") ||
+  texto.includes("o que vou fazer") ||
+  texto.includes("o que preciso fazer hoje") ||
+  texto.includes("o que acontece hoje") ||
+  texto.includes("tenho alguma coisa") ||
+  texto.includes("tenho algo") ||
+  texto.includes("tem alguma coisa") ||
+  texto.includes("tem algo") ||
+  texto.includes("minha rotina") ||
+  texto.includes("meu dia") ||
+  texto.includes("hoje") ||
+  texto.includes("amanha") ||
+  texto.includes("amanhã") ||
+  texto.includes("pela frente")
+) {
 
-      if (eventos.length === 0) {
-        resposta = escolher([
-          "Sua agenda não tem compromissos próximos registrados.",
-          "Não encontrei compromissos próximos na agenda.",
-          "Por enquanto, sua agenda está livre.",
-          "Não há eventos próximos que eu consiga encontrar."
-        ]);
-      } else {
+  const eventos = Array.isArray(context.calendar)
+    ? context.calendar
+    : [];
 
-        const nomes = eventos.slice(0, 8).map(evento => {
-          const nome =
-            evento.summary ||
-            evento.title ||
-            "Compromisso sem título";
+  if (eventos.length === 0) {
 
-          const inicio =
-            evento.start?.dateTime ||
-            evento.start?.date ||
-            "";
+    resposta = escolher([
+      "Não encontrei eventos próximos na sua agenda.",
+      "Sua agenda está livre por enquanto.",
+      "Não encontrei compromissos registrados para os próximos dias.",
+      "Não há eventos próximos registrados no seu calendário.",
+      "Pelo que consigo consultar, você não tem compromissos próximos."
+    ]);
 
-          let horario = "";
+  } else {
 
-          if (inicio.includes("T")) {
-            horario = new Date(inicio).toLocaleTimeString(
+    const eventosFormatados = eventos
+      .map(evento => {
+
+        const nome =
+          evento.summary ||
+          evento.title ||
+          "Compromisso sem título";
+
+        const inicio =
+          evento.start?.dateTime ||
+          evento.start?.date ||
+          "";
+
+        const fim =
+          evento.end?.dateTime ||
+          evento.end?.date ||
+          "";
+
+        let data = "";
+        let horario = "";
+
+        if (inicio) {
+
+          const dataObj = new Date(inicio);
+
+          if (!isNaN(dataObj.getTime())) {
+
+            data = dataObj.toLocaleDateString(
               "pt-BR",
               {
-                hour: "2-digit",
-                minute: "2-digit"
+                weekday: "short",
+                day: "2-digit",
+                month: "2-digit"
               }
             );
+
+            if (inicio.includes("T")) {
+
+              horario =
+                dataObj.toLocaleTimeString(
+                  "pt-BR",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  }
+                );
+            }
           }
+        }
 
-          return horario
-            ? `${nome} • ${horario}`
-            : nome;
-        });
+        let textoEvento = nome;
 
-        resposta =
-          escolher([
-            "Encontrei estes compromissos:",
-            "Aqui está sua agenda próxima:",
-            "Estes são os eventos que encontrei:",
-            "Sua agenda está assim:",
-            "Confira seus próximos compromissos:"
-          ]) +
-          "\n\n" +
-          listaBonita(nomes);
-      }
-    }
+        if (data) {
+          textoEvento += ` • ${data}`;
+        }
+
+        if (horario) {
+          textoEvento += ` às ${horario}`;
+        }
+
+        return textoEvento;
+      });
+
+    resposta =
+      escolher([
+        "Claro. Estes são os eventos que encontrei na sua agenda:",
+        "Aqui estão seus próximos compromissos:",
+        "Encontrei estes eventos no seu calendário:",
+        "Confira tudo que está programado:",
+        "Estes são os compromissos registrados:",
+        "Aqui está o que encontrei na sua agenda:"
+      ]) +
+      "\n\n" +
+      eventosFormatados
+        .slice(0, 50)
+        .map((evento, index) =>
+          `${index + 1}. ${evento}`
+        )
+        .join("\n");
+  }
+     }
 
     /* =========================
        TAREFAS
