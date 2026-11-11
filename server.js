@@ -160,9 +160,10 @@ function esperar(ms) {
 async function chamarGemini(url, payload, tentativa) {
   const controller = new AbortController();
 
+  // Cada tentativa pode durar até 60 segundos
   const timeout = setTimeout(() => {
     controller.abort();
-  }, 30000);
+  }, 60000);
 
   try {
     console.log(
@@ -171,12 +172,16 @@ async function chamarGemini(url, payload, tentativa) {
 
     return await fetch(url, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json"
       },
+
       signal: controller.signal,
+
       body: JSON.stringify(payload)
     });
+
   } finally {
     clearTimeout(timeout);
   }
@@ -262,6 +267,7 @@ ${message}
           ]
         }
       ],
+
       generationConfig: {
         temperature: 0.5,
         maxOutputTokens: 700
@@ -270,8 +276,17 @@ ${message}
 
     let response = null;
 
-    for (let tentativa = 1; tentativa <= 3; tentativa++) {
+    // =================================================
+    // 3 TENTATIVAS
+    // =================================================
+
+    for (
+      let tentativa = 1;
+      tentativa <= 3;
+      tentativa++
+    ) {
       try {
+
         response = await chamarGemini(
           url,
           payload,
@@ -288,7 +303,12 @@ ${message}
           body = {};
         }
 
+        // =============================================
+        // SUCESSO
+        // =============================================
+
         if (response.ok) {
+
           const text =
             body?.candidates?.[0]?.content?.parts
               ?.map(part => part.text || "")
@@ -296,6 +316,7 @@ ${message}
               .trim();
 
           if (!text) {
+
             console.error(
               "Gemini respondeu sem texto:",
               JSON.stringify(body)
@@ -315,7 +336,12 @@ ${message}
           });
         }
 
+        // =============================================
+        // SERVIDOR GEMINI SOBRECARREGADO
+        // =============================================
+
         if (response.status === 503) {
+
           console.error(
             "Gemini 503 na tentativa " +
               tentativa +
@@ -325,19 +351,27 @@ ${message}
           );
 
           if (tentativa < 3) {
-            await esperar(
-              tentativa === 1 ? 2000 : 4000
+
+            console.log(
+              "Aguardando 60 segundos antes da próxima tentativa..."
             );
+
+            await esperar(60000);
 
             continue;
           }
 
           return res.status(503).json({
             error: "gemini_busy",
+
             details:
-              "O Google Gemini está temporariamente sobrecarregado. Tente novamente em alguns segundos."
+              "O Google Gemini está temporariamente sobrecarregado depois de 3 tentativas."
           });
         }
+
+        // =============================================
+        // OUTROS ERROS
+        // =============================================
 
         console.error(
           "Erro Gemini:",
@@ -347,30 +381,48 @@ ${message}
 
         return res.status(502).json({
           error: "gemini_request_failed",
+
           details:
             body?.error?.message ||
             "Erro ao consultar o Gemini."
         });
 
       } catch (e) {
+
+        // =============================================
+        // TIMEOUT
+        // =============================================
+
         if (e.name === "AbortError") {
+
           console.error(
             "Gemini expirou na tentativa " +
               tentativa +
-              "."
+              " após 60 segundos."
           );
 
           if (tentativa < 3) {
-            await esperar(2000);
+
+            console.log(
+              "Aguardando 60 segundos antes da próxima tentativa..."
+            );
+
+            await esperar(60000);
+
             continue;
           }
 
           return res.status(504).json({
             error: "gemini_timeout",
+
             details:
-              "O Gemini demorou demais para responder."
+              "O Gemini demorou demais para responder depois de 3 tentativas."
           });
         }
+
+        // =============================================
+        // ERRO DE CONEXÃO
+        // =============================================
 
         console.error(
           "Erro na conexão com Gemini:",
@@ -385,6 +437,7 @@ ${message}
     }
 
   } catch (e) {
+
     console.error(
       "Erro geral na IA:",
       e
@@ -403,6 +456,7 @@ ${message}
 
 app.get("/api/news", async (req, res) => {
   try {
+
     const queries = [
       "Brasil OR Brasília OR economia brasileira",
       "mundo OR geopolítica OR internacional",
@@ -412,6 +466,7 @@ app.get("/api/news", async (req, res) => {
     const items = [];
 
     for (const q of queries) {
+
       const url =
         "https://news.google.com/rss/search?q=" +
         encodeURIComponent(q) +
@@ -423,11 +478,13 @@ app.get("/api/news", async (req, res) => {
       for (
         const item of (feed.items || []).slice(0, 5)
       ) {
+
         items.push({
           title: item.title,
           link: item.link,
           source:
             item.creator || "Google News",
+
           category:
             q.includes("tecnologia")
               ? "Tecnologia"
@@ -443,6 +500,7 @@ app.get("/api/news", async (req, res) => {
     });
 
   } catch (e) {
+
     console.error(
       "News:",
       e
