@@ -30,9 +30,9 @@ app.use(
 
 app.use(express.static(path.join(__dirname)));
 
-// ===============================
+// =====================================================
 // STATUS
-// ===============================
+// =====================================================
 
 app.get("/api/status", (req, res) => {
   res.json({
@@ -45,9 +45,9 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-// ===============================
+// =====================================================
 // GOOGLE CALENDAR
-// ===============================
+// =====================================================
 
 function oauth() {
   return new google.auth.OAuth2(
@@ -124,7 +124,9 @@ app.get("/api/calendar/events", async (req, res) => {
     if (!c) {
       return res
         .status(401)
-        .json({ error: "not_connected" });
+        .json({
+          error: "not_connected"
+        });
     }
 
     const r = await c.events.list({
@@ -147,9 +149,9 @@ app.get("/api/calendar/events", async (req, res) => {
   }
 });
 
-// ===============================
+// =====================================================
 // GOOGLE GEMINI
-// ===============================
+// =====================================================
 
 app.post("/api/ai", async (req, res) => {
   try {
@@ -175,18 +177,20 @@ app.post("/api/ai", async (req, res) => {
       });
     }
 
+    // Modelo atualizado
     const model =
       process.env.GEMINI_MODEL ||
-      "gemini-2.5-flash";
+      "gemini-3.8-flash";
 
     const prompt = `
-Você é o PRIMORIS, um assistente pessoal.
+Você é o PRIMORIS, um assistente pessoal inteligente.
 
 Responda sempre em português do Brasil.
 
-Seja claro, objetivo e útil.
+Seja claro, objetivo, útil e natural.
 
 Você pode ajudar com:
+
 - organização
 - estudos
 - agenda
@@ -197,10 +201,17 @@ Você pode ajudar com:
 - finanças pessoais
 - programação
 - explicações
+- criação de planos
+- organização de eventos
+- organização de estudos
 
-Use o contexto fornecido quando for útil.
+Use o contexto do PRIMORIS quando ele for relevante.
 
 Não invente informações que não estejam disponíveis.
+
+Se o usuário pedir para organizar algo, entregue uma organização prática e bem estruturada.
+
+Se o usuário pedir ajuda com estudos, explique de maneira simples e didática.
 
 CONTEXTO DO PRIMORIS:
 ${JSON.stringify(context)}
@@ -309,9 +320,9 @@ ${message}
   }
 });
 
-// ===============================
+// =====================================================
 // GOOGLE NEWS
-// ===============================
+// =====================================================
 
 app.get("/api/news", async (req, res) => {
   try {
@@ -363,9 +374,9 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
-// ===============================
+// =====================================================
 // FALLBACK DO SITE
-// ===============================
+// =====================================================
 
 app.use((req, res) => {
   res.sendFile(
@@ -373,9 +384,9 @@ app.use((req, res) => {
   );
 });
 
-// ===============================
+// =====================================================
 // SERVIDOR
-// ===============================
+// =====================================================
 
 app.listen(
   PORT,
