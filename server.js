@@ -138,7 +138,6 @@ app.get("/api/calendar/events", async (req, res) => {
     res.json({
       events: r.data.items || []
     });
-
   } catch (e) {
     console.error("Calendar:", e);
 
@@ -167,21 +166,17 @@ async function chamarGemini(url, payload, tentativa) {
 
   try {
     console.log(
-      `Gemini: tentativa ${tentativa}`
+      "Gemini: tentativa " + tentativa
     );
 
     return await fetch(url, {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json"
       },
-
       signal: controller.signal,
-
       body: JSON.stringify(payload)
     });
-
   } finally {
     clearTimeout(timeout);
   }
@@ -267,7 +262,6 @@ ${message}
           ]
         }
       ],
-
       generationConfig: {
         temperature: 0.5,
         maxOutputTokens: 700
@@ -276,14 +270,8 @@ ${message}
 
     let response = null;
 
-    // =================================================
-    // TENTATIVAS AUTOMÁTICAS
-    // =================================================
-
     for (let tentativa = 1; tentativa <= 3; tentativa++) {
-
       try {
-
         response = await chamarGemini(
           url,
           payload,
@@ -300,12 +288,7 @@ ${message}
           body = {};
         }
 
-        // ---------------------------------------------
-        // SUCESSO
-        // ---------------------------------------------
-
         if (response.ok) {
-
           const text =
             body?.candidates?.[0]?.content?.parts
               ?.map(part => part.text || "")
@@ -332,24 +315,18 @@ ${message}
           });
         }
 
-        // ---------------------------------------------
-        // ERRO 503
-        // ---------------------------------------------
-
         if (response.status === 503) {
-
           console.error(
-            `Gemini 503 na tentativa ${tentativa}:`,
+            "Gemini 503 na tentativa " +
+              tentativa +
+              ":",
             body?.error?.message ||
               "Serviço temporariamente indisponível."
           );
 
           if (tentativa < 3) {
-
             await esperar(
-              tentativa === 1
-                ? 2000
-                : 4000
+              tentativa === 1 ? 2000 : 4000
             );
 
             continue;
@@ -361,10 +338,6 @@ ${message}
               "O Google Gemini está temporariamente sobrecarregado. Tente novamente em alguns segundos."
           });
         }
-
-        // ---------------------------------------------
-        // OUTROS ERROS
-        // ---------------------------------------------
 
         console.error(
           "Erro Gemini:",
@@ -380,17 +353,15 @@ ${message}
         });
 
       } catch (e) {
-
         if (e.name === "AbortError") {
-
           console.error(
-            `Gemini expirou na tentativa ${tentativa}.`
+            "Gemini expirou na tentativa " +
+              tentativa +
+              "."
           );
 
           if (tentativa < 3) {
-
             await esperar(2000);
-
             continue;
           }
 
@@ -414,13 +385,12 @@ ${message}
     }
 
   } catch (e) {
-
     console.error(
       "Erro geral na IA:",
       e
     );
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "ai_server_error",
       details: e.message
     });
@@ -433,7 +403,6 @@ ${message}
 
 app.get("/api/news", async (req, res) => {
   try {
-
     const queries = [
       "Brasil OR Brasília OR economia brasileira",
       "mundo OR geopolítica OR internacional",
@@ -443,6 +412,68 @@ app.get("/api/news", async (req, res) => {
     const items = [];
 
     for (const q of queries) {
-
       const url =
-        "https
+        "https://news.google.com/rss/search?q=" +
+        encodeURIComponent(q) +
+        "&hl=pt-BR&gl=BR&ceid=BR:pt-419";
+
+      const feed =
+        await parser.parseURL(url);
+
+      for (
+        const item of (feed.items || []).slice(0, 5)
+      ) {
+        items.push({
+          title: item.title,
+          link: item.link,
+          source:
+            item.creator || "Google News",
+          category:
+            q.includes("tecnologia")
+              ? "Tecnologia"
+              : q.includes("mundo")
+              ? "Mundo"
+              : "Brasil"
+        });
+      }
+    }
+
+    res.json({
+      items
+    });
+
+  } catch (e) {
+    console.error(
+      "News:",
+      e
+    );
+
+    res.status(500).json({
+      error: e.message
+    });
+  }
+});
+
+// =====================================================
+// FALLBACK DO SITE
+// =====================================================
+
+app.use((req, res) => {
+  res.sendFile(
+    path.join(__dirname, "index.html")
+  );
+});
+
+// =====================================================
+// SERVIDOR
+// =====================================================
+
+app.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
+    console.log(
+      "PRIMORIS rodando na porta " + PORT
+    );
+  }
+);
