@@ -149,8 +149,43 @@ app.get("/api/calendar/events", async (req, res) => {
 });
 
 // =====================================================
-// GEMINI - IA
+// GEMINI
 // =====================================================
+
+function esperar(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function chamarGemini(url, payload, tentativa) {
+  const controller = new AbortController();
+
+  const timeout = setTimeout(() => {
+    controller.abort();
+  }, 30000);
+
+  try {
+    console.log(
+      `Gemini: tentativa ${tentativa}`
+    );
+
+    return await fetch(url, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      signal: controller.signal,
+
+      body: JSON.stringify(payload)
+    });
+
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 app.post("/api/ai", async (req, res) => {
   try {
@@ -181,32 +216,37 @@ app.post("/api/ai", async (req, res) => {
       "gemini-3.8-flash";
 
     const prompt = `
-Você é o PRIMORIS, um assistente pessoal.
+Você é o PRIMORIS, um assistente pessoal inteligente.
 
-Responda em português do Brasil.
+Responda sempre em português do Brasil.
 
-Seja rápido, claro e objetivo.
+Seja claro, objetivo e útil.
 
-Ajude com:
+Você pode ajudar com:
 - organização
 - estudos
-- tarefas
 - agenda
+- tarefas
 - planejamento
 - informações
 - programação
-- finanças
+- finanças pessoais
 - ideias
 - explicações
+- organização de eventos
+- organização de estudos
 
-Use o contexto quando for útil.
+Use o contexto fornecido quando for relevante.
 
 Não invente informações.
 
-CONTEXTO:
+Se o usuário pedir para organizar alguma coisa,
+entregue uma organização prática e bem estruturada.
+
+CONTEXTO DO PRIMORIS:
 ${JSON.stringify(context)}
 
-USUÁRIO:
+MENSAGEM DO USUÁRIO:
 ${message}
 `;
 
@@ -216,114 +256,167 @@ ${message}
       ":generateContent?key=" +
       encodeURIComponent(apiKey);
 
-    // Timeout de 15 segundos
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-      controller.abort();
-    }, 15000);
-
-    let response;
-
-    try {
-      response = await fetch(url, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        signal: controller.signal,
-
-        body: JSON.stringify({
-          contents: [
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [
             {
-              role: "user",
-              parts: [
-                {
-                  text: prompt
-                }
-              ]
+              text: prompt
             }
-          ],
+          ]
+        }
+      ],
 
-          generationConfig: {
-            temperature: 0.5,
-            maxOutputTokens: 600
+      generationConfig: {
+        temperature: 0.5,
+        maxOutputTokens: 700
+      }
+    };
+
+    let response = null;
+
+    // =================================================
+    // TENTATIVAS AUTOMÁTICAS
+    // =================================================
+
+    for (let tentativa = 1; tentativa <= 3; tentativa++) {
+
+      try {
+
+        response = await chamarGemini(
+          url,
+          payload,
+          tentativa
+        );
+
+        const raw = await response.text();
+
+        let body = {};
+
+        try {
+          body = JSON.parse(raw);
+        } catch {
+          body = {};
+        }
+
+        // ---------------------------------------------
+        // SUCESSO
+        // ---------------------------------------------
+
+        if (response.ok) {
+
+          const text =
+            body?.candidates?.[0]?.content?.parts
+              ?.map(part => part.text || "")
+              .join("")
+              .trim();
+
+          if (!text) {
+            console.error(
+              "Gemini respondeu sem texto:",
+              JSON.stringify(body)
+            );
+
+            return res.status(502).json({
+              error: "gemini_empty_response",
+              details:
+                "O Gemini respondeu sem texto."
+            });
           }
-        })
-      });
 
-    } finally {
-      clearTimeout(timeout);
+          return res.json({
+            text,
+            provider: "Google Gemini",
+            model
+          });
+        }
+
+        // ---------------------------------------------
+        // ERRO 503
+        // ---------------------------------------------
+
+        if (response.status === 503) {
+
+          console.error(
+            `Gemini 503 na tentativa ${tentativa}:`,
+            body?.error?.message ||
+              "Serviço temporariamente indisponível."
+          );
+
+          if (tentativa < 3) {
+
+            await esperar(
+              tentativa === 1
+                ? 2000
+                : 4000
+            );
+
+            continue;
+          }
+
+          return res.status(503).json({
+            error: "gemini_busy",
+            details:
+              "O Google Gemini está temporariamente sobrecarregado. Tente novamente em alguns segundos."
+          });
+        }
+
+        // ---------------------------------------------
+        // OUTROS ERROS
+        // ---------------------------------------------
+
+        console.error(
+          "Erro Gemini:",
+          response.status,
+          body
+        );
+
+        return res.status(502).json({
+          error: "gemini_request_failed",
+          details:
+            body?.error?.message ||
+            "Erro ao consultar o Gemini."
+        });
+
+      } catch (e) {
+
+        if (e.name === "AbortError") {
+
+          console.error(
+            `Gemini expirou na tentativa ${tentativa}.`
+          );
+
+          if (tentativa < 3) {
+
+            await esperar(2000);
+
+            continue;
+          }
+
+          return res.status(504).json({
+            error: "gemini_timeout",
+            details:
+              "O Gemini demorou demais para responder."
+          });
+        }
+
+        console.error(
+          "Erro na conexão com Gemini:",
+          e
+        );
+
+        return res.status(500).json({
+          error: "ai_server_error",
+          details: e.message
+        });
+      }
     }
-
-    const raw = await response.text();
-
-    let body = {};
-
-    try {
-      body = JSON.parse(raw);
-    } catch {
-      body = {};
-    }
-
-    if (!response.ok) {
-      console.error(
-        "Erro Gemini:",
-        response.status,
-        body
-      );
-
-      return res.status(502).json({
-        error: "gemini_request_failed",
-        details:
-          body?.error?.message ||
-          "Erro ao consultar o Gemini."
-      });
-    }
-
-    const text =
-      body?.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("")
-        .trim();
-
-    if (!text) {
-      console.error(
-        "Gemini sem resposta:",
-        JSON.stringify(body)
-      );
-
-      return res.status(502).json({
-        error: "gemini_empty_response",
-        details:
-          "O Gemini não retornou uma resposta."
-      });
-    }
-
-    res.json({
-      text,
-      provider: "Google Gemini",
-      model
-    });
 
   } catch (e) {
 
-    if (e.name === "AbortError") {
-      console.error(
-        "Gemini demorou mais de 15 segundos."
-      );
-
-      return res.status(504).json({
-        error: "gemini_timeout",
-        details:
-          "A IA demorou demais para responder."
-      });
-    }
-
     console.error(
-      "Erro na IA:",
+      "Erro geral na IA:",
       e
     );
 
@@ -340,6 +433,7 @@ ${message}
 
 app.get("/api/news", async (req, res) => {
   try {
+
     const queries = [
       "Brasil OR Brasília OR economia brasileira",
       "mundo OR geopolítica OR internacional",
@@ -351,68 +445,4 @@ app.get("/api/news", async (req, res) => {
     for (const q of queries) {
 
       const url =
-        "https://news.google.com/rss/search?q=" +
-        encodeURIComponent(q) +
-        "&hl=pt-BR&gl=BR&ceid=BR:pt-419";
-
-      const feed = await parser.parseURL(url);
-
-      for (
-        const item of (feed.items || []).slice(0, 5)
-      ) {
-        items.push({
-          title: item.title,
-          link: item.link,
-          source:
-            item.creator || "Google News",
-
-          category:
-            q.includes("tecnologia")
-              ? "Tecnologia"
-              : q.includes("mundo")
-              ? "Mundo"
-              : "Brasil"
-        });
-      }
-    }
-
-    res.json({
-      items
-    });
-
-  } catch (e) {
-
-    console.error(
-      "News:",
-      e
-    );
-
-    res.status(500).json({
-      error: e.message
-    });
-  }
-});
-
-// =====================================================
-// FALLBACK
-// =====================================================
-
-app.use((req, res) => {
-  res.sendFile(
-    path.join(__dirname, "index.html")
-  );
-});
-
-// =====================================================
-// SERVIDOR
-// =====================================================
-
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
-    console.log(
-      `PRIMORIS rodando na porta ${PORT}`
-    );
-  }
-);
+        "https
