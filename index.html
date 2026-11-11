@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070812">
+<meta name="description" content="PRIMORIS — Assistente Pessoal Futurista">
+<title>PRIMORIS — Assistente Pessoal</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070812;--panel:#0d1020;--panel2:#11152a;--line:rgba(126,147,255,.18);
+  --text:#f3f5ff;--muted:#8f98b8;--cyan:#54e8ff;--pink:#ff4fd8;--violet:#9a6cff;
+  --green:#5dffae;--danger:#ff647c;--shadow:0 18px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+radial-gradient(circle at 15% 5%,rgba(154,108,255,.15),transparent 30%),
+radial-gradient(circle at 85% 10%,rgba(84,232,255,.12),transparent 28%),
+linear-gradient(180deg,#070812,#090b16 55%,#06070e);
+color:var(--text);font-family:Rajdhani,system-ui,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,black,transparent 85%);z-index:-1}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:245px;position:fixed;inset:0 auto 0 0;padding:22px 14px;background:rgba(7,8,18,.84);backdrop-filter:blur(22px);border-right:1px solid var(--line);z-index:20}
+.logo{padding:8px 12px 22px}.logo strong{font:800 22px Orbitron;letter-spacing:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.logo small{display:block;color:var(--muted);letter-spacing:2px;margin-top:6px}
+.nav{display:grid;gap:7px}.nav button{border:1px solid transparent;background:transparent;color:#aeb6d2;padding:12px 13px;border-radius:13px;text-align:left;transition:.2s}.nav button:hover,.nav button.active{color:white;background:linear-gradient(90deg,rgba(84,232,255,.1),rgba(255,79,216,.08));border-color:var(--line);box-shadow:inset 3px 0 var(--cyan)}
+.main{margin-left:245px;width:calc(100% - 245px);padding:24px;max-width:1500px}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{color:var(--cyan);font:600 12px Orbitron;letter-spacing:2px}.clock{font:700 28px Orbitron}.date{color:var(--muted)}
+.page{display:none;animation:fade .25s ease}.page.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.hero{padding:28px;border:1px solid var(--line);border-radius:25px;background:linear-gradient(135deg,rgba(17,21,42,.94),rgba(10,12,25,.88));box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-90px;top:-110px;background:rgba(84,232,255,.13);filter:blur(5px)}
+h1,h2,h3{margin:0 0 8px}h1{font:800 clamp(27px,4vw,46px) Orbitron}h2{font:700 25px Orbitron}h3{font-size:19px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:15px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+.card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:19px;padding:18px;background:linear-gradient(145deg,rgba(16,20,39,.92),rgba(10,12,25,.92));box-shadow:0 10px 35px rgba(0,0,0,.22);transition:.2s}.card:hover{transform:translateY(-2px);border-color:rgba(84,232,255,.35);box-shadow:0 14px 40px rgba(84,232,255,.08)}
+.stat{font:800 30px Orbitron;margin-top:8px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--cyan);margin-bottom:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid rgba(84,232,255,.3);border-radius:12px;padding:10px 14px;background:linear-gradient(135deg,rgba(84,232,255,.12),rgba(154,108,255,.12));color:white;font-weight:700;transition:.2s}.btn:hover{transform:translateY(-1px);border-color:var(--cyan)}.btn.primary{background:linear-gradient(135deg,#256c83,#6b3c9c)}.btn.danger{border-color:rgba(255,100,124,.35);color:#ff9aaa}
+input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15;color:white;border-radius:12px;padding:11px 12px;outline:none}input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(84,232,255,.08)}textarea{min-height:110px;resize:vertical}.form{display:grid;gap:10px}.list{display:grid;gap:9px;margin-top:12px}.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}.item small{color:var(--muted)}
+.chat{height:min(57vh,610px);overflow:auto;display:flex;flex-direction:column;gap:10px;padding:8px 2px 15px}.bubble{max-width:85%;padding:12px 14px;border-radius:15px;white-space:pre-wrap;line-height:1.4}.bubble.ai{align-self:flex-start;background:#11162b;border:1px solid var(--line)}.bubble.user{align-self:flex-end;background:linear-gradient(135deg,#214e61,#613d72);border:1px solid rgba(84,232,255,.2)}.chatbar{display:flex;gap:8px;margin-top:8px}.chatbar input{flex:1}
+.news{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.news .card h3{line-height:1.25}.status{display:inline-flex;align-items:center;gap:7px;color:var(--green);font-size:13px}.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green)}
+.mobilebar{display:none}
+.toast{position:fixed;right:18px;bottom:18px;background:#11162b;border:1px solid var(--line);padding:12px 15px;border-radius:13px;box-shadow:var(--shadow);z-index:50;display:none}.toast.show{display:block;animation:fade .2s}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;width:100%;padding:16px 14px 90px}.grid,.news{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.mobilebar{display:flex;position:fixed;z-index:30;bottom:10px;left:10px;right:10px;background:rgba(10,12,25,.9);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:7px;gap:5px;box-shadow:var(--shadow)}.mobilebar button{flex:1;border:0;background:transparent;color:#9ba4c2;padding:8px 3px;border-radius:11px;font-size:11px}.mobilebar button.active{color:white;background:rgba(84,232,255,.1)}}
+@media(max-width:600px){.grid,.news{grid-template-columns:1fr}.top{align-items:flex-start}.clock{font-size:19px}.hero{padding:21px}.chat{height:54vh}.chatbar{position:sticky;bottom:0}.row{align-items:flex-start;flex-wrap:wrap}}
+</style>
+
+<style id="primoris-finance-css">
+.finance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.finance-card{position:relative;overflow:hidden;padding:20px;border:1px solid rgba(0,229,255,.18);border-radius:20px;background:linear-gradient(145deg,rgba(20,24,45,.92),rgba(10,12,25,.96));box-shadow:0 0 28px rgba(0,229,255,.07)}
+.finance-card:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.035),transparent);pointer-events:none}
+.finance-card span{display:block;font-size:12px;opacity:.72;margin-bottom:10px;letter-spacing:.5px}
+.finance-card strong{font-family:Orbitron,sans-serif;font-size:clamp(20px,5vw,30px);letter-spacing:.3px}
+.finance-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.finance-actions button{border:1px solid rgba(0,229,255,.28);border-radius:14px;padding:11px 15px;background:rgba(0,229,255,.08);color:inherit;cursor:pointer}
+.finance-entry{margin-top:18px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
+.finance-entry h3{margin:0 0 8px;font-size:14px}
+.finance-entry p{margin:0;opacity:.7;font-size:12px;line-height:1.5}
+@media(max-width:600px){.finance-grid{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
+  <nav class="nav">
+    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="markets">◒ Mercados</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button>
+  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button></nav>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <div><div class="eyebrow">SYSTEM // ONLINE</div><div class="status"><span class="dot"></span> PRIMORIS operacional</div></div>
+    <div style="text-align:right"><div id="clock" class="clock">--:--:--</div><div id="date" class="date"></div></div>
+  </header>
+
+  <section id="page-home" class="page">
+    <div class="hero"><div class="eyebrow">PERSONAL COMMAND CENTER</div><h1>Seu dia, sem bagunça.</h1><p class="muted">Agenda, tarefas, estudos, notícias e memória em um único painel. A humanidade finalmente inventou um lugar para guardar as coisas que esquece.</p><div class="actions"><button class="btn primary" onclick="showPage('assistant')">Falar com PRIMORIS</button><button class="btn" onclick="syncCalendar()">Sincronizar agenda</button></div></div>
+    <div class="grid">
+      <div class="card"><span class="badge">TAREFAS</span><div class="stat" id="statTasks">0</div><div class="muted">pendentes</div></div>
+      <div class="card"><span class="badge">EVENTOS</span><div class="stat" id="statEvents">0</div><div class="muted">sincronizados</div></div>
+      <div class="card"><span class="badge">ESTUDOS</span><div class="stat" id="statStudies">0</div><div class="muted">registros</div></div>
+    </div>
+    <div class="grid2"><div class="card"><h3>Resumo rápido</h3><p id="brief" class="muted">Carregando seu painel...</p></div><div class="card"><h3>Estado do sistema</h3><p class="muted">IA local ativa · PWA ativo · Google Calendar disponível · Notícias online</p></div></div>
+  </section>
+
+  <section id="page-assistant" class="page">
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
+    <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Ex.: quais são meus compromissos hoje?"><button class="btn primary">Enviar</button></form></div>
+  </section>
+
+  <section id="page-agenda" class="page">
+    <div class="row"><div><h2>Agenda</h2><div class="muted">Google Calendar sincronizado com o painel.</div></div><button class="btn primary" onclick="syncCalendar()">Sincronizar</button></div>
+    <div id="agendaList" class="list"></div>
+  </section>
+
+  <section id="page-studies" class="page">
+    <div class="row"><div><h2>Estudos</h2><div class="muted">Registre sessões e mantenha algum vestígio de organização.</div></div></div>
+    <div class="grid2"><div class="card"><form id="studyForm" class="form"><input id="studyTitle" placeholder="Matéria ou tema" required><input id="studyTime" type="number" min="1" placeholder="Minutos" required><textarea id="studyNotes" placeholder="Observações"></textarea><button class="btn primary">Registrar estudo</button></form></div><div class="card"><h3>Histórico</h3><div id="studyList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-opportunities" class="page">
+    <h2>Oportunidades</h2><div class="muted">Guarde ideias, cursos, projetos e oportunidades.</div>
+    <div class="grid2"><div class="card"><form id="oppForm" class="form"><input id="oppTitle" placeholder="Nome" required><input id="oppLink" placeholder="Link"><textarea id="oppNotes" placeholder="Notas"></textarea><button class="btn primary">Salvar oportunidade</button></form></div><div class="card"><div id="oppList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-news" class="page">
+    <div class="row"><div><h2>Informações</h2><div class="muted">Notícias reais carregadas pelo servidor.</div></div><button class="btn primary" onclick="loadNews()">↻ Atualizar</button></div>
+    <div id="newsState" class="muted" style="margin:12px 0"></div><div id="newsList" class="news"></div>
+  </section>
+
+  <section id="page-markets" class="page">
+    <h2>Mercados</h2><div class="muted">Painel informativo para acompanhar indicadores.</div>
+    <div class="grid"><div class="card"><span class="badge">IBOVESPA</span><div class="stat">B3</div><p class="muted">Acompanhe pelo seu provedor de mercado.</p></div><div class="card"><span class="badge">DÓLAR</span><div class="stat">USD/BRL</div><p class="muted">Cotação depende de fonte externa.</p></div><div class="card"><span class="badge">STATUS</span><div class="stat">ONLINE</div><p class="muted">Painel pronto para integrações futuras.</p></div></div>
+  </section>
+
+  <section id="page-memory" class="page">
+    <h2>Memória</h2><div class="muted">Preferências que o PRIMORIS deve lembrar localmente.</div>
+    <div class="card" style="margin-top:15px"><textarea id="memoryInput" placeholder="Ex.: prefiro respostas curtas..."></textarea><button class="btn primary" style="margin-top:9px" onclick="saveMemory()">Salvar memória</button></div>
+  </section>
+
+  <section id="page-integrations" class="page">
+    <h2>Integrações</h2><div class="muted">Conexões do sistema.</div>
+    <div class="grid2"><div class="card"><h3>Google Calendar</h3><p id="calendarStatus" class="muted">Verificando conexão...</p><div class="actions"><button class="btn primary" onclick="connectCalendar()">Conectar</button><button class="btn" onclick="syncCalendar()">Sincronizar</button></div></div>
+    <div class="card"><h3>Google News</h3><p class="muted">RSS de notícias por categoria.</p><button class="btn" onclick="showPage('news')">Abrir notícias</button></div></div>
+  </section>
+
+  <section id="page-settings" class="page">
+    <h2>Configurações</h2><div class="muted">Ferramentas locais do PRIMORIS.</div>
+    <div class="grid2"><div class="card"><h3>Dados</h3><div class="actions"><button class="btn" onclick="exportData()">Exportar JSON</button><label class="btn">Importar JSON<input id="importFile" type="file" accept=".json" hidden></label><button class="btn danger" onclick="resetData()">Apagar dados locais</button></div></div><div class="card"><h3>Sistema</h3><p id="systemStatus" class="muted">Verificando servidor...</p><button class="btn" onclick="testAI()">Testar IA</button></div></div>
+  </section>
+
+<section id="page-finance" class="page">
+  <div class="panel-header">
+    <div>
+      <div class="eyebrow">PRIMORIS // FINANCE</div>
+      <h1>Controle Financeiro</h1>
+      <p>Veja quanto você tem, quanto gastou, quanto pode gastar e quanto deve.</p>
+    </div>
+  </div>
+  <div class="finance-grid">
+    <div class="finance-card"><span>💰 TENHO</span><strong id="finTenho">R$ 0,00</strong></div>
+    <div class="finance-card"><span>📉 GASTEI</span><strong id="finGastei">R$ 0,00</strong></div>
+    <div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div>
+    <div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div>
+  </div>
+  <div class="finance-actions">
+    <button type="button" onclick="editarFinancas()">Editar valores</button>
+    <button type="button" onclick="limparFinancas()">Limpar</button>
+  </div>
+  <div class="finance-entry">
+    <h3>Resumo</h3>
+    <p id="finResumo">Seus valores ficam salvos neste aparelho.</p>
+  </div>
+</section>
+
+</main>
+</div>
+
+<nav class="mobilebar">
+<button data-page="home">⌂<br>Hoje</button><button data-page="assistant">◉<br>IA</button><button data-page="agenda">◷<br>Agenda</button><button data-page="studies">▣<br>Estudos</button><button data-page="finance">💰<br>Finanças</button><button data-page="news">◈<br>Info</button><button data-page="integrations">⌁<br>Integra</button>
+</nav>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='primoris_cesar_v2';
+let data=JSON.parse(localStorage.getItem(KEY)||'{"tasks":[],"events":[],"studies":[],"opportunities":[],"memory":""}');
+const $=id=>document.getElementById(id);
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
+  document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
+  window.scrollTo(0,0);
+  if(p==='news') loadNews();
+  if(p==='agenda') renderAgenda();
+  if(p==='memory') $('memoryInput').value=data.memory||'';
+  if(p==='finance' && typeof renderFinancas==='function') renderFinancas();
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function render(){
+  $('statTasks').textContent=(data.tasks||[]).filter(x=>!x.done).length;
+  $('statEvents').textContent=(data.events||[]).length;
+  $('statStudies').textContent=(data.studies||[]).length;
+  $('brief').textContent=`Você tem ${(data.tasks||[]).filter(x=>!x.done).length} tarefa(s) pendente(s), ${(data.events||[]).length} evento(s) sincronizado(s) e ${(data.studies||[]).length} registro(s) de estudo.`;
+  renderAgenda();renderStudies();renderOpps();
+}
+
+function renderAgenda(){
+  const box=$('agendaList');const ev=data.events||[];
+  if(!ev.length){box.innerHTML='<div class="card">Nenhum evento sincronizado. Conecte o Google Calendar nas Integrações.</div>';return}
+  box.innerHTML=ev.map(e=>{
+    const d=e.date?new Date(e.date):null;
+    const when=d&&!isNaN(d)?d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'Data não informada';
+    return `<div class="item"><b>${escapeHtml(e.title||'Evento')}</b><br><small>${escapeHtml(when)}</small></div>`
+  }).join('');
+}
+
+function renderStudies(){
+  const box=$('studyList');const arr=data.studies||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><br><small>${escapeHtml(x.minutes)} min · ${escapeHtml(x.notes||'Sem observações')}</small></div>`).join(''):'<div class="muted">Nenhum estudo registrado.</div>';
+}
+function renderOpps(){
+  const box=$('oppList');const arr=data.opportunities||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map((x,i)=>`<div class="item"><b>${escapeHtml(x.title)}</b>${x.link?`<br><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:var(--cyan)">Abrir link</a>`:''}<br><small>${escapeHtml(x.notes||'')}</small></div>`).join(''):'<div class="muted">Nenhuma oportunidade salva.</div>';
+}
+
+$('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({title:$('studyTitle').value,minutes:Number($('studyTime').value),notes:$('studyNotes').value,date:new Date().toISOString()});save();e.target.reset();render();toast('Estudo registrado')};
+$('oppForm').onsubmit=e=>{e.preventDefault();data.opportunities.push({title:$('oppTitle').value,link:$('oppLink').value,notes:$('oppNotes').value,date:new Date().toISOString()});save();e.target.reset();render();toast('Oportunidade salva')};
+
+$('chatForm').onsubmit=async e=>{
+  e.preventDefault();const q=$('chatInput').value.trim();if(!q)return;
+  addChat(q,'user');$('chatInput').value='';
+  addChat('Processando...','ai');const placeholder=$('chat').lastElementChild;
+  try{
+    const context={...data,calendar:data.events||[]};
+    const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,context})});
+    if(!r.ok)throw new Error('Servidor indisponível');
+    const j=await r.json();placeholder.textContent=j.text||'Não consegui responder.';placeholder.className='bubble ai';
+  }catch(err){placeholder.textContent=localAI(q);placeholder.className='bubble ai'}
+};
+function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai">PRIMORIS online. Pode falar.</div>'}
+function localAI(q){
+  const t=q.toLowerCase();
+  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá. PRIMORIS online e pronto para ajudar.';
+  if(/hora/.test(t))return 'Agora são '+new Date().toLocaleTimeString('pt-BR')+'.';
+  if(/agenda|calendário|calendario|compromisso|evento|marcado|programado|o que tenho|o que vou fazer/.test(t))return data.events?.length?'Você tem '+data.events.length+' evento(s) sincronizado(s). Abra a Agenda para ver os detalhes.':'Não há eventos sincronizados no momento.';
+  if(/tarefa/.test(t))return 'Você tem '+(data.tasks||[]).filter(x=>!x.done).length+' tarefa(s) pendente(s).';
+  return 'Estou funcionando em modo local. Posso consultar sua agenda, tarefas, estudos e memória.';
+}
+function saveMemory(){data.memory=$('memoryInput').value;save();toast('Memória salva')}
+
+async function syncCalendar(){
+  try{
+    const r=await fetch('/api/calendar/events?ts='+Date.now(),{cache:'no-store'});
+      if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||err.details||('HTTP '+r.status));}
+      const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Não conectado');
+    data.events=(j.events||[]).map(e=>({title:e.summary||'Evento',date:e.start?.dateTime||e.start?.date}));
+    save();render();$('calendarStatus').textContent='Google Calendar conectado e sincronizado.';toast('Agenda sincronizada');
+  }catch(e){$('calendarStatus').textContent='Não foi possível sincronizar. Use Conectar para autorizar o Google Calendar.';toast('Agenda não sincronizada')}
+}
+function connectCalendar(){location.href='/auth/google'}
+
+async function loadNews(){
+  const box=$('newsList'),state=$('newsState');
+  box.innerHTML='<div class="card">Atualizando notícias...</div>';state.textContent='Consultando Google News em tempo real...';
+  try{
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
+    const r=await fetch('/api/news?t='+Date.now(),{method:'GET',cache:'no-store',signal:controller.signal});clearTimeout(timer);
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Servidor retornou erro');
+    const items=j.items||[];
+    if(!items.length){box.innerHTML='<div class="card">Nenhuma notícia disponível neste momento.</div>';state.textContent='Sem resultados agora.';return}
+    box.innerHTML=items.map(n=>`<a class="card" href="${escapeHtml(n.link)}" target="_blank" rel="noopener"><span class="badge">${escapeHtml(n.category||'Notícia')}</span><h3>${escapeHtml(n.title)}</h3><p class="muted">${escapeHtml(n.source||'Google News')}</p></a>`).join('');
+    state.textContent=`Atualizado agora · ${items.length} notícias`;
+  }catch(e){
+    box.innerHTML=`<div class="card"><h3>Não foi possível atualizar</h3><p class="muted">${escapeHtml(e.message||'Erro desconhecido')}</p><button class="btn" onclick="loadNews()">Tentar novamente</button></div>`;
+    state.textContent='Falha ao consultar notícias.';
+  }
+}
+
+async function testAI(){try{
+  const s=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const sj=await s.json();
+  const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'Responda apenas: IA funcionando.',context:data})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||j.details||('HTTP '+r.status));
+  $('systemStatus').textContent=sj.ai?'Google Gemini conectado e funcionando.':'IA local funcionando.';
+  toast(sj.ai?'Gemini funcionando':'IA funcionando');
+}catch(e){$('systemStatus').textContent='Servidor da IA indisponível no momento.';toast('Falha na IA')}}
+
+async function checkStatus(){
+  try{const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();$('systemStatus').textContent=j.ok?'Servidor online.':'Servidor respondeu com erro.'}catch{$('systemStatus').textContent='Servidor não respondeu.'}
+}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='primoris-backup.json';a.click();URL.revokeObjectURL(a.href)}
+$('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{data=JSON.parse(r.result);save();render();toast('Dados importados')}catch{toast('Arquivo JSON inválido')}};r.readAsText(f)}
+function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={tasks:[],events:[],studies:[],opportunities:[],memory:''};save();render();toast('Dados locais apagados')}}
+
+function clock(){
+  const d=new Date();$('clock').textContent=d.toLocaleTimeString('pt-BR');
+  $('date').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+}
+setInterval(clock,1000);clock();render();clearChat();checkStatus();loadNews();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+showPage('home');
+</script>
+
+<script id="primoris-gemini-test">
+async function testarGemini(){
+  const el=document.getElementById("aiStatus")||document.getElementById("statusAI");
+  try{
+    const s=await fetch("/api/status",{cache:"no-store"});
+    const j=await s.json();
+    const msg=j.ai?"Google Gemini conectado":"IA externa não configurada";
+    if(el)el.textContent=msg;
+    return j;
+  }catch(e){
+    if(el)el.textContent="Servidor da IA indisponível";
+    throw e;
+  }
+}
+</script>
+
+
+<script id="primoris-finance-js">
+(function(){
+  const KEY="primoris_financas_v1";
+  function load(){
+    try{return JSON.parse(localStorage.getItem(KEY)||'{"tenho":0,"gastei":0,"posso":0,"devo":0}')}
+    catch(e){return {tenho:0,gastei:0,posso:0,devo:0}}
+  }
+  function money(v){
+    return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  }
+  function ask(label,value){
+    const x=prompt(label, String(value||0).replace(".",","));
+    if(x===null)return value;
+    const n=Number(String(x).replace(/\./g,"").replace(",","."));
+    return Number.isFinite(n)?n:0;
+  }
+  window.renderFinancas=function(){
+    const d=load();
+    const ids={tenho:"finTenho",gastei:"finGastei",posso:"finPosso",devo:"finDevo"};
+    Object.keys(ids).forEach(k=>{const el=document.getElementById(ids[k]);if(el)el.textContent=money(d[k]);});
+    const r=document.getElementById("finResumo");
+    if(r)r.textContent=`Disponível: ${money(d.posso)} • Gastos: ${money(d.gastei)} • Dívidas: ${money(d.devo)}.`;
+  };
+  window.editarFinancas=function(){
+    const d=load();
+    const novo={
+      tenho:ask("Quanto dinheiro você tem?",d.tenho),
+      gastei:ask("Quanto você gastou?",d.gastei),
+      posso:ask("Quanto você pode gastar?",d.posso),
+      devo:ask("Quanto você deve?",d.devo)
+    };
+    localStorage.setItem(KEY,JSON.stringify(novo));
+    renderFinancas();
+  };
+  window.limparFinancas=function(){
+    localStorage.removeItem(KEY);
+    renderFinancas();
+  };
+  renderFinancas();
+})();
+</script>
+
+</body>
+</html>
