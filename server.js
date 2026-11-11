@@ -122,11 +122,9 @@ app.get("/api/calendar/events", async (req, res) => {
     const c = calendarClient(req);
 
     if (!c) {
-      return res
-        .status(401)
-        .json({
-          error: "not_connected"
-        });
+      return res.status(401).json({
+        error: "not_connected"
+      });
     }
 
     const r = await c.events.list({
@@ -140,6 +138,7 @@ app.get("/api/calendar/events", async (req, res) => {
     res.json({
       events: r.data.items || []
     });
+
   } catch (e) {
     console.error("Calendar:", e);
 
@@ -150,7 +149,7 @@ app.get("/api/calendar/events", async (req, res) => {
 });
 
 // =====================================================
-// GOOGLE GEMINI
+// GEMINI - IA
 // =====================================================
 
 app.post("/api/ai", async (req, res) => {
@@ -177,46 +176,37 @@ app.post("/api/ai", async (req, res) => {
       });
     }
 
-    // Modelo atualizado
     const model =
       process.env.GEMINI_MODEL ||
       "gemini-3.8-flash";
 
     const prompt = `
-Você é o PRIMORIS, um assistente pessoal inteligente.
+Você é o PRIMORIS, um assistente pessoal.
 
-Responda sempre em português do Brasil.
+Responda em português do Brasil.
 
-Seja claro, objetivo, útil e natural.
+Seja rápido, claro e objetivo.
 
-Você pode ajudar com:
-
+Ajude com:
 - organização
 - estudos
-- agenda
 - tarefas
+- agenda
 - planejamento
 - informações
-- ideias
-- finanças pessoais
 - programação
+- finanças
+- ideias
 - explicações
-- criação de planos
-- organização de eventos
-- organização de estudos
 
-Use o contexto do PRIMORIS quando ele for relevante.
+Use o contexto quando for útil.
 
-Não invente informações que não estejam disponíveis.
+Não invente informações.
 
-Se o usuário pedir para organizar algo, entregue uma organização prática e bem estruturada.
-
-Se o usuário pedir ajuda com estudos, explique de maneira simples e didática.
-
-CONTEXTO DO PRIMORIS:
+CONTEXTO:
 ${JSON.stringify(context)}
 
-MENSAGEM DO USUÁRIO:
+USUÁRIO:
 ${message}
 `;
 
@@ -226,31 +216,47 @@ ${message}
       ":generateContent?key=" +
       encodeURIComponent(apiKey);
 
-    const response = await fetch(url, {
-      method: "POST",
+    // Timeout de 15 segundos
+    const controller = new AbortController();
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 15000);
 
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: prompt
-              }
-            ]
+    let response;
+
+    try {
+      response = await fetch(url, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        signal: controller.signal,
+
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            }
+          ],
+
+          generationConfig: {
+            temperature: 0.5,
+            maxOutputTokens: 600
           }
-        ],
+        })
+      });
 
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1200
-        }
-      })
-    });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const raw = await response.text();
 
@@ -258,7 +264,7 @@ ${message}
 
     try {
       body = JSON.parse(raw);
-    } catch (e) {
+    } catch {
       body = {};
     }
 
@@ -271,16 +277,9 @@ ${message}
 
       return res.status(502).json({
         error: "gemini_request_failed",
-
         details:
-          "Gemini " +
-          response.status +
-          ": " +
-          (
-            body?.error?.message ||
-            raw ||
-            "Erro desconhecido"
-          )
+          body?.error?.message ||
+          "Erro ao consultar o Gemini."
       });
     }
 
@@ -292,26 +291,41 @@ ${message}
 
     if (!text) {
       console.error(
-        "Gemini não retornou texto:",
+        "Gemini sem resposta:",
         JSON.stringify(body)
       );
 
       return res.status(502).json({
         error: "gemini_empty_response",
-
         details:
-          "O Google Gemini respondeu sem texto."
+          "O Gemini não retornou uma resposta."
       });
     }
 
     res.json({
-      text: text,
+      text,
       provider: "Google Gemini",
-      model: model
+      model
     });
 
   } catch (e) {
-    console.error("Erro na IA:", e);
+
+    if (e.name === "AbortError") {
+      console.error(
+        "Gemini demorou mais de 15 segundos."
+      );
+
+      return res.status(504).json({
+        error: "gemini_timeout",
+        details:
+          "A IA demorou demais para responder."
+      });
+    }
+
+    console.error(
+      "Erro na IA:",
+      e
+    );
 
     res.status(500).json({
       error: "ai_server_error",
@@ -335,6 +349,7 @@ app.get("/api/news", async (req, res) => {
     const items = [];
 
     for (const q of queries) {
+
       const url =
         "https://news.google.com/rss/search?q=" +
         encodeURIComponent(q) +
@@ -362,11 +377,15 @@ app.get("/api/news", async (req, res) => {
     }
 
     res.json({
-      items: items
+      items
     });
 
   } catch (e) {
-    console.error("News:", e);
+
+    console.error(
+      "News:",
+      e
+    );
 
     res.status(500).json({
       error: e.message
@@ -375,7 +394,7 @@ app.get("/api/news", async (req, res) => {
 });
 
 // =====================================================
-// FALLBACK DO SITE
+// FALLBACK
 // =====================================================
 
 app.use((req, res) => {
