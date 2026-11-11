@@ -46,7 +46,7 @@ app.get("/api/status", (req, res) => {
 });
 
 // =====================================================
-// GOOGLE CALENDAR
+// GOOGLE OAUTH
 // =====================================================
 
 function oauth() {
@@ -104,8 +104,14 @@ app.get("/auth/google/disconnect", (req, res) => {
   res.redirect("/");
 });
 
+// =====================================================
+// GOOGLE CALENDAR CLIENT
+// =====================================================
+
 function calendarClient(req) {
-  if (!req.session.tokens) return null;
+  if (!req.session.tokens) {
+    return null;
+  }
 
   const o = oauth();
 
@@ -117,13 +123,18 @@ function calendarClient(req) {
   });
 }
 
+// =====================================================
+// LISTAR EVENTOS
+// =====================================================
+
 app.get("/api/calendar/events", async (req, res) => {
   try {
     const c = calendarClient(req);
 
     if (!c) {
       return res.status(401).json({
-        error: "not_connected"
+        error: "not_connected",
+        message: "Google Calendar não está conectado."
       });
     }
 
@@ -138,14 +149,277 @@ app.get("/api/calendar/events", async (req, res) => {
     res.json({
       events: r.data.items || []
     });
+
   } catch (e) {
-    console.error("Calendar:", e);
+    console.error("Calendar events:", e);
 
     res.status(500).json({
-      error: e.message
+      error: "calendar_error",
+      message: e.message
     });
   }
 });
+
+// =====================================================
+// CRIAR COMPROMISSO
+// =====================================================
+
+app.post("/api/calendar/create", async (req, res) => {
+  try {
+    const c = calendarClient(req);
+
+    if (!c) {
+      return res.status(401).json({
+        error: "not_connected",
+        message: "Google Calendar não está conectado."
+      });
+    }
+
+    const {
+      summary,
+      description,
+      location,
+      start,
+      end,
+      allDay
+    } = req.body || {};
+
+    if (!summary) {
+      return res.status(400).json({
+        error: "summary_required",
+        message: "O título do compromisso é obrigatório."
+      });
+    }
+
+    if (!start) {
+      return res.status(400).json({
+        error: "start_required",
+        message: "A data/horário inicial é obrigatório."
+      });
+    }
+
+    const evento = {
+      summary: String(summary),
+      description: description
+        ? String(description)
+        : undefined,
+      location: location
+        ? String(location)
+        : undefined
+    };
+
+    if (allDay) {
+      evento.start = {
+        date: String(start).slice(0, 10)
+      };
+
+      evento.end = {
+        date: String(end || start).slice(0, 10)
+      };
+
+    } else {
+      if (!end) {
+        return res.status(400).json({
+          error: "end_required",
+          message:
+            "O horário final é obrigatório para eventos com horário."
+        });
+      }
+
+      evento.start = {
+        dateTime: new Date(start).toISOString()
+      };
+
+      evento.end = {
+        dateTime: new Date(end).toISOString()
+      };
+    }
+
+    const criado = await c.events.insert({
+      calendarId: "primary",
+      requestBody: evento
+    });
+
+    console.log(
+      "Evento criado:",
+      criado.data.id
+    );
+
+    res.json({
+      ok: true,
+      event: criado.data
+    });
+
+  } catch (e) {
+    console.error(
+      "Erro ao criar evento:",
+      e
+    );
+
+    res.status(500).json({
+      error: "calendar_create_error",
+      message: e.message
+    });
+  }
+});
+
+// =====================================================
+// EDITAR COMPROMISSO
+// =====================================================
+
+app.put("/api/calendar/edit/:eventId", async (req, res) => {
+  try {
+    const c = calendarClient(req);
+
+    if (!c) {
+      return res.status(401).json({
+        error: "not_connected",
+        message: "Google Calendar não está conectado."
+      });
+    }
+
+    const eventId = req.params.eventId;
+
+    if (!eventId) {
+      return res.status(400).json({
+        error: "event_id_required",
+        message: "ID do evento não informado."
+      });
+    }
+
+    const {
+      summary,
+      description,
+      location,
+      start,
+      end,
+      allDay
+    } = req.body || {};
+
+    const evento = {};
+
+    if (summary !== undefined) {
+      evento.summary = String(summary);
+    }
+
+    if (description !== undefined) {
+      evento.description = String(description);
+    }
+
+    if (location !== undefined) {
+      evento.location = String(location);
+    }
+
+    if (start) {
+      if (allDay) {
+        evento.start = {
+          date: String(start).slice(0, 10)
+        };
+      } else {
+        evento.start = {
+          dateTime: new Date(start).toISOString()
+        };
+      }
+    }
+
+    if (end) {
+      if (allDay) {
+        evento.end = {
+          date: String(end).slice(0, 10)
+        };
+      } else {
+        evento.end = {
+          dateTime: new Date(end).toISOString()
+        };
+      }
+    }
+
+    const atualizado = await c.events.patch({
+      calendarId: "primary",
+      eventId,
+      requestBody: evento
+    });
+
+    console.log(
+      "Evento atualizado:",
+      atualizado.data.id
+    );
+
+    res.json({
+      ok: true,
+      event: atualizado.data
+    });
+
+  } catch (e) {
+    console.error(
+      "Erro ao editar evento:",
+      e
+    );
+
+    res.status(500).json({
+      error: "calendar_edit_error",
+      message: e.message
+    });
+  }
+});
+
+// =====================================================
+// EXCLUIR COMPROMISSO
+// =====================================================
+
+app.delete(
+  "/api/calendar/delete/:eventId",
+  async (req, res) => {
+    try {
+      const c = calendarClient(req);
+
+      if (!c) {
+        return res.status(401).json({
+          error: "not_connected",
+          message:
+            "Google Calendar não está conectado."
+        });
+      }
+
+      const eventId = req.params.eventId;
+
+      if (!eventId) {
+        return res.status(400).json({
+          error: "event_id_required",
+          message:
+            "ID do evento não informado."
+        });
+      }
+
+      await c.events.delete({
+        calendarId: "primary",
+        eventId
+      });
+
+      console.log(
+        "Evento excluído:",
+        eventId
+      );
+
+      res.json({
+        ok: true,
+        deleted: true,
+        eventId
+      });
+
+    } catch (e) {
+      console.error(
+        "Erro ao excluir evento:",
+        e
+      );
+
+      res.status(500).json({
+        error: "calendar_delete_error",
+        message: e.message
+      });
+    }
+  }
+);
 
 // =====================================================
 // GEMINI
@@ -157,10 +431,13 @@ function esperar(ms) {
   });
 }
 
-async function chamarGemini(url, payload, tentativa) {
+async function chamarGemini(
+  url,
+  payload,
+  tentativa
+) {
   const controller = new AbortController();
 
-  // Cada tentativa pode durar até 60 segundos
   const timeout = setTimeout(() => {
     controller.abort();
   }, 60000);
@@ -193,7 +470,8 @@ app.post("/api/ai", async (req, res) => {
       req.body?.message || ""
     ).trim();
 
-    const context = req.body?.context || {};
+    const context =
+      req.body?.context || {};
 
     if (!message) {
       return res.status(400).json({
@@ -201,7 +479,8 @@ app.post("/api/ai", async (req, res) => {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey =
+      process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(503).json({
@@ -243,6 +522,10 @@ Não invente informações.
 Se o usuário pedir para organizar alguma coisa,
 entregue uma organização prática e bem estruturada.
 
+Se o usuário falar sobre um compromisso,
+evento, reunião, prova, tarefa com data ou horário,
+identifique claramente as informações disponíveis.
+
 CONTEXTO DO PRIMORIS:
 ${JSON.stringify(context)}
 
@@ -276,24 +559,20 @@ ${message}
 
     let response = null;
 
-    // =================================================
-    // 3 TENTATIVAS
-    // =================================================
-
     for (
       let tentativa = 1;
       tentativa <= 3;
       tentativa++
     ) {
       try {
-
         response = await chamarGemini(
           url,
           payload,
           tentativa
         );
 
-        const raw = await response.text();
+        const raw =
+          await response.text();
 
         let body = {};
 
@@ -303,12 +582,7 @@ ${message}
           body = {};
         }
 
-        // =============================================
-        // SUCESSO
-        // =============================================
-
         if (response.ok) {
-
           const text =
             body?.candidates?.[0]?.content?.parts
               ?.map(part => part.text || "")
@@ -316,14 +590,14 @@ ${message}
               .trim();
 
           if (!text) {
-
             console.error(
               "Gemini respondeu sem texto:",
               JSON.stringify(body)
             );
 
             return res.status(502).json({
-              error: "gemini_empty_response",
+              error:
+                "gemini_empty_response",
               details:
                 "O Gemini respondeu sem texto."
             });
@@ -336,12 +610,31 @@ ${message}
           });
         }
 
-        // =============================================
-        // SERVIDOR GEMINI SOBRECARREGADO
-        // =============================================
+        // ---------------------------------------------
+        // LIMITE DE COTA
+        // ---------------------------------------------
+
+        if (response.status === 429) {
+          console.error(
+            "Gemini 429:",
+            body?.error?.message ||
+              "Cota excedida."
+          );
+
+          return res.status(429).json({
+            error:
+              "gemini_quota_exceeded",
+            details:
+              body?.error?.message ||
+              "A cota do Gemini foi excedida."
+          });
+        }
+
+        // ---------------------------------------------
+        // GEMINI SOBRECARREGADO
+        // ---------------------------------------------
 
         if (response.status === 503) {
-
           console.error(
             "Gemini 503 na tentativa " +
               tentativa +
@@ -351,7 +644,6 @@ ${message}
           );
 
           if (tentativa < 3) {
-
             console.log(
               "Aguardando 60 segundos antes da próxima tentativa..."
             );
@@ -363,15 +655,10 @@ ${message}
 
           return res.status(503).json({
             error: "gemini_busy",
-
             details:
               "O Google Gemini está temporariamente sobrecarregado depois de 3 tentativas."
           });
         }
-
-        // =============================================
-        // OUTROS ERROS
-        // =============================================
 
         console.error(
           "Erro Gemini:",
@@ -380,8 +667,8 @@ ${message}
         );
 
         return res.status(502).json({
-          error: "gemini_request_failed",
-
+          error:
+            "gemini_request_failed",
           details:
             body?.error?.message ||
             "Erro ao consultar o Gemini."
@@ -389,12 +676,7 @@ ${message}
 
       } catch (e) {
 
-        // =============================================
-        // TIMEOUT
-        // =============================================
-
         if (e.name === "AbortError") {
-
           console.error(
             "Gemini expirou na tentativa " +
               tentativa +
@@ -402,7 +684,6 @@ ${message}
           );
 
           if (tentativa < 3) {
-
             console.log(
               "Aguardando 60 segundos antes da próxima tentativa..."
             );
@@ -413,16 +694,12 @@ ${message}
           }
 
           return res.status(504).json({
-            error: "gemini_timeout",
-
+            error:
+              "gemini_timeout",
             details:
               "O Gemini demorou demais para responder depois de 3 tentativas."
           });
         }
-
-        // =============================================
-        // ERRO DE CONEXÃO
-        // =============================================
 
         console.error(
           "Erro na conexão com Gemini:",
@@ -430,21 +707,22 @@ ${message}
         );
 
         return res.status(500).json({
-          error: "ai_server_error",
+          error:
+            "ai_server_error",
           details: e.message
         });
       }
     }
 
   } catch (e) {
-
     console.error(
       "Erro geral na IA:",
       e
     );
 
     return res.status(500).json({
-      error: "ai_server_error",
+      error:
+        "ai_server_error",
       details: e.message
     });
   }
@@ -456,7 +734,6 @@ ${message}
 
 app.get("/api/news", async (req, res) => {
   try {
-
     const queries = [
       "Brasil OR Brasília OR economia brasileira",
       "mundo OR geopolítica OR internacional",
@@ -466,7 +743,6 @@ app.get("/api/news", async (req, res) => {
     const items = [];
 
     for (const q of queries) {
-
       const url =
         "https://news.google.com/rss/search?q=" +
         encodeURIComponent(q) +
@@ -476,14 +752,15 @@ app.get("/api/news", async (req, res) => {
         await parser.parseURL(url);
 
       for (
-        const item of (feed.items || []).slice(0, 5)
+        const item of
+          (feed.items || []).slice(0, 5)
       ) {
-
         items.push({
           title: item.title,
           link: item.link,
           source:
-            item.creator || "Google News",
+            item.creator ||
+            "Google News",
 
           category:
             q.includes("tecnologia")
@@ -500,7 +777,6 @@ app.get("/api/news", async (req, res) => {
     });
 
   } catch (e) {
-
     console.error(
       "News:",
       e
@@ -518,7 +794,10 @@ app.get("/api/news", async (req, res) => {
 
 app.use((req, res) => {
   res.sendFile(
-    path.join(__dirname, "index.html")
+    path.join(
+      __dirname,
+      "index.html"
+    )
   );
 });
 
@@ -531,7 +810,8 @@ app.listen(
   "0.0.0.0",
   () => {
     console.log(
-      "PRIMORIS rodando na porta " + PORT
+      "PRIMORIS rodando na porta " +
+        PORT
     );
   }
 );
