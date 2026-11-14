@@ -291,25 +291,51 @@ async function chamarGroq(payload) {
   } finally { clearTimeout(timeout); }
 }
 
-// NVIDIA NIM: API compatível com OpenAI (requer NVIDIA_API_KEY).
-async function chamarNvidia(payload) {
-  const apiKey = process.env.NVIDIA_API_KEY;
-  const model = process.env.NVIDIA_MODEL || "openai/gpt-oss-120b";
-  if (!apiKey) return { ok:false, status:503, body:{error:{message:"NVIDIA_API_KEY não está configurada no servidor."}}, model };
+// CLOUDFLARE WORKERS AI - PROVEDOR ADICIONAL COM COTA GRATUITA DIÁRIA
+async function chamarCloudflare(payload) {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiKey = process.env.CLOUDFLARE_API_TOKEN;
+  const model = process.env.CLOUDFLARE_MODEL || "@cf/openai/gpt-oss-120b";
+  if (!accountId || !apiKey) {
+    return {
+      ok:false,
+      status:503,
+      body:{error:{message:"CLOUDFLARE_ACCOUNT_ID ou CLOUDFLARE_API_TOKEN não está configurado no servidor."}},
+      model
+    };
+  }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
   try {
-    const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
-      method:"POST",
-      headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
-      signal:controller.signal,
-      body:JSON.stringify({...payload, model})
-    });
+    const response = await fetch(
+      "https://api.cloudflare.com/client/v4/accounts/" +
+      encodeURIComponent(accountId) +
+      "/ai/run/" + encodeURIComponent(model),
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer "+apiKey
+        },
+        signal:controller.signal,
+        body:JSON.stringify(payload)
+      }
+    );
     const body = await response.json().catch(()=>({}));
-    return {ok:response.ok,status:response.status,body,model};
+    const normalized = body?.result?.response != null
+      ? { ...body, choices:[{message:{content:body.result.response}}] }
+      : body;
+    return {ok:response.ok,status:response.status,body:normalized,model};
   } catch(e) {
-    return {ok:false,status:e.name==="AbortError"?504:502,body:{error:{message:e.name==="AbortError"?"NVIDIA NIM excedeu 60 segundos.":e.message}},model};
-  } finally { clearTimeout(timeout); }
+    return {
+      ok:false,
+      status:e.name==="AbortError"?504:502,
+      body:{error:{message:e.name==="AbortError"?"Cloudflare AI excedeu 60 segundos.":e.message}},
+      model
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // OpenAI oficial: usa as variáveis já existentes no Render.
@@ -337,14 +363,14 @@ function providerConfigured(provider) {
   return provider==="openai" ? !!process.env.OPENAI_API_KEY :
     provider==="gemini" ? !!process.env.GEMINI_API_KEY :
     provider==="groq" ? !!process.env.GROQ_API_KEY :
-    provider==="nvidia" ? !!process.env.NVIDIA_API_KEY :
+    provider==="cloudflare" ? !!process.env.CLOUDFLARE_API_TOKEN && !!process.env.CLOUDFLARE_ACCOUNT_ID :
     provider==="openrouter" ? !!process.env.OPENROUTER_API_KEY : false;
 }
 function providerModel(provider) {
   return provider==="openai" ? (process.env.OPENAI_MODEL || "gpt-4o-mini") :
     provider==="gemini" ? (process.env.GEMINI_MODEL || "gemini-3.8-flash") :
     provider==="groq" ? (process.env.GROQ_MODEL || "openai/gpt-oss-120b") :
-    provider==="nvidia" ? (process.env.NVIDIA_MODEL || "openai/gpt-oss-120b") :
+    provider==="cloudflare" ? (process.env.CLOUDFLARE_MODEL || "@cf/openai/gpt-oss-120b") :
     (process.env.OPENROUTER_MODEL || "nvidia/nemotron-3.5-lightning:free");
 }
 function extractAIText(value, depth=0) {
@@ -377,14 +403,14 @@ async function callTextProvider(provider, prompt, maxTokens=1200) {
   ],temperature:0.35,max_tokens:maxTokens};
   const r=provider==="openai" ? await chamarOpenAI(payload) :
     provider==="groq" ? await chamarGroq(payload) :
-    provider==="nvidia" ? await chamarNvidia(payload) : await chamarOpenRouter(payload,1);
+    provider==="cloudflare" ? await chamarCloudflare(payload) : await chamarOpenRouter(payload,1);
   const choice=r.body?.choices?.[0];
   const content=choice?.message?.content;
   const text=extractAIText(content);
   return {...r,provider,text,finishReason:choice?.finish_reason||choice?.native_finish_reason||null,contentType:Array.isArray(content)?"array":(content===null?"null":typeof content)};
 }
 function providerOrder(requested) {
-  const all=["openai","openrouter","gemini","groq","nvidia"];
+  const all=["openai","openrouter","gemini","groq","cloudflare"];
   // Um provedor escolhido pelo usuário deve ser usado sozinho. Fallback entre
   // provedores acontece somente quando o usuário seleciona o modo automático.
   if(requested==="auto") return all.filter(providerConfigured);
@@ -397,11 +423,11 @@ function providerOrder(requested) {
 
 app.get("/api/status", (req, res) => {
   const requested=String(req.query.provider||"").toLowerCase();
-  const chosen=["openai","openrouter","gemini","groq","nvidia","auto"].includes(requested)?requested:"openai";
-  const names={openai:"OpenAI",openrouter:"OpenRouter",gemini:"Google Gemini",groq:"Groq",nvidia:"NVIDIA NIM"};
+  const chosen=["openai","openrouter","gemini","groq","cloudflare","auto"].includes(requested)?requested:"openai";
+  const names={openai:"OpenAI",openrouter:"OpenRouter",gemini:"Google Gemini",groq:"Groq",cloudflare:"Cloudflare AI"};
   res.json({
     ok:true, calendar:!!req.session.tokens, gmail:!!req.session.gmailConnected,
-    ai:["openai","openrouter","gemini","groq","nvidia"].some(providerConfigured),
+    ai:["openai","openrouter","gemini","groq","cloudflare"].some(providerConfigured),
     aiProvider:chosen==="auto"?"Automático":(names[chosen]||"OpenRouter"),
     aiModel:chosen==="auto"?"Fallback automático":providerModel(chosen),
     providers:{
@@ -409,7 +435,7 @@ app.get("/api/status", (req, res) => {
       openrouter:{available:providerConfigured("openrouter"),model:providerModel("openrouter")},
       gemini:{available:providerConfigured("gemini"),model:providerModel("gemini")},
       groq:{available:providerConfigured("groq"),model:providerModel("groq")},
-      nvidia:{available:providerConfigured("nvidia"),model:providerModel("nvidia")}
+      cloudflare:{available:providerConfigured("cloudflare"),model:providerModel("cloudflare")}
     }
   });
 });
@@ -418,7 +444,7 @@ app.get("/api/status", (req, res) => {
 // que um provedor lento não esconda o resultado dos outros.
 app.post("/api/ai/test", async (req,res)=>{
   const requested=String(req.body?.provider||"openrouter").toLowerCase();
-  const allowed=["openai","openrouter","gemini","groq","nvidia"];
+  const allowed=["openai","openrouter","gemini","groq","cloudflare"];
   const providers=requested==="auto"?allowed:[requested];
   const results=await Promise.all(providers.filter(p=>allowed.includes(p)).map(async provider=>{
     if(!providerConfigured(provider)){
@@ -1050,11 +1076,11 @@ app.post("/api/ai", async (req,res)=>{
     }
     const prompt=`Você é o PRIMORIS, assistente pessoal inteligente.\nResponda em português do Brasil, com naturalidade, cordialidade e objetividade. Use o nome da pessoa somente se estiver explicitamente presente nas configurações/memórias. Não invente dados nem afirme ações não executadas. Considere as memórias quando relevantes.\nMEMÓRIAS: ${JSON.stringify(memories)}\nCONTEXTO: ${contextJson}\nMENSAGEM: ${message.slice(0,8000)}`;
     const requested=String(req.body?.provider||"openai").toLowerCase();
-    const order=providerOrder(requested==="auto"?"auto":(["openai","openrouter","gemini","groq","nvidia"].includes(requested)?requested:"openai"));
+    const order=providerOrder(requested==="auto"?"auto":(["openai","openrouter","gemini","groq","cloudflare"].includes(requested)?requested:"openai"));
     let last=null;
     for(const provider of order){
       const r=await callTextProvider(provider,prompt,900);
-      if(r.ok&&r.text)return res.json({text:r.text,provider:({openai:"OpenAI",openrouter:"OpenRouter",gemini:"Google Gemini",groq:"Groq",nvidia:"NVIDIA NIM"})[provider]||provider,providerId:provider,model:r.model});
+      if(r.ok&&r.text)return res.json({text:r.text,provider:({openai:"OpenAI",openrouter:"OpenRouter",gemini:"Google Gemini",groq:"Groq",cloudflare:"Cloudflare AI"})[provider]||provider,providerId:provider,model:r.model});
       last=r;
       if(![429,401,403,500,502,503,504].includes(r.status))break;
     }
@@ -1110,7 +1136,7 @@ Não invente datas, horários, valores ou títulos. Para apagar uma tarefa, use 
 Contexto existente: ${JSON.stringify(context).slice(0,12000)}
 Comando: ${message}`;
     const requested=String(req.body?.provider||"openai").toLowerCase();
-    const order=providerOrder(requested==="auto"?"auto":(["openai","openrouter","gemini","groq","nvidia"].includes(requested)?requested:"openai"));
+    const order=providerOrder(requested==="auto"?"auto":(["openai","openrouter","gemini","groq","cloudflare"].includes(requested)?requested:"openai"));
     for(const provider of order){
       const result=await callTextProvider(provider,prompt,500);
       if(!result.ok||!result.text)continue;
