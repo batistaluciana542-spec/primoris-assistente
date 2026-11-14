@@ -316,7 +316,15 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 @media(max-width:900px){
   .main:before{left:50%;width:90vw;height:90vw}
 }
-</style></head>
+</style>
+<style id="primoris-whatsapp-css">
+.whatsapp-contacts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.whatsapp-contact{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid rgba(84,232,255,.14);border-radius:14px;background:linear-gradient(135deg,rgba(84,232,255,.05),rgba(255,79,216,.05))}
+.whatsapp-contact strong{display:block}.whatsapp-contact small{color:var(--muted)}
+.whatsapp-contact .btn{padding:7px 10px;font-size:12px}
+@media(max-width:600px){.whatsapp-contacts{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
 <div class="app">
 <aside class="sidebar">
@@ -400,15 +408,26 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <h2>Integrações</h2><div class="muted">Conexões do sistema.</div>
     <div class="grid2"><div class="card"><h3>Google Calendar</h3><p id="calendarStatus" class="muted">Verificando conexão...</p><div class="actions"><button class="btn primary" onclick="connectCalendar()">Conectar</button><button class="btn" onclick="syncCalendar()">Sincronizar</button></div></div>
     <div class="card"><h3>Google News</h3><p class="muted">RSS de notícias por categoria.</p><button class="btn" onclick="showPage('news')">Abrir notícias</button></div></div>
-    <div class="card" style="margin-top:14px"><h3>WhatsApp</h3><p class="muted">Prepare uma mensagem e abra a conversa no WhatsApp. O envio é confirmado por você no aplicativo.</p>
-      <form id="whatsappForm" class="form" onsubmit="openWhatsAppMessage(event)">
-        <label for="whatsappPhone" class="muted">Número do WhatsApp com DDD e código do país</label>
-        <input id="whatsappPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 5562999999999" required>
-        <label for="whatsappMessage" class="muted">Mensagem</label>
-        <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem que deseja enviar..." required></textarea>
-        <div class="actions"><button class="btn primary" type="submit">Abrir WhatsApp com a mensagem</button></div>
+    <div class="card" style="margin-top:14px"><h3>WhatsApp</h3><p class="muted">Cadastre os nomes e números uma vez. Depois você pode dizer no Assistente, por exemplo: <b>“Manda uma mensagem para João dizendo oi, tudo bem?”</b> e o PRIMORIS abre diretamente a conversa certa no WhatsApp.</p>
+      <form id="whatsappContactForm" class="form" onsubmit="saveWhatsAppContact(event)">
+        <div class="grid2" style="margin-top:0">
+          <input id="whatsappContactName" placeholder="Nome do contato" required>
+          <input id="whatsappContactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="WhatsApp: 5562999999999" required>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">＋ Salvar contato</button></div>
       </form>
-      <p class="muted" style="margin-top:10px">Dica: no Brasil, informe 55 + DDD + número. Não é necessário salvar o contato no PRIMORIS.</p>
+      <div id="whatsappContacts" class="whatsapp-contacts"></div>
+      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
+        <h3>Enviar manualmente</h3>
+        <form id="whatsappForm" class="form" onsubmit="openWhatsAppMessage(event)">
+          <label for="whatsappPhone" class="muted">Número do WhatsApp com DDD e código do país</label>
+          <input id="whatsappPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 5562999999999" required>
+          <label for="whatsappMessage" class="muted">Mensagem</label>
+          <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem que deseja enviar..." required></textarea>
+          <div class="actions"><button class="btn primary" type="submit">Abrir WhatsApp com a mensagem</button></div>
+        </form>
+      </div>
+      <p class="muted" style="margin-top:10px">Dica: no Brasil, informe 55 + DDD + número. O PRIMORIS abre a conversa e deixa o texto pronto. Por segurança, o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
       <p id="whatsappStatus" class="muted" aria-live="polite"></p>
       <p><a id="whatsappFallbackLink" href="#" target="_self" hidden rel="noopener">Abrir conversa no WhatsApp</a></p>
     </div>
@@ -527,9 +546,39 @@ function setAppearance(mode){
 
 function normalizeWhatsAppNumber(value){
   let digits=String(value||'').replace(/\D/g,'');
-  // Números brasileiros digitados com DDD, mas sem código do país.
   if((digits.length===10||digits.length===11)&&!digits.startsWith('55'))digits='55'+digits;
   return digits;
+}
+function loadWhatsAppContacts(){
+  try{const x=JSON.parse(localStorage.getItem('primoris_whatsapp_contacts')||'[]');return Array.isArray(x)?x:[]}
+  catch{return []}
+}
+function saveWhatsAppContacts(list){localStorage.setItem('primoris_whatsapp_contacts',JSON.stringify(list))}
+function normalizeContactName(value){return String(value||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function renderWhatsAppContacts(){
+  const box=$('whatsappContacts');if(!box)return;
+  const list=loadWhatsAppContacts();
+  box.innerHTML=list.length?list.map((c,i)=>`<div class="whatsapp-contact"><div><strong>💬 ${escapeHtml(c.name)}</strong><small>${escapeHtml(c.phone)}</small></div><button type="button" class="btn danger" onclick="deleteWhatsAppContact(${i})">Excluir</button></div>`).join(''):'<div class="muted">Nenhum contato salvo ainda.</div>';
+}
+function saveWhatsAppContact(event){
+  event?.preventDefault();
+  const name=String($('whatsappContactName')?.value||'').trim();
+  const phone=normalizeWhatsAppNumber($('whatsappContactPhone')?.value);
+  if(!name)return toast('Informe o nome do contato.');
+  if(phone.length<10||phone.length>15)return toast('Confira o número com DDD e código do país.');
+  const list=loadWhatsAppContacts();
+  const key=normalizeContactName(name);
+  const existing=list.findIndex(c=>normalizeContactName(c.name)===key);
+  const item={name,phone};
+  if(existing>=0)list[existing]=item;else list.push(item);
+  saveWhatsAppContacts(list);renderWhatsAppContacts();
+  event?.target?.reset?.();
+  toast(existing>=0?'Contato atualizado':'Contato do WhatsApp salvo');
+}
+function deleteWhatsAppContact(index){
+  const list=loadWhatsAppContacts();if(!list[index])return;
+  if(!confirm('Excluir este contato do WhatsApp?'))return;
+  list.splice(index,1);saveWhatsAppContacts(list);renderWhatsAppContacts();
 }
 function openWhatsAppMessage(event){
   event?.preventDefault();
@@ -540,8 +589,7 @@ function openWhatsAppMessage(event){
   const url='https://wa.me/'+phone+'?text='+encodeURIComponent(message);
   const fallback=$('whatsappFallbackLink');
   if(fallback){fallback.href=url;fallback.hidden=false;}
-  if($('whatsappStatus'))$('whatsappStatus').textContent='Tentando abrir o aplicativo WhatsApp. Se não abrir, use o link “Abrir conversa” logo abaixo. Você ainda confirma o envio no aplicativo.';
-  // No Android, tenta abrir o app pessoal diretamente; o navegador usa wa.me como fallback.
+  if($('whatsappStatus'))$('whatsappStatus').textContent='Abrindo a conversa no WhatsApp. Você ainda confirma o envio no aplicativo.';
   const isAndroid=/Android/i.test(navigator.userAgent||'');
   if(isAndroid){
     const intent='intent://send?phone='+phone+'&text='+encodeURIComponent(message)+'#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url='+encodeURIComponent(url)+';end';
@@ -557,8 +605,16 @@ function handleWhatsAppChatRequest(query){
   const sendMessageIntent=/(?:\b(?:mande|manda|envie|envia|enviar|avise|avisa|dispare|escreva|escreve)\s+(?:uma\s+)?(?:mensagem|msg|texto)\s+(?:para|pra|pro|no|pelo)\b|\b(?:mensagem|msg)\s+(?:para|pra|pro)\b)/i.test(q);
   if(!explicitWhatsApp&&!sendMessageIntent)return null;
 
+  const contacts=loadWhatsAppContacts();
   const phoneMatch=q.match(/(?:\+?\d[\d\s().-]{8,}\d)/);
-  const phone=phoneMatch?normalizeWhatsAppNumber(phoneMatch[1]):'';
+  let phone=phoneMatch?normalizeWhatsAppNumber(phoneMatch[1]):'';
+  let contactName='';
+  if(!phone){
+    const cleaned=normalizeContactName(q);
+    const matches=contacts.filter(c=>cleaned.includes(normalizeContactName(c.name)));
+    if(matches.length===1){phone=matches[0].phone;contactName=matches[0].name}
+    else if(matches.length>1)return 'Encontrei mais de um contato com esse nome. Use o nome completo para eu escolher o certo.';
+  }
   let message='';
   const msgMatch=q.match(/(?:\b(?:dizendo|avisando(?:\s+que)?|escrevendo|falando(?:\s+que)?|mensagem(?:\s+que)?|texto)\b\s*[:,-]?\s*|:\s*)(.+)$/i);
   if(msgMatch)message=msgMatch[1].trim();
@@ -568,19 +624,17 @@ function handleWhatsAppChatRequest(query){
   showPage('integrations');
 
   if(!phone){
-    if($('whatsappStatus'))$('whatsappStatus').textContent='Mensagem preparada. Informe o número do destinatário com código do país e DDD.';
-    $('whatsappPhone')?.focus();
-    return 'Preparei a mensagem. Para abrir a conversa certa, informe o número do destinatário com código do país e DDD na área Integrações. Não tenho acesso automático aos contatos do seu celular.';
+    renderWhatsAppContacts();
+    return 'Não encontrei esse nome nos contatos do WhatsApp. Cadastre o nome e o número uma vez em Integrações > WhatsApp.';
   }
   if(!message){
     $('whatsappMessage')?.focus();
-    return 'Número preenchido. Escreva o texto da mensagem na área Integrações e toque em “Abrir WhatsApp com a mensagem”.';
+    return `Encontrei ${contactName||'o contato'}. Qual mensagem devo colocar?`;
   }
-
-  // O pedido foi enviado pelo usuário; com número e texto disponíveis, abre o link wa.me.
   openWhatsAppMessage();
-  return 'Abrindo a conversa no WhatsApp com a mensagem preenchida. Confira o destinatário e toque em Enviar no aplicativo.';
+  return `Abrindo o WhatsApp para ${contactName||'o contato'} com a mensagem preenchida. No aplicativo, toque em Enviar.`;
 }
+
 
 function showPage(p){
   document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
