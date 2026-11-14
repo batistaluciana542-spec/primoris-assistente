@@ -1,4 +1,4 @@
-const CACHE='primoris-v4';
+const CACHE='primoris-v5';
 const ASSETS=['/','/index.html','/manifest.webmanifest','/icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting();});
