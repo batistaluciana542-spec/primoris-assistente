@@ -276,7 +276,7 @@ async function chamarGroq(payload) {
   const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
   if (!apiKey) return { ok:false, status:503, body:{error:{message:"GROQ_API_KEY não está configurada no servidor."}}, model };
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method:"POST",
