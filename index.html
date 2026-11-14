@@ -1924,5 +1924,67 @@ window.addEventListener('load',()=>{
   }
 });
 </script>
+
+<style id="primoris-voice-lab-v7">
+#primorisVoiceLab{position:fixed;right:18px;bottom:18px;width:min(420px,calc(100vw - 28px));z-index:80;display:none;padding:18px;border:1px solid rgba(84,232,255,.3);border-radius:22px;background:linear-gradient(145deg,rgba(8,11,25,.97),rgba(27,13,42,.97));box-shadow:0 22px 70px rgba(0,0,0,.55),0 0 35px rgba(84,232,255,.08);backdrop-filter:blur(22px)}
+#primorisVoiceLab.open{display:block;animation:pvVoiceIn .2s ease}
+@keyframes pvVoiceIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.pv-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.pv-title{font:800 18px Orbitron;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.pv-sub{font-size:11px;color:var(--muted);margin-top:3px}.pv-close{border:1px solid var(--line);background:rgba(255,255,255,.04);color:white;border-radius:10px;width:34px;height:34px}
+.pv-status{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);margin-bottom:12px}.pv-orb{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 15px var(--cyan)}.pv-orb.speaking{animation:pvOrb 1s infinite}@keyframes pvOrb{50%{transform:scale(1.55);box-shadow:0 0 25px var(--pink)}}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pv-field{display:grid;gap:6px}.pv-field.wide{grid-column:1/-1}.pv-label{font-size:11px;color:var(--muted);letter-spacing:.5px}.pv-range{display:grid;grid-template-columns:1fr 52px;gap:8px;align-items:center}.pv-range input[type=range]{height:28px;padding:0;border:0;background:transparent;box-shadow:none;accent-color:var(--cyan)}.pv-range output{font-size:12px;color:var(--cyan);text-align:right}.pv-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.pv-actions .btn{flex:1;min-width:105px}.pv-note{font-size:11px;line-height:1.4;color:var(--muted);margin-top:10px}
+.pv-fab{position:fixed;right:18px;bottom:18px;z-index:79;width:54px;height:54px;border-radius:17px;border:1px solid rgba(84,232,255,.4);background:linear-gradient(135deg,#087bff,#8b35cf);color:white;font-size:23px;box-shadow:0 0 24px rgba(84,232,255,.22)}.pv-fab:hover{transform:translateY(-2px)}
+@media(max-width:600px){#primorisVoiceLab{right:10px;bottom:78px;width:calc(100vw - 20px)}.pv-fab{right:14px;bottom:78px}}
+</style>
+<div id="primorisVoiceLab" aria-hidden="true">
+ <div class="pv-head"><div><div class="pv-title">PRIMORIS VOICE LAB</div><div class="pv-sub">Perfil de voz local · sem API paga</div></div><button class="pv-close" type="button" onclick="togglePrimorisVoiceLab(false)">×</button></div>
+ <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><div><b id="pvStatusText">PRIMORIS pronto</b><div id="pvVoiceInfo" class="pv-sub">Carregando vozes do dispositivo...</div></div></div>
+ <div class="pv-grid">
+  <label class="pv-field wide"><span class="pv-label">VOZ BASE</span><select id="pvVoiceSelect"></select></label>
+  <label class="pv-field"><span class="pv-label">PERSONALIDADE</span><select id="pvStyle"><option value="natural">Natural</option><option value="futuristic" selected>Futurista</option><option value="calm">Calma</option><option value="energetic">Energética</option></select></label>
+  <label class="pv-field"><span class="pv-label">IDIOMA</span><select id="pvLang"><option value="pt-BR" selected>Português (Brasil)</option><option value="pt-PT">Português (Portugal)</option></select></label>
+  <label class="pv-field wide"><span class="pv-label">VELOCIDADE</span><div class="pv-range"><input id="pvRate" type="range" min=".65" max="1.35" step=".01" value=".92"><output id="pvRateOut">0.92x</output></div></label>
+  <label class="pv-field wide"><span class="pv-label">TONALIDADE</span><div class="pv-range"><input id="pvPitch" type="range" min=".55" max="1.45" step=".01" value=".82"><output id="pvPitchOut">0.82</output></div></label>
+  <label class="pv-field wide"><span class="pv-label">VOLUME</span><div class="pv-range"><input id="pvVolume" type="range" min=".2" max="1" step=".01" value=".95"><output id="pvVolumeOut">95%</output></div></label>
+  <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><textarea id="pvTestText" rows="3">Olá, Anthony. Eu sou o PRIMORIS. Sistema online. Tudo pronto para ajudar você.</textarea></label>
+ </div>
+ <div class="pv-actions"><button class="btn primary" type="button" onclick="testPrimorisVoice()">▶ Testar voz</button><button class="btn" type="button" onclick="stopPrimorisVoice()">■ Parar</button><button class="btn" type="button" onclick="savePrimorisVoiceSettings()">✓ Salvar perfil</button></div>
+ <div class="pv-note">O perfil usa a voz disponível no aparelho e aplica ritmo, pausas, tom e volume. Uma voz neural totalmente nova exigiria um motor TTS externo, então aqui mantemos tudo local e gratuito.</div>
+</div>
+<button id="primorisVoiceFab" class="pv-fab" type="button" aria-label="Abrir PRIMORIS Voice Lab" onclick="togglePrimorisVoiceLab()">🎙️</button>
+<script id="primoris-voice-lab-v7-js">
+(function(){
+ const KEY='primoris_voice_profile_v2', synth=window.speechSynthesis;
+ let voices=[]; const $v=id=>document.getElementById(id);
+ function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}}
+ function save(){const p={style:$v('pvStyle').value,lang:$v('pvLang').value,rate:Number($v('pvRate').value),pitch:Number($v('pvPitch').value),volume:Number($v('pvVolume').value),voice:$v('pvVoiceSelect').value,enabled:true,updatedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(p));return p}
+ function ranges(){if($v('pvRateOut'))$v('pvRateOut').textContent=Number($v('pvRate').value).toFixed(2)+'x';if($v('pvPitchOut'))$v('pvPitchOut').textContent=Number($v('pvPitch').value).toFixed(2);if($v('pvVolumeOut'))$v('pvVolumeOut').textContent=Math.round(Number($v('pvVolume').value)*100)+'%'}
+ function best(){const lang=String($v('pvLang')?.value||'pt-BR').toLowerCase();return voices.find(v=>String(v.lang||'').toLowerCase()===lang)||voices.find(v=>String(v.lang||'').toLowerCase().startsWith('pt-br'))||voices.find(v=>String(v.lang||'').toLowerCase().startsWith('pt'))||voices.find(v=>v.default)||voices[0]}
+ function populate(){
+  if(!synth||!$v('pvVoiceSelect'))return; voices=synth.getVoices()||[];
+  const p=read(),lang=String($v('pvLang').value||'pt-BR').toLowerCase();
+  voices=voices.slice().sort((a,b)=>(String(a.lang||'').toLowerCase().startsWith(lang)?0:1)-(String(b.lang||'').toLowerCase().startsWith(lang)?0:1));
+  $v('pvVoiceSelect').innerHTML=voices.length?voices.map((v,i)=>'<option value="'+i+'">'+escapeHtml(v.name)+' · '+escapeHtml(v.lang)+(v.default?' · padrão':'')+'</option>').join(''):'<option value="">Nenhuma voz disponível</option>';
+  const saved=voices.findIndex(v=>v.name===p.voice), b=voices.findIndex(v=>v===best()); $v('pvVoiceSelect').value=String(saved>=0?saved:(b>=0?b:0));
+  const v=voices[Number($v('pvVoiceSelect').value)||0]; $v('pvVoiceInfo').textContent=v?v.name+' · '+v.lang+' · '+voices.length+' voz(es)':'Nenhuma voz disponível';
+ }
+ function profile(){const p={rate:Number($v('pvRate').value),pitch:Number($v('pvPitch').value),volume:Number($v('pvVolume').value)},s=$v('pvStyle').value;if(s==='calm'){p.rate=Math.min(1,p.rate*.9);p.pitch=Math.min(1.2,p.pitch+.04)}if(s==='energetic'){p.rate=Math.min(1.35,p.rate*1.08);p.pitch=Math.min(1.45,p.pitch+.12)}if(s==='futuristic'){p.rate=Math.min(1.18,p.rate*.96)}return p}
+ function clean(t){return String(t||'').replace(/https?:\/\/\S+/gi,'link').replace(/[*_#]/g,'').replace(/\s+/g,' ').trim()}
+ function speak(t){
+  if(!synth)return false; const list=clean(t).match(/[^.!?;:]+[.!?;:]?|.{1,240}$/g)||[], p=profile(), v=voices[Number($v('pvVoiceSelect').value)||0]||best(); if(!list.length)return false;
+  synth.cancel(); $v('pvOrb')?.classList.add('speaking'); $v('pvStatusText').textContent='PRIMORIS falando...';
+  list.forEach((part,i)=>{const u=new SpeechSynthesisUtterance(part.trim());u.lang=$v('pvLang').value||'pt-BR';if(v)u.voice=v;u.rate=p.rate;u.pitch=p.pitch;u.volume=p.volume;u.onend=()=>{if(i===list.length-1){$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS pronto'}};u.onerror=()=>{if(i===list.length-1){$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='Falha na voz'}};synth.speak(u)});
+  return true
+ }
+ window.togglePrimorisVoiceLab=function(force){const b=$v('primorisVoiceLab');if(!b)return;const open=typeof force==='boolean'?force:!b.classList.contains('open');b.classList.toggle('open',open);b.setAttribute('aria-hidden',String(!open));if(open){populate();ranges()}};
+ window.stopPrimorisVoice=function(){synth?.cancel();$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS parado'};
+ window.testPrimorisVoice=function(){save();speak($v('pvTestText').value)};
+ window.savePrimorisVoiceSettings=function(){save();toast('Perfil de voz do PRIMORIS salvo neste aparelho.');if(typeof devLog==='function')devLog('Perfil de voz atualizado')};
+ window.speakText=function(text){return speak(text)};
+ ['pvRate','pvPitch','pvVolume'].forEach(id=>$v(id)?.addEventListener('input',ranges));
+ $v('pvLang')?.addEventListener('change',populate); $v('pvVoiceSelect')?.addEventListener('change',save);
+ const p=read(); if(p.style)$v('pvStyle').value=p.style;if(p.lang)$v('pvLang').value=p.lang;if(p.rate)$v('pvRate').value=p.rate;if(p.pitch)$v('pvPitch').value=p.pitch;if(p.volume)$v('pvVolume').value=p.volume;
+ populate();ranges();if(synth?.addEventListener)synth.addEventListener('voiceschanged',populate);
+})();
+</script>
 </body>
 </html>
