@@ -1,1 +1,22 @@
-{"name":"PRIMORIS — Assistente Pessoal","short_name":"PRIMORIS","start_url":"/","display":"standalone","background_color":"#09090a","theme_color":"#0b0b0c","description":"Assistente pessoal PRIMORIS","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{
+  "name":"PRIMORIS — Assistente Pessoal",
+  "short_name":"PRIMORIS",
+  "id":"/",
+  "start_url":"/",
+  "scope":"/",
+  "display":"standalone",
+  "background_color":"#070812",
+  "theme_color":"#7c3cff",
+  "description":"PRIMORIS — Assistente pessoal futurista de Anthony.",
+  "lang":"pt-BR",
+  "orientation":"portrait-primary",
+  "categories":["productivity","utilities","education"],
+  "icons":[
+    {"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ],
+  "shortcuts":[
+    {"name":"Assistente","short_name":"IA","description":"Abrir o assistente PRIMORIS","url":"/#assistant","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
+    {"name":"PRIMORIS OS","short_name":"OS","description":"Abrir o painel central","url":"/#os","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
+    {"name":"Skills","short_name":"Skills","description":"Gerenciar habilidades","url":"/#skills","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]}
+  ]
+}
