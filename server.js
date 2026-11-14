@@ -1,4 +1,5 @@
 const express = require("express");
+const crypto = require("crypto");
 const session = require("express-session");
 const dotenv = require("dotenv");
 const path = require("path");
@@ -15,18 +16,27 @@ app.set("trust proxy", 1);
 
 app.use(express.json({ limit: "2mb" }));
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "change-me",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "lax"
-    }
-  })
-);
+const SESSION_SECRET = process.env.SESSION_SECRET || "change-me";
+app.use(session({
+  secret: SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 30
+  }
+}));
+
+const GOOGLE_REFRESH_COOKIE = "primoris_google_refresh";
+const GOOGLE_COOKIE_KEY = crypto.createHash("sha256").update(SESSION_SECRET).digest();
+function encryptGoogleToken(token){const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv("aes-256-gcm",GOOGLE_COOKIE_KEY,iv);const encrypted=Buffer.concat([cipher.update(String(token),"utf8"),cipher.final()]);const tag=cipher.getAuthTag();return Buffer.concat([iv,tag,encrypted]).toString("base64url");}
+function decryptGoogleToken(value){try{const raw=Buffer.from(String(value||""),"base64url");if(raw.length<29)return null;const decipher=crypto.createDecipheriv("aes-256-gcm",GOOGLE_COOKIE_KEY,raw.subarray(0,12));decipher.setAuthTag(raw.subarray(12,28));return Buffer.concat([decipher.update(raw.subarray(28)),decipher.final()]).toString("utf8");}catch{return null;}}
+function getCookie(req,name){const header=String(req.headers.cookie||"");const found=header.split(";").map(x=>x.trim()).find(x=>x.startsWith(name+"="));return found?decodeURIComponent(found.slice(name.length+1)):null;}
+function setGoogleRefreshCookie(res,token){const secure=process.env.NODE_ENV==="production"?"; Secure":"";res.setHeader("Set-Cookie",GOOGLE_REFRESH_COOKIE+"="+encodeURIComponent(encryptGoogleToken(token))+"; Max-Age=31536000; Path=/; HttpOnly; SameSite=Lax"+secure);}
+function clearGoogleRefreshCookie(res){res.setHeader("Set-Cookie",GOOGLE_REFRESH_COOKIE+"=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax");}
+app.use((req,res,next)=>{if(!req.session.tokens){const refreshToken=decryptGoogleToken(getCookie(req,GOOGLE_REFRESH_COOKIE));if(refreshToken){req.session.tokens={refresh_token:refreshToken};req.session.gmailConnected=true;}}next();});
 
 app.use(express.static(path.join(__dirname)));
 
@@ -502,6 +512,7 @@ app.get("/auth/google/callback", async (req, res) => {
 
     req.session.tokens = tokens;
     req.session.gmailConnected = true;
+    if (tokens.refresh_token) setGoogleRefreshCookie(res, tokens.refresh_token);
 
     res.redirect("/#integrations");
   } catch (e) {
@@ -516,6 +527,7 @@ app.get("/auth/google/callback", async (req, res) => {
 app.get("/auth/google/disconnect", (req, res) => {
   req.session.tokens = null;
   req.session.gmailConnected = false;
+  clearGoogleRefreshCookie(res);
   res.redirect("/");
 });
 
@@ -526,6 +538,7 @@ function gmailClient(req) {
   if (!req.session.tokens) return null;
   const o = oauth();
   o.setCredentials(req.session.tokens);
+  o.on("tokens", tokens => { if (tokens.refresh_token) req.session.tokens.refresh_token = tokens.refresh_token; });
   return google.gmail({ version: "v1", auth: o });
 }
 function gmailHeader(headers, name) {
@@ -631,6 +644,7 @@ function calendarClient(req) {
   const o = oauth();
 
   o.setCredentials(req.session.tokens);
+  o.on("tokens", tokens => { if (tokens.refresh_token) req.session.tokens.refresh_token = tokens.refresh_token; });
 
   return google.calendar({
     version: "v3",
