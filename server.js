@@ -1241,6 +1241,17 @@ app.get("/api/news", async (req, res) => {
   }
 });
 
+// Health check leve para Render e para o diagnóstico do PRIMORIS.
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "PRIMORIS",
+    version: "1.3.0",
+    uptimeSeconds: Math.round(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // =====================================================
 // FALLBACK DO SITE
 // =====================================================
