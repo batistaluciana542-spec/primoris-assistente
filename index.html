@@ -523,12 +523,12 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 const KEY='primoris_cesar_v2';
 let data=(()=>{
   const raw=localStorage.getItem(KEY);
-  if(!raw)return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};
-  try{const parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?{tasks:[],events:[],studies:[],opportunities:[],...parsed,memories:Array.isArray(parsed.memories)?parsed.memories:[],reminders:Array.isArray(parsed.reminders)?parsed.reminders:[],notifications:Array.isArray(parsed.notifications)?parsed.notifications:[]}:{tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[]};}
+  if(!raw)return {profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};
+  try{const parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?{profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],...parsed,profile:{name:'Anthony',...(parsed.profile||{})},memories:Array.isArray(parsed.memories)?parsed.memories:[],reminders:Array.isArray(parsed.reminders)?parsed.reminders:[],notifications:Array.isArray(parsed.notifications)?parsed.notifications:[]}:{tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[]};}
   catch(err){console.error('Dados locais do PRIMORIS inválidos; mantendo o conteúdo salvo sem sobrescrever:',err);return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};}
 })();
 const $=id=>document.getElementById(id);
-const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+data.profile={name:'Anthony',...(data.profile||{})};const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
@@ -756,7 +756,7 @@ function actionDateTime(date,time){
   return Number.isNaN(d.getTime())?null:d;
 }
 async function requestAIAction(q){
-  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
+  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
   if(j.clarification&&!j.action)return {clarification:j.clarification};
@@ -859,7 +859,7 @@ $('chatForm').onsubmit=async e=>{
       .slice(0,-1)
       .slice(-10)
       .map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent.trim().slice(0,1800)}));
-    const context={...data,calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),recentChat,currentDate:new Date().toISOString()};
+    const context={...data,userProfile:{name:'Anthony'},userName:'Anthony',calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),recentChat,currentDate:new Date().toISOString()};
     const selectedProvider=getAIProvider();
     const controller=new AbortController();
     const aiTimeout=setTimeout(()=>controller.abort(),35000);
@@ -882,10 +882,10 @@ $('chatForm').onsubmit=async e=>{
   }
 };
 function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
-function clearChat(){$('chat').innerHTML='<div class="bubble ai">PRIMORIS online. Pode falar.</div>'}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai">Olá, Anthony. PRIMORIS online. Pode falar.</div>'}
 function localAI(q){
   const t=q.toLowerCase();
-  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá. PRIMORIS online e pronto para ajudar.';
+  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá, Anthony. PRIMORIS online e pronto para ajudar.';
   if(/hora/.test(t))return 'Agora são '+new Date().toLocaleTimeString('pt-BR')+'.';
   if(/agenda|calendário|calendario|compromisso|evento|marcado|programado|o que tenho|o que vou fazer/.test(t))return data.events?.length?'Você tem '+data.events.length+' evento(s) sincronizado(s). Abra a Agenda para ver os detalhes.':'Não há eventos sincronizados no momento.';
   if(/tarefa/.test(t))return 'Você tem '+(data.tasks||[]).filter(x=>!x.done).length+' tarefa(s) pendente(s).';
@@ -1191,7 +1191,7 @@ $('importFile').onchange=e=>{
   reader.onerror=()=>{toast('Não foi possível ler o arquivo');e.target.value=''};
   reader.readAsText(file);
 }
-function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();toast('Dados locais apagados')}}
+function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();toast('Dados locais apagados')}}
 
 
 function notificationKey(type,id){return `${type}:${id}`}
