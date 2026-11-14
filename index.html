@@ -192,7 +192,15 @@ body.appearance-contrast{--cyan:#8dffdc;--pink:#ffb4ec;--violet:#c0a6ff;--muted:
 .ai-provider-status{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(255,255,255,.035)}
 @media(max-width:600px){#aiProviderSelect{min-width:0!important;width:100%}.actions:has(#aiProviderSelect){flex-direction:column;align-items:stretch!important}.ai-provider-status{justify-content:center}}
 </style>
-</head>
+<style id="primoris-appearance-themes">
+.appearance-card{overflow:hidden}.appearance-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.appearance-head h3{margin-bottom:4px}.appearance-live{font-size:10px;font-weight:800;letter-spacing:1px;padding:7px 10px;border-radius:999px;background:rgba(90,220,255,.08);color:var(--cyan);border:1px solid rgba(90,220,255,.18)}
+.theme-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}.theme-choice{appearance:none;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);color:inherit;border-radius:16px;padding:9px;text-align:left;cursor:pointer;transition:.18s ease}.theme-choice:hover{transform:translateY(-2px);border-color:rgba(120,220,255,.35);box-shadow:0 8px 24px rgba(0,0,0,.2)}.theme-choice.active{border-color:var(--cyan)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--cyan) 18%,transparent),0 0 22px color-mix(in srgb,var(--cyan) 14%,transparent)}.theme-choice strong{display:block;margin-top:8px;font-size:13px}.theme-choice small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.theme-preview{height:72px;border-radius:11px;display:block;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--p1),var(--p2));border:1px solid rgba(255,255,255,.12)}.theme-preview i,.theme-preview b,.theme-preview em{position:absolute;display:block;border-radius:7px}.theme-preview i{left:9px;top:9px;width:34%;height:54%;background:var(--cardp);border:1px solid rgba(255,255,255,.18)}.theme-preview b{right:9px;top:12px;width:42%;height:10px;background:var(--accent);box-shadow:0 16px 0 var(--accent2)}.theme-preview em{left:9px;bottom:9px;width:58%;height:7px;background:rgba(255,255,255,.28)}.theme-preview-cyber{--p1:#17102d;--p2:#071c2d;--cardp:#21173d;--accent:#64eaff;--accent2:#a77bff}.theme-preview-ocean{--p1:#071a32;--p2:#063d4a;--cardp:#0c2945;--accent:#43e5ff;--accent2:#5fa8ff}.theme-preview-purple{--p1:#20102f;--p2:#40164b;--cardp:#2c1941;--accent:#d98cff;--accent2:#ff73c8}.theme-preview-matrix{--p1:#050b08;--p2:#092316;--cardp:#0b1a12;--accent:#48ff91;--accent2:#a4ff4d}.theme-preview-crimson{--p1:#120709;--p2:#320c13;--cardp:#211014;--accent:#ff596d;--accent2:#ff9b5c}.theme-preview-clean{--p1:#edf4fb;--p2:#dbe7f2;--cardp:#ffffff;--accent:#246bff;--accent2:#00a7c7}.theme-preview-midnight{--p1:#060d1b;--p2:#13294b;--cardp:#0f1d33;--accent:#72b8ff;--accent2:#7c8cff}.theme-preview-aurora{--p1:#071b1c;--p2:#082b3d;--cardp:#0e282b;--accent:#65ffd0;--accent2:#55b8ff}
+body.theme-ocean{--cyan:#43e5ff;--violet:#5fa8ff;--pink:#6ee7ff}body.theme-purple{--cyan:#d98cff;--violet:#ff73c8;--pink:#f0a0ff}body.theme-matrix{--cyan:#48ff91;--violet:#a4ff4d;--pink:#75ffbd}body.theme-crimson{--cyan:#ff596d;--violet:#ff9b5c;--pink:#ff8b9d}body.theme-clean{--cyan:#246bff;--violet:#6b5cff;--pink:#d64dff;--muted:#526173}body.theme-midnight{--cyan:#72b8ff;--violet:#7c8cff;--pink:#8cc8ff}body.theme-aurora{--cyan:#65ffd0;--violet:#55b8ff;--pink:#7af7ff}
+body.theme-ocean,body.theme-purple,body.theme-matrix,body.theme-crimson,body.theme-midnight,body.theme-aurora,body.theme-clean{background-image:radial-gradient(circle at 85% 10%,color-mix(in srgb,var(--cyan) 10%,transparent),transparent 30%),radial-gradient(circle at 15% 85%,color-mix(in srgb,var(--violet) 8%,transparent),transparent 30%)}
+body.theme-clean{background:#eef3f8!important;color:#182334!important}body.theme-clean .card,body.theme-clean .panel,body.theme-clean .sidebar{background:rgba(255,255,255,.86)!important;border-color:rgba(36,107,255,.14)!important;color:#182334!important}body.theme-clean .muted{color:#526173!important}body.theme-clean input,body.theme-clean textarea,body.theme-clean select{background:#fff!important;color:#182334!important;border-color:#cbd7e5!important}
+body.theme-matrix .card,body.theme-matrix .panel{border-color:rgba(72,255,145,.16)!important}body.theme-crimson .card,body.theme-crimson .panel{border-color:rgba(255,89,109,.16)!important}
+@media(max-width:850px){.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.appearance-head{display:block}.appearance-live{display:inline-block;margin-top:10px}.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.theme-preview{height:62px}}
+</style></head>
 <body>
 <div class="app">
 <aside class="sidebar">
@@ -349,7 +357,19 @@ body.appearance-contrast{--cyan:#8dffdc;--pink:#ffb4ec;--violet:#c0a6ff;--muted:
         </div>
       </div>
     </div>
-    <div class="card" style="margin-top:14px"><h3>Aparência</h3><label for="appearanceMode" class="muted">Tema visual</label><select id="appearanceMode" onchange="setAppearance(this.value)"><option value="default">Futurista original</option><option value="contrast">Alto contraste</option></select></div>
+    <div class="card appearance-card" style="margin-top:14px">
+  <div class="appearance-head"><div><h3>🎨 Aparência</h3><p class="muted">Mude toda a identidade visual do PRIMORIS.</p></div><span class="appearance-live">● AO VIVO</span></div>
+  <div id="appearanceThemes" class="theme-grid">
+    <button type="button" class="theme-choice" data-theme-choice="default" onclick="setAppearance('default')"><span class="theme-preview theme-preview-cyber"><i></i><b></b><em></em></span><strong>Cyber Neon</strong><small>Roxo · Ciano</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="ocean" onclick="setAppearance('ocean')"><span class="theme-preview theme-preview-ocean"><i></i><b></b><em></em></span><strong>Ocean</strong><small>Azul · Ciano</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="purple" onclick="setAppearance('purple')"><span class="theme-preview theme-preview-purple"><i></i><b></b><em></em></span><strong>Violet</strong><small>Violeta · Rosa</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="matrix" onclick="setAppearance('matrix')"><span class="theme-preview theme-preview-matrix"><i></i><b></b><em></em></span><strong>Matrix</strong><small>Preto · Verde</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="crimson" onclick="setAppearance('crimson')"><span class="theme-preview theme-preview-crimson"><i></i><b></b><em></em></span><strong>Crimson</strong><small>Preto · Vermelho</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="clean" onclick="setAppearance('clean')"><span class="theme-preview theme-preview-clean"><i></i><b></b><em></em></span><strong>Clean</strong><small>Claro · Moderno</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="midnight" onclick="setAppearance('midnight')"><span class="theme-preview theme-preview-midnight"><i></i><b></b><em></em></span><strong>Midnight</strong><small>Azul · Escuro</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="aurora" onclick="setAppearance('aurora')"><span class="theme-preview theme-preview-aurora"><i></i><b></b><em></em></span><strong>Aurora</strong><small>Verde · Azul</small></button>
+  </div>
+</div>
     <div class="grid2"><div class="card"><h3>Dados</h3><div class="actions backup-actions"><button id="exportDataButton" class="btn" type="button" onclick="exportData()">📦 Exportar dados</button><button id="importDataButton" class="btn" type="button" onclick="document.getElementById('importFile').click()">📥 Importar dados</button><input id="importFile" type="file" accept=".json,application/json" hidden><button class="btn danger" type="button" onclick="resetData()">Apagar dados locais</button></div></div><div class="card"><h3>Sistema</h3><p id="systemStatus" class="muted">Verificando servidor...</p><button class="btn" type="button" onclick="testAI()">Testar IA</button></div></div>
     <div class="card dev-card" style="margin-top:14px"><div class="row"><div><h3>Modo desenvolvedor da IA</h3><p id="devStatus" class="muted">Verificando autorização...</p></div><span id="devBadge" class="badge">BLOQUEADO</span></div><div class="actions" style="margin-top:10px"><input id="devKeyInput" type="password" autocomplete="off" placeholder="Chave do modo desenvolvedor"><button class="btn primary" type="button" onclick="unlockDeveloperMode()">Ativar</button><button class="btn danger" type="button" onclick="lockDeveloperMode()">Bloquear</button></div><p class="muted" style="margin-top:8px">A chave fica somente nesta sessão do navegador e não é enviada ao Gemini. Depois de ativar, a IA poderá aplicar alterações no site pelos seus comandos.</p></div>
   </section>
@@ -377,7 +397,16 @@ const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
 const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
-function setAppearance(mode){document.body.classList.toggle('appearance-contrast',mode==='contrast');localStorage.setItem('primoris_appearance',mode);if($('appearanceMode'))$('appearanceMode').value=mode}
+function setAppearance(mode){
+  const themes=['default','ocean','purple','matrix','crimson','clean','midnight','aurora'];
+  if(!themes.includes(mode))mode='default';
+  document.body.classList.remove(...themes.filter(t=>t!=='default').map(t=>'theme-'+t));
+  if(mode!=='default')document.body.classList.add('theme-'+mode);
+  document.body.classList.toggle('appearance-contrast',mode==='contrast');
+  localStorage.setItem('primoris_appearance',mode);
+  document.querySelectorAll('[data-theme-choice]').forEach(el=>el.classList.toggle('active',el.dataset.themeChoice===mode));
+  if($('appearanceMode'))$('appearanceMode').value=mode;
+}
 
 
 function normalizeWhatsAppNumber(value){
