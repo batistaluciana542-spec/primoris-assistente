@@ -548,67 +548,6 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <section id="page-settings" class="page">
     <h2>Configurações</h2><div class="muted">Ajustes e atalhos das áreas do PRIMORIS.</div>
     <div class="settings-links"><button class="btn" onclick="showPage('memory')">Memória</button><button class="btn" onclick="showPage('assistant')">IA</button><button class="btn" onclick="showPage('agenda')">Google Calendar</button><button class="btn" onclick="showPage('news')">Notícias</button><button class="btn" onclick="showPage('finance')">Finanças</button><button class="btn" onclick="showPage('integrations')">Integrações</button></div>
-    <style id="primoris-voice-settings-v9">
-      #primorisVoiceSettings{margin-top:14px;padding:18px;border:1px solid rgba(84,232,255,.25);border-radius:18px;background:linear-gradient(145deg,rgba(8,11,25,.78),rgba(27,13,42,.72));box-shadow:0 0 25px rgba(84,232,255,.05)}
-      #primorisVoiceSettings .pv-title{font:800 18px Orbitron;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}
-      #primorisVoiceSettings .pv-sub{font-size:12px;color:var(--muted);margin-top:4px}
-      #primorisVoiceSettings .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-      #primorisVoiceSettings .pv-field{display:grid;gap:6px}.pv-field.wide{grid-column:1/-1}.pv-label{font-size:11px;color:var(--muted)}
-      #primorisVoiceSettings .pv-range{display:grid;grid-template-columns:1fr 58px;gap:10px;align-items:center}
-      #primorisVoiceSettings input[type=range]{accent-color:var(--cyan);width:100%;cursor:pointer}
-      #primorisVoiceSettings .pv-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-      #primorisVoiceSettings .pv-actions .btn{flex:1;min-width:110px}
-      #primorisVoiceSettings .pv-status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:11px;color:var(--muted)}
-      #primorisVoiceSettings .pv-orb{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
-      #primorisVoiceSettings .pv-orb.speaking{animation:pvVoicePulse 1s infinite}
-      @keyframes pvVoicePulse{50%{transform:scale(1.35);box-shadow:0 0 18px var(--pink)}}
-      @media(max-width:600px){#primorisVoiceSettings .pv-grid{grid-template-columns:1fr}.pv-field.wide{grid-column:auto}}
-    </style>
-    <div id="primorisVoiceSettings" class="card" style="margin-top:14px">
-      <div class="pv-title">🎙️ PRIMORIS VOICE</div>
-      <div class="pv-sub">Perfil de voz local. Sem API paga, sem painel flutuante.</div>
-      <div class="pv-grid">
-        <label class="pv-field wide"><span class="pv-label">VOZ BASE</span><select id="pvVoiceSelect"></select></label>
-        <label class="pv-field"><span class="pv-label">PERSONALIDADE</span><select id="pvStyle"><option value="natural">Natural</option><option value="futuristic" selected>Futurista</option><option value="calm">Calma</option><option value="energetic">Energética</option></select></label>
-        <label class="pv-field"><span class="pv-label">IDIOMA</span><select id="pvLang"><option value="pt-BR" selected>Português (Brasil)</option><option value="pt-PT">Português (Portugal)</option></select></label>
-        <label class="pv-field wide"><span class="pv-label">VELOCIDADE</span><div class="pv-range"><input id="pvRate" type="range" min=".65" max="1.35" step=".01" value=".92"><output id="pvRateOut">0.92x</output></div></label>
-        <label class="pv-field wide"><span class="pv-label">TONALIDADE</span><div class="pv-range"><input id="pvPitch" type="range" min=".55" max="1.45" step=".01" value=".82"><output id="pvPitchOut">0.82</output></div></label>
-        <label class="pv-field wide"><span class="pv-label">VOLUME</span><div class="pv-range"><input id="pvVolume" type="range" min=".2" max="1" step=".01" value=".95"><output id="pvVolumeOut">95%</output></div></label>
-        <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><textarea id="pvTestText" rows="3">Olá, Anthony. Eu sou o PRIMORIS. Sistema online. Tudo pronto para ajudar você.</textarea></label>
-      </div>
-      <div class="pv-actions"><button class="btn primary" type="button" onclick="testPrimorisVoice()">▶ Testar voz</button><button class="btn" type="button" onclick="stopPrimorisVoice()">■ Parar</button><button class="btn" type="button" onclick="savePrimorisVoiceSettings()">✓ Salvar perfil</button></div>
-      <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><span id="pvStatusText">PRIMORIS pronto</span><span id="pvVoiceInfo"></span></div>
-    </div>
-    <script id="primoris-voice-settings-v9-js">
-    (function(){
-      const KEY='primoris_voice_profile_v2', synth=window.speechSynthesis;
-      let voices=[];
-      const $v=id=>document.getElementById(id);
-      function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}}
-      function save(){
-        const p={style:$v('pvStyle').value,lang:$v('pvLang').value,rate:Number($v('pvRate').value),pitch:Number($v('pvPitch').value),volume:Number($v('pvVolume').value),voice:$v('pvVoiceSelect').value,enabled:true,updatedAt:new Date().toISOString()};
-        localStorage.setItem(KEY,JSON.stringify(p)); return p;
-      }
-      function ranges(){$v('pvRateOut').textContent=Number($v('pvRate').value).toFixed(2)+'x';$v('pvPitchOut').textContent=Number($v('pvPitch').value).toFixed(2);$v('pvVolumeOut').textContent=Math.round(Number($v('pvVolume').value)*100)+'%'}
-      function best(){return voices.find(v=>String(v.lang||'').toLowerCase()==='pt-br')||voices.find(v=>String(v.lang||'').toLowerCase().startsWith('pt'))||voices.find(v=>v.default)||voices[0]||null}
-      function populate(){
-        if(!synth)return;voices=synth.getVoices()||[];const p=read(),lang=String($v('pvLang').value||'pt-BR').toLowerCase();
-        voices=voices.slice().sort((a,b)=>(String(a.lang||'').toLowerCase().startsWith(lang)?0:1)-(String(b.lang||'').toLowerCase().startsWith(lang)?0:1));
-        const select=$v('pvVoiceSelect');
-        select.innerHTML=voices.length?voices.map((v,i)=>'<option value="'+i+'">'+String(v.name).replace(/</g,'&lt;')+' · '+String(v.lang).replace(/</g,'&lt;')+(v.default?' · padrão':'')+'</option>').join(''):'<option value="0">Nenhuma voz disponível</option>';
-        const saved=voices.findIndex(v=>v.name===p.voice),b=voices.findIndex(v=>v===best());select.value=String(saved>=0?saved:(b>=0?b:0));
-        const v=voices[Number(select.value)||0];$v('pvVoiceInfo').textContent=v?' · '+v.name+' · '+v.lang:'';
-      }
-      function profile(){const p={rate:Number($v('pvRate').value),pitch:Number($v('pvPitch').value),volume:Number($v('pvVolume').value)},s=$v('pvStyle').value;if(s==='calm'){p.rate=Math.min(1,p.rate*.9);p.pitch=Math.min(1.2,p.pitch+.04)}if(s==='energetic'){p.rate=Math.min(1.35,p.rate*1.08);p.pitch=Math.min(1.45,p.pitch+.12)}if(s==='futuristic')p.rate=Math.min(1.18,p.rate*.96);return p}
-      function speak(t){if(!synth)return false;const text=String(t||'').replace(/https?:\/\/\S+/gi,'link').replace(/[*_#]/g,'').replace(/\s+/g,' ').trim(),list=text.match(/[^.!?;:]+[.!?;:]?|.{1,240}$/g)||[],p=profile(),v=voices[Number($v('pvVoiceSelect').value)||0]||best();if(!list.length)return false;synth.cancel();$v('pvOrb').classList.add('speaking');$v('pvStatusText').textContent='PRIMORIS falando...';list.forEach((part,i)=>{const u=new SpeechSynthesisUtterance(part.trim());u.lang=$v('pvLang').value||'pt-BR';if(v)u.voice=v;u.rate=p.rate;u.pitch=p.pitch;u.volume=p.volume;u.onend=()=>{if(i===list.length-1){$v('pvOrb').classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS pronto'}};u.onerror=()=>{if(i===list.length-1){$v('pvOrb').classList.remove('speaking');$v('pvStatusText').textContent='Falha na voz'}};synth.speak(u)});return true}
-      window.testPrimorisVoice=()=>{save();speak($v('pvTestText').value)};window.stopPrimorisVoice=()=>{synth?.cancel();$v('pvOrb').classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS parado'};window.savePrimorisVoiceSettings=()=>{save();if(typeof toast==='function')toast('Perfil de voz salvo neste aparelho.');if(typeof devLog==='function')devLog('Perfil de voz atualizado')};
-      const originalSpeak=window.speakText;window.speakText=t=>speak(t);
-      ['pvRate','pvPitch','pvVolume'].forEach(id=>$v(id)?.addEventListener('input',ranges));$v('pvLang')?.addEventListener('change',populate);$v('pvVoiceSelect')?.addEventListener('change',save);
-      const p=read();if(p.style)$v('pvStyle').value=p.style;if(p.lang)$v('pvLang').value=p.lang;if(p.rate)$v('pvRate').value=p.rate;if(p.pitch)$v('pvPitch').value=p.pitch;if(p.volume)$v('pvVolume').value=p.volume;
-      ranges();populate();if(synth?.addEventListener)synth.addEventListener('voiceschanged',populate);
-    })();
-    </script>
-
     <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do PRIMORIS</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="cloudflare">☁️ Cloudflare AI</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted ai-provider-status">Verificando disponibilidade...</span></div></div>
 
     <div class="card" style="margin-top:14px">
@@ -1987,9 +1926,22 @@ window.addEventListener('load',()=>{
 </script>
 
 
-<div id="primorisVoiceLab" aria-hidden="true">
- <div class="pv-head"><div><div class="pv-title">PRIMORIS VOICE LAB</div><div class="pv-sub">Perfil de voz local · sem API paga</div></div><button class="pv-close" type="button" onclick="togglePrimorisVoiceLab(false)">×</button></div>
- <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><div><b id="pvStatusText">PRIMORIS pronto</b><div id="pvVoiceInfo" class="pv-sub">Carregando vozes do dispositivo...</div></div></div>
+<style id="primoris-voice-settings-v8">
+#primorisVoiceSettings{margin-top:14px;padding:16px;border:1px solid rgba(84,232,255,.25);border-radius:18px;background:linear-gradient(145deg,rgba(8,11,25,.65),rgba(27,13,42,.65));box-shadow:0 0 25px rgba(84,232,255,.05)}
+#primorisVoiceSettings .pv-title{font:800 17px Orbitron;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}
+#primorisVoiceSettings .pv-sub{font-size:11px;color:var(--muted);margin-top:3px}
+#primorisVoiceSettings .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+#primorisVoiceSettings .pv-field{display:grid;gap:6px}.pv-field.wide{grid-column:1/-1}.pv-label{font-size:11px;color:var(--muted)}
+#primorisVoiceSettings .pv-range{display:grid;grid-template-columns:1fr 52px;gap:8px;align-items:center}
+#primorisVoiceSettings input[type=range]{accent-color:var(--cyan)}
+#primorisVoiceSettings .pv-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#primorisVoiceSettings .pv-actions .btn{flex:1;min-width:110px}
+#primorisVoiceSettings .pv-status{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11px;color:var(--muted)}
+#primorisVoiceSettings .pv-orb{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+</style>
+<div id="primorisVoiceSettings">
+ <div class="pv-title">🎙️ PRIMORIS VOICE</div>
+ <div class="pv-sub">Controle a voz do assistente diretamente pelas configurações.</div>
  <div class="pv-grid">
   <label class="pv-field wide"><span class="pv-label">VOZ BASE</span><select id="pvVoiceSelect"></select></label>
   <label class="pv-field"><span class="pv-label">PERSONALIDADE</span><select id="pvStyle"><option value="natural">Natural</option><option value="futuristic" selected>Futurista</option><option value="calm">Calma</option><option value="energetic">Energética</option></select></label>
@@ -2000,24 +1952,1567 @@ window.addEventListener('load',()=>{
   <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><textarea id="pvTestText" rows="3">Olá, Anthony. Eu sou o PRIMORIS. Sistema online. Tudo pronto para ajudar você.</textarea></label>
  </div>
  <div class="pv-actions"><button class="btn primary" type="button" onclick="testPrimorisVoice()">▶ Testar voz</button><button class="btn" type="button" onclick="stopPrimorisVoice()">■ Parar</button><button class="btn" type="button" onclick="savePrimorisVoiceSettings()">✓ Salvar perfil</button></div>
- <div class="pv-note">O perfil usa a voz disponível no aparelho e aplica ritmo, pausas, tom e volume. Uma voz neural totalmente nova exigiria um motor TTS externurn p}
- function clean(t){return String(t||'').replace(/https?:\/\/\S+/gi,'link').replace(/[*_#]/g,'').replace(/\s+/g,' ').trim()}
- function speak(t){
-  if(!synth)return false; const list=clean(t).match(/[^.!?;:]+[.!?;:]?|.{1,240}$/g)||[], p=profile(), v=voices[Number($v('pvVoiceSelect').value)||0]||best(); if(!list.length)return false;
-  synth.cancel(); $v('pvOrb')?.classList.add('speaking'); $v('pvStatusText').textContent='PRIMORIS falando...';
-  list.forEach((part,i)=>{const u=new SpeechSynthesisUtterance(part.trim());u.lang=$v('pvLang').value||'pt-BR';if(v)u.voice=v;u.rate=p.rate;u.pitch=p.pitch;u.volume=p.volume;u.onend=()=>{if(i===list.length-1){$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS pronto'}};u.onerror=()=>{if(i===list.length-1){$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='Falha na voz'}};synth.speak(u)});
-  return true
- }
- window.togglePrimorisVoiceLab=function(force){const b=$v('primorisVoiceLab');if(!b)return;const open=typeof force==='boolean'?force:!b.classList.contains('open');b.classList.toggle('open',open);b.setAttribute('aria-hidden',String(!open));if(open){populate();ranges()}};
- window.stopPrimorisVoice=function(){synth?.cancel();$v('pvOrb')?.classList.remove('speaking');$v('pvStatusText').textContent='PRIMORIS parado'};
- window.testPrimorisVoice=function(){save();speak($v('pvTestText').value)};
- window.savePrimorisVoiceSettings=function(){save();toast('Perfil de voz do PRIMORIS salvo neste aparelho.');if(typeof devLog==='function')devLog('Perfil de voz atualizado')};
- window.speakText=function(text){return speak(text)};
- ['pvRate','pvPitch','pvVolume'].forEach(id=>$v(id)?.addEventListener('input',ranges));
- $v('pvLang')?.addEventListener('change',populate); $v('pvVoiceSelect')?.addEventListener('change',save);
- const p=read(); if(p.style)$v('pvStyle').value=p.style;if(p.lang)$v('pvLang').value=p.lang;if(p.rate)$v('pvRate').value=p.rate;if(p.pitch)$v('pvPitch').value=p.pitch;if(p.volume)$v('pvVolume').value=p.volume;
- populate();ranges();if(synth?.addEventListener)synth.addEventListener('voiceschanged',populate);
+ <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><span id="pvStatusText">PRIMORIS pronto</span><span id="pvVoiceInfo"></span></div>
+</div>
+<script id="primoris-voice-settings-v8-js">
+(function(){
+ const KEY='primoris_voice_profile_v2',synth=window.speechSynthesis;let voices=[];const $=id=>document.getElementById(id);
+ function read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch{return {}}}
+ function save(){const p={style:$('pvStyle').value,lang:$('pvLang').value,rate:Number($('pvRate').value),pitch:Number($('pvPitch').value),volume:Number($('pvVolume').value),voice:$('pvVoiceSelect').value,enabled:true,updatedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(p));return p}
+ function ranges(){$('pvRateOut').textContent=Number($('pvRate').value).toFixed(2)+'x';$('pvPitchOut').textContent=Number($('pvPitch').value).toFixed(2);$('pvVolumeOut').textContent=Math.round(Number($('pvVolume').value)*100)+'%'}
+ function best(){return voices.find(v=>String(v.lang||'').toLowerCase()==='pt-br')||voices.find(v=>String(v.lang||'').toLowerCase().startsWith('pt'))||voices.find(v=>v.default)||voices[0]}
+ function populate(){if(!synth)return;voices=synth.getVoices()||[];const p=read(),lang=String($('pvLang').value||'pt-BR').toLowerCase();voices=voices.slice().sort((a,b)=>(String(a.lang||'').toLowerCase().startsWith(lang)?0:1)-(String(b.lang||'').toLowerCase().startsWith(lang)?0:1));$('pvVoiceSelect').innerHTML=voices.length?voices.map((v,i)=>'<option value="'+i+'">'+v.name+' · '+v.lang+(v.default?' · padrão':'')+'</option>').join(''):'<option>Nenhuma voz disponível</option>';const saved=voices.findIndex(v=>v.name===p.voice),b=voices.findIndex(v=>v===best());$('pvVoiceSelect').value=String(saved>=0?saved:(b>=0?b:0));const v=voices[Number($('pvVoiceSelect').value)||0];$('pvVoiceInfo').textContent=v?' · '+v.name+' · '+v.lang:''}
+ function profile(){const p={rate:Number($('pvRate').value),pitch:Number($('pvPitch').value),volume:Number($('pvVolume').value)},s=$('pvStyle').value;if(s==='calm'){p.rate=Math.min(1,p.rate*.9);p.pitch=Math.min(1.2,p.pitch+.04)}if(s==='energetic'){p.rate=Math.min(1.35,p.rate*1.08);p.pitch=Math.min(1.45,p.pitch+.12)}if(s==='futuristic')p.rate=Math.min(1.18,p.rate*.96);return p}
+ function speak(t){if(!synth)return false;const text=String(t||'').replace(/https?:\/\/\S+/gi,'link').replace(/[*_#]/g,'').replace(/\s+/g,' ').trim(),list=text.match(/[^.!?;:]+[.!?;:]?|.{1,240}$/g)||[],p=profile(),v=voices[Number($('pvVoiceSelect').value)||0]||best();if(!list.length)return false;synth.cancel();$('pvOrb').classList.add('speaking');$('pvStatusText').textContent='PRIMORIS falando...';list.forEach((part,i)=>{const u=new SpeechSynthesisUtterance(part.trim());u.lang=$('pvLang').value||'pt-BR';if(v)u.voice=v;u.rate=p.rate;u.pitch=p.pitch;u.volume=p.volume;u.onend=()=>{if(i===list.length-1){ $('pvOrb').classList.remove('speaking');$('pvStatusText').textContent='PRIMORIS pronto'}};u.onerror=()=>{if(i===list.length-1){$('pvOrb').classList.remove('speaking');$('pvStatusText').textContent='Falha na voz'}};synth.speak(u)});return true}
+ window.testPrimorisVoice=()=>{save();speak($('pvTestText').value)};window.stopPrimorisVoice=()=>{synth?.cancel();$('pvOrb').classList.remove('speaking');$('pvStatusText').textContent='PRIMORIS parado'};window.savePrimorisVoiceSettings=()=>{save();if(typeof toast==='function')toast('Perfil de voz salvo neste aparelho.');if(typeof devLog==='function')devLog('Perfil de voz atualizado')};window.speakText=speak;
+ ['pvRate','pvPitch','pvVolume'].forEach(id=>$(id)?.addEventListener('input',ranges));$('pvLang')?.addEventListener('change',populate);$('pvVoiceSelect')?.addEventListener('change',save);
+ const p=read();if(p.style)$('pvStyle').value=p.style;if(p.lang)$('pvLang').value=p.lang;if(p.rate)$('pvRate').value=p.rate;if(p.pitch)$('pvPitch').value=p.pitch;if(p.volume)$('pvVolume').value=p.volume;populate();ranges();if(synth?.addEventListener)synth.addEventListener('voiceschanged',populate);
 })();
+</script></body>
+</html<button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button data-page="skills">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
+  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <div><div class="eyebrow">SYSTEM // ONLINE</div><div class="status"><span class="dot"></span> PRIMORIS operacional</div></div>
+    <div style="text-align:right"><div id="clock" class="clock">--:--:--</div><div id="date" class="date"></div></div>
+  </header>
+
+  <section id="page-home" class="page">
+    <div class="hero"><div class="eyebrow">PERSONAL COMMAND CENTER</div><h1>Seu dia, sem bagunça.</h1><p class="muted">Agenda, tarefas, estudos, notícias e memória em um único painel. A humanidade finalmente inventou um lugar para guardar as coisas que esquece.</p><div class="actions"><button class="btn primary" onclick="showPage('assistant')">Falar com PRIMORIS</button><button class="btn" onclick="syncCalendar()">Sincronizar agenda</button></div></div>
+    <div class="grid">
+      <div class="card"><span class="badge">TAREFAS</span><div class="stat" id="statTasks">0</div><div class="muted">pendentes</div></div>
+      <div class="card"><span class="badge">EVENTOS</span><div class="stat" id="statEvents">0</div><div class="muted">sincronizados</div></div>
+      <div class="card"><span class="badge">ESTUDOS</span><div class="stat" id="statStudies">0</div><div class="muted">registros</div></div>
+    </div>
+    <div class="card" style="margin-top:15px"><div class="row"><h3>Tarefas</h3><span class="muted">Criadas aqui ou pelo assistente</span></div><div id="taskList" class="list"></div></div>
+    <div class="card" style="margin-top:15px"><div class="row"><h3>🔔 Notificações inteligentes</h3><button class="btn" type="button" onclick="enableNotifications()">Ativar</button></div><div id="notificationList" class="list"><div class="muted">Nenhuma notificação pendente.</div></div></div>
+    <div class="dashboard-columns">
+      <div class="card"><h3>Próximos compromissos</h3><div id="dashEvents" class="list"></div></div>
+      <div class="card"><h3>Próximos lembretes</h3><div id="dashReminders" class="list"></div></div>
+      <div class="card"><h3>Resumo financeiro</h3><p id="dashFinance" class="muted">Sem movimentações registradas.</p></div>
+      <div class="card"><h3>Estudos</h3><div id="dashStudies" class="list"></div></div>
+    </div>
+    <div class="grid2"><div class="card"><h3>Resumo rápido</h3><p id="brief" class="muted">Carregando seu painel...</p></div><div class="card"><h3>Estado do sistema</h3><p class="muted">IA conectada ao servidor · PWA ativo · Google Calendar disponível · Notícias online</p></div></div>
+  </section>
+
+  <section id="page-assistant" class="page">
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
+    <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
+  </section>
+
+  <section id="page-tasks" class="page">
+    <div class="row"><div><h2>Gerenciador de tarefas</h2><div class="muted">Crie, edite, priorize e acompanhe suas tarefas.</div></div></div>
+    <div class="card" style="margin-top:14px"><h3 id="taskFormTitle">Nova tarefa</h3>
+      <form id="taskForm" class="task-form"><input id="taskTitle" class="wide" placeholder="O que precisa ser feito?" required>
+        <input id="taskDueDate" type="date"><input id="taskDueTime" type="time">
+        <select id="taskPriority"><option value="baixa">Prioridade baixa</option><option value="media" selected>Prioridade média</option><option value="alta">Prioridade alta</option></select>
+        <div class="wide actions"><button class="btn primary">Salvar tarefa</button><button type="button" class="btn" id="taskCancel" hidden onclick="cancelTaskEdit()">Cancelar</button></div>
+      </form>
+    </div>
+    <div class="grid2"><div class="card"><h3>Pendentes</h3><div id="pendingTasks" class="list"></div></div><div class="card"><h3>Concluídas</h3><div id="completedTasks" class="list"></div></div></div>
+  </section>
+
+  <section id="page-agenda" class="page"><div class="row"><div><h2>Agenda</h2><div class="muted">Google Calendar sincronizado com o painel.</div></div><button class="btn primary" onclick="syncCalendar()">Sincronizar</button></div><div class="card" style="margin-top:14px"><h3 id="agendaFormTitle">Novo compromisso</h3><form id="agendaForm" class="agenda-form"><input id="eventTitle" placeholder="Título do evento" required><input id="eventDate" type="datetime-local" required><input id="eventDescription" placeholder="Descrição (opcional)"><input id="eventLocation" placeholder="Local (opcional)"><div class="actions"><button class="btn primary">Salvar evento</button><button type="button" class="btn" id="eventCancel" hidden onclick="cancelEventEdit()">Cancelar</button></div></form><p class="muted">Se o servidor não oferecer criação de eventos, eles serão guardados localmente.</p></div><div class="grid2"><div class="card"><h3>Hoje</h3><div id="agendaToday" class="list"></div></div><div class="card"><h3>Amanhã</h3><div id="agendaTomorrow" class="list"></div></div></div><h3 style="margin-top:18px">Próximos eventos</h3><div id="agendaList" class="list"></div></section>
+
+  <section id="page-studies" class="page">
+    <div class="row"><div><h2>Estudos</h2><div class="muted">Registre sessões e mantenha algum vestígio de organização.</div></div></div>
+    <div class="grid2"><div class="card"><form id="studyForm" class="form"><input id="studyTitle" placeholder="Matéria, tarefa, prova ou evento" required>
+      <select id="studyKind"><option value="matéria">Matéria / sessão</option><option value="tarefa escolar">Tarefa escolar</option><option value="prova">Prova</option><option value="nota">Nota</option><option value="data importante">Data importante</option></select>
+      <input id="studyTime" type="number" min="1" placeholder="Minutos estudados (opcional)">
+      <input id="studyDate" type="date"><input id="studyGrade" type="number" min="0" max="10" step="0.1" placeholder="Nota (0 a 10, opcional)">
+      <textarea id="studyNotes" placeholder="Observações / conteúdo / detalhes"></textarea><button class="btn primary">Registrar estudo</button></form></div><div class="card"><h3>Histórico</h3><div id="studyList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-opportunities" class="page">
+    <h2>Oportunidades</h2><div class="muted">Guarde ideias, cursos, projetos e oportunidades.</div>
+    <div class="grid2"><div class="card"><form id="oppForm" class="form"><input id="oppTitle" placeholder="Nome" required><input id="oppLink" placeholder="Link"><textarea id="oppNotes" placeholder="Notas"></textarea><button class="btn primary">Salvar oportunidade</button></form></div><div class="card"><div id="oppList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-news" class="page">
+    <div class="row"><div><h2>Informações</h2><div class="muted">Notícias reais carregadas pelo servidor.</div></div><button class="btn primary" onclick="loadNews()">↻ Atualizar</button></div>
+    <div id="newsState" class="muted" style="margin:12px 0"></div><div id="newsList" class="news"></div>
+  </section>
+
+  <section id="page-email" class="page">
+    <div class="row"><div><div class="eyebrow">PRIMORIS // GMAIL</div><h2>Meus E-mails</h2><div class="muted">Leia sua caixa de entrada sem sair do PRIMORIS.</div></div><button class="btn primary" type="button" onclick="loadEmails()">↻ Atualizar</button></div>
+    <div class="card" style="margin-top:15px"><div class="actions"><input id="emailSearch" placeholder="Pesquisar e-mails..." onkeydown="if(event.key==='Enter')loadEmails()"><button class="btn" type="button" onclick="loadEmails()">Pesquisar</button></div><p id="emailState" class="muted" style="margin:12px 0">Verificando Gmail...</p></div>
+    <div class="grid2"><div class="card"><h3>Caixa de entrada</h3><div id="emailList" class="list"><div class="muted">Carregando...</div></div></div><div class="card"><h3>Mensagem</h3><div id="emailViewer" class="email-viewer"><div class="muted">Selecione um e-mail para ler.</div></div></div></div>
+    <div class="card" style="margin-top:14px">
+      <div class="row"><div><h3>✍️ Novo rascunho</h3><div class="muted">O PRIMORIS prepara o e-mail no Gmail. O envio continua sob seu controle.</div></div><span class="badge">GMAIL</span></div>
+      <form id="gmailDraftForm" class="form" style="margin-top:12px">
+        <input id="gmailDraftTo" type="email" placeholder="Destinatário" required>
+        <input id="gmailDraftSubject" placeholder="Assunto" required>
+        <textarea id="gmailDraftBody" placeholder="Escreva a mensagem..." required></textarea>
+        <div class="actions"><button class="btn primary" type="submit">💾 Salvar como rascunho</button><button class="btn" type="button" onclick="clearGmailDraft()">Limpar</button></div>
+        <div id="gmailDraftStatus" class="muted"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div></section>
+
+  <section id="page-integrations" class="page">
+    <h2>Integrações</h2><div class="muted">Conexões do sistema.</div>
+    <div class="grid2"><div class="card"><h3>Google Calendar</h3><p id="calendarStatus" class="muted">Verificando conexão...</p><div class="actions"><button class="btn primary" onclick="connectCalendar()">Conectar</button><button class="btn" onclick="syncCalendar()">Sincronizar</button></div></div>
+    <div class="card"><h3>Google News</h3><p class="muted">RSS de notícias por categoria.</p><button class="btn" onclick="showPage('news')">Abrir notícias</button></div></div>
+    <div class="card" style="margin-top:14px"><h3>WhatsApp</h3><p class="muted">Cadastre os nomes e números uma vez. Depois você pode dizer no Assistente, por exemplo: <b>“Manda uma mensagem para João dizendo oi, tudo bem?”</b> e o PRIMORIS abre diretamente a conversa certa no WhatsApp.</p>
+      <form id="whatsappContactForm" class="form" onsubmit="saveWhatsAppContact(event)">
+        <div class="grid2" style="margin-top:0">
+          <input id="whatsappContactName" placeholder="Nome do contato" required>
+          <input id="whatsappContactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="WhatsApp: 5562999999999" required>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">＋ Salvar contato</button></div>
+      </form>
+      <div id="whatsappContacts" class="whatsapp-contacts"></div>
+      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
+        <h3>Enviar manualmente</h3>
+        <form id="whatsappForm" class="form" onsubmit="openWhatsAppMessage(event)">
+          <label for="whatsappPhone" class="muted">Número do WhatsApp com DDD e código do país</label>
+          <input id="whatsappPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 5562999999999" required>
+          <label for="whatsappMessage" class="muted">Mensagem</label>
+          <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem que deseja enviar..." required></textarea>
+          <div class="actions"><button class="btn primary" type="submit">Abrir WhatsApp com a mensagem</button></div>
+        </form>
+      </div>
+      <p class="muted" style="margin-top:10px">Dica: no Brasil, informe 55 + DDD + número. O PRIMORIS abre a conversa e deixa o texto pronto. Por segurança, o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
+      <p id="whatsappStatus" class="muted" aria-live="polite"></p>
+      <p><a id="whatsappFallbackLink" href="#" target="_self" hidden rel="noopener">Abrir conversa no WhatsApp</a></p>
+    </div>
+  </section>
+
+  <section id="page-search" class="page"><h2>Busca no PRIMORIS</h2><p class="muted">Pesquise tarefas, memórias, anotações, compromissos e movimentações financeiras.</p>
+    <div class="card"><input id="globalSearch" placeholder="Digite para pesquisar..." oninput="renderGlobalSearch()"><div id="globalSearchResults" class="search-results"></div></div>
+  </section>
+
+  <section id="page-skills" class="page">
+    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // SKILLS</div><h1>Habilidades</h1><p class="muted">Módulos que o PRIMORIS pode usar. Ative ou desative funções sem mexer nas IAs existentes.</p></div></div>
+    <div class="card"><div class="row"><div><h3>🧩 Skills disponíveis</h3><p class="muted">As preferências ficam salvas neste aparelho.</p></div><button class="btn" type="button" onclick="resetSkills()">Restaurar</button></div><div id="skillsGrid" class="skills-grid"></div></div>
+  </section>
+
+  <section id="page-os" class="page">
+    <div class="os-shell">
+      <div class="os-head"><div><div class="eyebrow">PRIMORIS // PERSONAL OPERATING SYSTEM</div><div class="os-name">PRIMORIS OS</div><div class="muted">Central pessoal de Anthony</div></div><span class="status"><span class="dot"></span> ONLINE</span></div>
+      <div class="os-grid">
+        <button class="os-tile" type="button" onclick="showPage('assistant')"><span class="big">🧠</span><strong>Assistente</strong><small>Converse com a IA</small></button>
+        <button class="os-tile" type="button" onclick="showPage('tasks')"><span class="big">📋</span><strong>Tarefas</strong><small id="osTasks">0 pendentes</small></button>
+        <button class="os-tile" type="button" onclick="showPage('agenda')"><span class="big">📅</span><strong>Agenda</strong><small id="osEvents">0 eventos</small></button>
+        <button class="os-tile" type="button" onclick="showPage('memory')"><span class="big">🧠</span><strong>Memória</strong><small id="osMemory">0 registros</small></button>
+        <button class="os-tile" type="button" onclick="showPage('studies')"><span class="big">📚</span><strong>Estudos</strong><small>Organize seu aprendizado</small></button>
+        <button class="os-tile" type="button" onclick="showPage('finance')"><span class="big">💰</span><strong>Finanças</strong><small>Controle financeiro</small></button>
+        <button class="os-tile" type="button" onclick="showPage('skills')"><span class="big">🧩</span><strong>Skills</strong><small>Gerencie habilidades</small></button>
+        <button class="os-tile" type="button" onclick="showPage('settings')"><span class="big">⚙️</span><strong>Configurações</strong><small>Personalize o sistema</small></button>
+      </div>
+      <div class="os-footer"><span class="muted">PRIMORIS v4.0 · Anthony</span><button class="btn primary" type="button" onclick="showPage('assistant');setTimeout(()=>document.getElementById('chatInput')?.focus(),150)">Iniciar comando</button></div>
+    </div>
+  </section>
+
+  <section id="page-devpanel" class="page">
+    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // DEVELOPER</div><h1>Dev Panel</h1><p class="muted">Painel técnico para verificar o estado do sistema. Nenhuma chave de API é exibida.</p></div></div>
+    <div class="card"><div class="row"><div><h3>🛠️ Controle do sistema</h3><p id="devPanelMode" class="muted">Modo desenvolvedor protegido.</p></div><button class="btn primary" type="button" onclick="runDevPanelScan()">Executar diagnóstico</button></div>
+      <div class="dev-grid">
+        <div class="dev-stat"><span class="muted">IA selecionada</span><strong id="devAI">--</strong></div>
+        <div class="dev-stat"><span class="muted">Armazenamento</span><strong id="devStorage">--</strong></div>
+        <div class="dev-stat"><span class="muted">PWA</span><strong id="devPWA">--</strong></div>
+        <div class="dev-stat"><span class="muted">Microfone</span><strong id="devMic">--</strong></div>
+        <div class="dev-stat"><span class="muted">Voz</span><strong id="devVoice">--</strong></div>
+        <div class="dev-stat"><span class="muted">Notificações</span><strong id="devNotify">--</strong></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><div class="row"><h3>📜 Log local</h3><button class="btn" type="button" onclick="clearDevLog()">Limpar</button></div><div id="devLog" class="dev-log"><div class="muted">Nenhum evento registrado.</div></div></div>
+  </section>
+
+  <section id="page-diagnostics" class="page">
+    <h2>Diagnóstico do Sistema</h2><p class="muted">Testes reais de conectividade e chamadas aos provedores. Nenhuma chave é exibida.</p>
+    <div class="actions" style="margin:14px 0"><button class="btn primary" type="button" onclick="runAllAITests()">TESTAR TODAS AS IAS</button><button class="btn" type="button" onclick="runFullDiagnostics()">TESTAR SISTEMA COMPLETO</button></div>
+    <div id="diagSummary" class="diag-summary"></div>
+    <div class="card"><h3>Sistema</h3><div id="diagSystem" class="list"><div class="muted">Aguardando teste...</div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Inteligência Artificial</h3><div id="diagAI" class="list"><div class="muted">Toque em testar todas as IAs.</div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Resultado detalhado</h3><div id="diagDetails" class="list"><div class="muted">Nenhum teste executado.</div></div></div>
+  </section>
+
+  <!-- PRIMORIS DEPLOY BUILD: backup controls are authored directly in this HTML. -->
+  <section id="page-settings" class="page">
+    <h2>Configurações</h2><div class="muted">Ajustes e atalhos das áreas do PRIMORIS.</div>
+    <div class="settings-links"><button class="btn" onclick="showPage('memory')">Memória</button><button class="btn" onclick="showPage('assistant')">IA</button><button class="btn" onclick="showPage('agenda')">Google Calendar</button><button class="btn" onclick="showPage('news')">Notícias</button><button class="btn" onclick="showPage('finance')">Finanças</button><button class="btn" onclick="showPage('integrations')">Integrações</button></div>
+    <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do PRIMORIS</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="cloudflare">☁️ Cloudflare AI</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted ai-provider-status">Verificando disponibilidade...</span></div></div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>🔊 Voz do PRIMORIS</h3>
+      <p class="muted">Escolha como o PRIMORIS fala. A configuração fica salva neste aparelho.</p>
+      <div class="voice-settings-grid">
+        <div>
+          <label for="voiceGender" class="muted">Preferência</label>
+          <select id="voiceGender" onchange="setVoiceGender(this.value)">
+            <option value="auto">🤖 Automática</option>
+            <option value="male">👨 Voz masculina</option>
+            <option value="female">👩 Voz feminina</option>
+          </select>
+        </div>
+        <div>
+          <label for="voiceSelect" class="muted">Voz disponível no aparelho</label>
+          <select id="voiceSelect" onchange="setVoiceSelection(this.value)">
+            <option value="auto">Carregando vozes...</option>
+          </select>
+        </div>
+        <div class="wide voice-preview">
+          <button class="btn primary" type="button" onclick="testSelectedVoice()">🔊 Testar voz</button>
+          <button class="btn" type="button" onclick="refreshVoiceList()">↻ Atualizar vozes</button><button class="btn" type="button" onclick="stopSpeaking()">⏹️ Parar voz</button>
+          <span id="voiceSettingsStatus" class="muted">Detectando vozes disponíveis...</span>
+        </div>
+        <div>
+          <label for="voiceRate" class="muted">⚡ Velocidade</label>
+          <div class="voice-range"><input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.96" oninput="voiceSliderChanged()"><output id="voiceRateValue">0.96x</output></div>
+        </div>
+        <div>
+          <label for="voicePitch" class="muted">🎵 Tom</label>
+          <div class="voice-range"><input id="voicePitch" type="range" min="0.5" max="1.5" step="0.05" value="0.92" oninput="voiceSliderChanged()"><output id="voicePitchValue">0.92</output></div>
+        </div>
+        <div>
+          <label for="voiceVolume" class="muted">🔉 Volume</label>
+          <div class="voice-range"><input id="voiceVolume" type="range" min="0" max="1" step="0.05" value="1" oninput="voiceSliderChanged()"><output id="voiceVolumeValue">100%</output></div>
+        </div>
+        <div>
+          <label class="muted">💾 Preferência</label>
+          <div class="voice-help">As alterações são salvas automaticamente. “Automática” escolhe uma voz em português compatível com a preferência selecionada.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card appearance-card" style="margin-top:14px">
+  <div class="appearance-head"><div><h3>🎨 Aparência</h3><p class="muted">Mude toda a identidade visual do PRIMORIS.</p></div><span class="appearance-live">● AO VIVO</span></div>
+  <div id="appearanceThemes" class="theme-grid">
+    <button type="button" class="theme-choice" data-theme-choice="default" onclick="setAppearance('default')"><span class="theme-preview theme-preview-cyber"><i></i><b></b><em></em></span><strong>Cyber Neon</strong><small>Roxo · Ciano</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="ocean" onclick="setAppearance('ocean')"><span class="theme-preview theme-preview-ocean"><i></i><b></b><em></em></span><strong>Ocean</strong><small>Azul · Ciano</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="purple" onclick="setAppearance('purple')"><span class="theme-preview theme-preview-purple"><i></i><b></b><em></em></span><strong>Violet</strong><small>Violeta · Rosa</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="matrix" onclick="setAppearance('matrix')"><span class="theme-preview theme-preview-matrix"><i></i><b></b><em></em></span><strong>Matrix</strong><small>Preto · Verde</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="crimson" onclick="setAppearance('crimson')"><span class="theme-preview theme-preview-crimson"><i></i><b></b><em></em></span><strong>Crimson</strong><small>Preto · Vermelho</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="clean" onclick="setAppearance('clean')"><span class="theme-preview theme-preview-clean"><i></i><b></b><em></em></span><strong>Clean</strong><small>Claro · Moderno</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="midnight" onclick="setAppearance('midnight')"><span class="theme-preview theme-preview-midnight"><i></i><b></b><em></em></span><strong>Midnight</strong><small>Azul · Escuro</small></button>
+    <button type="button" class="theme-choice" data-theme-choice="aurora" onclick="setAppearance('aurora')"><span class="theme-preview theme-preview-aurora"><i></i><b></b><em></em></span><strong>Aurora</strong><small>Verde · Azul</small></button>
+  </div>
+</div>
+    <div class="grid2"><div class="card"><h3>Dados</h3><div class="actions backup-actions"><button id="exportDataButton" class="btn" type="button" onclick="exportData()">📦 Exportar dados</button><button id="importDataButton" class="btn" type="button" onclick="document.getElementById('importFile').click()">📥 Importar dados</button><input id="importFile" type="file" accept=".json,application/json" hidden><button class="btn danger" type="button" onclick="resetData()">Apagar dados locais</button></div></div><div class="card"><h3>Sistema</h3><p id="systemStatus" class="muted">Verificando servidor...</p><button class="btn" type="button" onclick="testAI()">Testar IA</button></div></div>
+    <div class="card dev-card" style="margin-top:14px"><div class="row"><div><h3>Modo desenvolvedor da IA</h3><p id="devStatus" class="muted">Verificando autorização...</p></div><span id="devBadge" class="badge">BLOQUEADO</span></div><div class="actions" style="margin-top:10px"><input id="devKeyInput" type="password" autocomplete="off" placeholder="Chave do modo desenvolvedor"><button class="btn primary" type="button" onclick="unlockDeveloperMode()">Ativar</button><button class="btn danger" type="button" onclick="lockDeveloperMode()">Bloquear</button></div><p class="muted" style="margin-top:8px">A chave fica somente nesta sessão do navegador e não é enviada ao Gemini. Depois de ativar, a IA poderá aplicar alterações no site pelos seus comandos.</p></div>
+  </section>
+
+<section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
+
+</main>
+</div>
+
+<nav class="mobilebar" aria-label="Navegação principal; deslize para ver todas as páginas">
+<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
+</nav>
+<div id="toast" class="toast"></div>
+<div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
+<div id="pwaBanner" class="pwa-banner" role="status">
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-copy"><strong>INSTALAR PRIMORIS</strong><small>Use o PRIMORIS como aplicativo, com acesso rápido pela tela inicial.</small></div>
+  <button class="btn primary" type="button" onclick="installPrimoris()">Instalar</button>
+  <button class="btn" type="button" onclick="dismissPWAInstall()">×</button>
+</div>
+
+<script>
+const KEY='primoris_cesar_v2';
+let data=(()=>{
+  const raw=localStorage.getItem(KEY);
+  if(!raw)return {profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};
+  try{const parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?{profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],...parsed,profile:{name:'Anthony',...(parsed.profile||{})},memories:Array.isArray(parsed.memories)?parsed.memories:[],reminders:Array.isArray(parsed.reminders)?parsed.reminders:[],notifications:Array.isArray(parsed.notifications)?parsed.notifications:[]}:{tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[]};}
+  catch(err){console.error('Dados locais do PRIMORIS inválidos; mantendo o conteúdo salvo sem sobrescrever:',err);return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};}
+})();
+const $=id=>document.getElementById(id);
+data.profile={name:'Anthony',...(data.profile||{})};const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
+function setAppearance(mode){
+  const themes=['default','ocean','purple','matrix','crimson','clean','midnight','aurora'];
+  if(!themes.includes(mode))mode='default';
+  document.body.classList.remove(...themes.filter(t=>t!=='default').map(t=>'theme-'+t));
+  if(mode!=='default')document.body.classList.add('theme-'+mode);
+  document.body.classList.toggle('appearance-contrast',mode==='contrast');
+  localStorage.setItem('primoris_appearance',mode);
+  document.querySelectorAll('[data-theme-choice]').forEach(el=>el.classList.toggle('active',el.dataset.themeChoice===mode));
+  if($('appearanceMode'))$('appearanceMode').value=mode;
+}
+
+
+function normalizeWhatsAppNumber(value){
+  let digits=String(value||'').replace(/\D/g,'');
+  if((digits.length===10||digits.length===11)&&!digits.startsWith('55'))digits='55'+digits;
+  return digits;
+}
+function loadWhatsAppContacts(){
+  try{const x=JSON.parse(localStorage.getItem('primoris_whatsapp_contacts')||'[]');return Array.isArray(x)?x:[]}
+  catch{return []}
+}
+function saveWhatsAppContacts(list){localStorage.setItem('primoris_whatsapp_contacts',JSON.stringify(list))}
+function normalizeContactName(value){return String(value||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function renderWhatsAppContacts(){
+  const box=$('whatsappContacts');if(!box)return;
+  const list=loadWhatsAppContacts();
+  box.innerHTML=list.length?list.map((c,i)=>`<div class="whatsapp-contact"><div><strong>💬 ${escapeHtml(c.name)}</strong><small>${escapeHtml(c.phone)}</small></div><button type="button" class="btn danger" onclick="deleteWhatsAppContact(${i})">Excluir</button></div>`).join(''):'<div class="muted">Nenhum contato salvo ainda.</div>';
+}
+function saveWhatsAppContact(event){
+  event?.preventDefault();
+  const name=String($('whatsappContactName')?.value||'').trim();
+  const phone=normalizeWhatsAppNumber($('whatsappContactPhone')?.value);
+  if(!name)return toast('Informe o nome do contato.');
+  if(phone.length<10||phone.length>15)return toast('Confira o número com DDD e código do país.');
+  const list=loadWhatsAppContacts();
+  const key=normalizeContactName(name);
+  const existing=list.findIndex(c=>normalizeContactName(c.name)===key);
+  const item={name,phone};
+  if(existing>=0)list[existing]=item;else list.push(item);
+  saveWhatsAppContacts(list);renderWhatsAppContacts();
+  event?.target?.reset?.();
+  toast(existing>=0?'Contato atualizado':'Contato do WhatsApp salvo');
+}
+function deleteWhatsAppContact(index){
+  const list=loadWhatsAppContacts();if(!list[index])return;
+  if(!confirm('Excluir este contato do WhatsApp?'))return;
+  list.splice(index,1);saveWhatsAppContacts(list);renderWhatsAppContacts();
+}
+function openWhatsAppMessage(event){
+  event?.preventDefault();
+  const phone=normalizeWhatsAppNumber($('whatsappPhone')?.value);
+  const message=String($('whatsappMessage')?.value||'').trim();
+  if(phone.length<10||phone.length>15){toast('Confira o número com código do país e DDD.');return false;}
+  if(!message){toast('Digite a mensagem antes de continuar.');return false;}
+  const url='https://wa.me/'+phone+'?text='+encodeURIComponent(message);
+  const fallback=$('whatsappFallbackLink');
+  if(fallback){fallback.href=url;fallback.hidden=false;}
+  if($('whatsappStatus'))$('whatsappStatus').textContent='Abrindo a conversa no WhatsApp. Você ainda confirma o envio no aplicativo.';
+  const isAndroid=/Android/i.test(navigator.userAgent||'');
+  if(isAndroid){
+    const intent='intent://send?phone='+phone+'&text='+encodeURIComponent(message)+'#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url='+encodeURIComponent(url)+';end';
+    window.location.href=intent;
+  }else{
+    window.location.href=url;
+  }
+  return false;
+}
+function handleWhatsAppChatRequest(query){
+  const q=String(query||'').trim();
+  const explicitWhatsApp=/\bwhats\s?app\b|\bzap\b/i.test(q);
+  const sendMessageIntent=/(?:\b(?:mande|manda|envie|envia|enviar|avise|avisa|dispare|escreva|escreve)\s+(?:uma\s+)?(?:mensagem|msg|texto)\s+(?:para|pra|pro|no|pelo)\b|\b(?:mensagem|msg)\s+(?:para|pra|pro)\b)/i.test(q);
+  if(!explicitWhatsApp&&!sendMessageIntent)return null;
+
+  const contacts=loadWhatsAppContacts();
+  const phoneMatch=q.match(/(?:\+?\d[\d\s().-]{8,}\d)/);
+  let phone=phoneMatch?normalizeWhatsAppNumber(phoneMatch[1]):'';
+  let contactName='';
+  if(!phone){
+    const cleaned=normalizeContactName(q);
+    const matches=contacts.filter(c=>cleaned.includes(normalizeContactName(c.name)));
+    if(matches.length===1){phone=matches[0].phone;contactName=matches[0].name}
+    else if(matches.length>1)return 'Encontrei mais de um contato com esse nome. Use o nome completo para eu escolher o certo.';
+  }
+  let message='';
+  const msgMatch=q.match(/(?:\b(?:dizendo|avisando(?:\s+que)?|escrevendo|falando(?:\s+que)?|mensagem(?:\s+que)?|texto)\b\s*[:,-]?\s*|:\s*)(.+)$/i);
+  if(msgMatch)message=msgMatch[1].trim();
+
+  if(phone&&$('whatsappPhone'))$('whatsappPhone').value=phone;
+  if(message&&$('whatsappMessage'))$('whatsappMessage').value=message;
+  showPage('integrations');
+
+  if(!phone){
+    renderWhatsAppContacts();
+    return 'Não encontrei esse nome nos contatos do WhatsApp. Cadastre o nome e o número uma vez em Integrações > WhatsApp.';
+  }
+  if(!message){
+    $('whatsappMessage')?.focus();
+    return `Encontrei ${contactName||'o contato'}. Qual mensagem devo colocar?`;
+  }
+  openWhatsAppMessage();
+  return `Abrindo o WhatsApp para ${contactName||'o contato'} com a mensagem preenchida. No aplicativo, toque em Enviar.`;
+}
+
+
+const PRIMORIS_SKILLS_KEY='primoris_skills_v1';
+const PRIMORIS_DEVLOG_KEY='primoris_devlog_v1';
+const PRIMORIS_SKILLS=[
+ {id:'assistant',icon:'🧠',name:'Assistente IA',desc:'Conversas e comandos inteligentes.',enabled:true},
+ {id:'whatsapp',icon:'💬',name:'WhatsApp',desc:'Abrir conversas e preparar mensagens.',enabled:true},
+ {id:'gmail',icon:'📧',name:'Gmail',desc:'Pesquisar, ler e criar rascunhos de e-mail.',enabled:true},
+ {id:'taskAgent',icon:'⚡',name:'Agente de tarefas',desc:'Transformar comandos em tarefas, lembretes e ações.',enabled:true},
+ {id:'memory',icon:'🧠',name:'Memória',desc:'Guardar preferências e informações úteis.',enabled:true},
+ {id:'study',icon:'📚',name:'Estudos',desc:'Registrar e organizar estudos.',enabled:true},
+ {id:'tasks',icon:'📋',name:'Tarefas',desc:'Criar e acompanhar tarefas.',enabled:true},
+ {id:'agenda',icon:'📅',name:'Agenda',desc:'Eventos locais e Google Calendar.',enabled:true},
+ {id:'voice',icon:'🎙️',name:'Voz',desc:'Reconhecimento e leitura de respostas.',enabled:true},
+ {id:'search',icon:'🔎',name:'Busca',desc:'Pesquisar seus dados locais.',enabled:true},
+ {id:'finance',icon:'💰',name:'Finanças',desc:'Controle financeiro pessoal.',enabled:true}
+];
+function loadSkills(){try{const x=JSON.parse(localStorage.getItem(PRIMORIS_SKILLS_KEY)||'{}');return PRIMORIS_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(PRIMORIS_SKILLS.map(s=>[s.id,s.enabled]))}}
+function saveSkills(x){localStorage.setItem(PRIMORIS_SKILLS_KEY,JSON.stringify(x))}
+function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" onclick="toggleSkill('${s.id}')"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('')}
+function toggleSkill(id){const x=loadSkills();x[id]=!x[id];saveSkills(x);renderSkills();devLog((x[id]?'Ativada':'Desativada')+' skill: '+id);toast((x[id]?'Skill ativada: ':'Skill desativada: ')+id)}
+function resetSkills(){if(!confirm('Restaurar todas as skills?'))return;localStorage.removeItem(PRIMORIS_SKILLS_KEY);renderSkills();toast('Skills restauradas')}
+function devLog(message){try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');list.unshift({time:new Date().toISOString(),message:String(message)});localStorage.setItem(PRIMORIS_DEVLOG_KEY,JSON.stringify(list.slice(0,80)))}catch{}renderDevLog()}
+function renderDevLog(){const box=$('devLog');if(!box)return;try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');box.innerHTML=list.length?list.map(x=>`<div class="item"><span class="muted">${new Date(x.time).toLocaleString('pt-BR')}</span><br>${escapeHtml(x.message)}</div>`).join(''):'<div class="muted">Nenhum evento registrado.</div>'}catch{box.innerHTML='<div class="muted">Log indisponível.</div>'}}
+function clearDevLog(){localStorage.removeItem(PRIMORIS_DEVLOG_KEY);renderDevLog();toast('Log limpo')}
+function runDevPanelScan(){
+ const provider=localStorage.getItem('primoris_ai_provider')||'auto';
+ const storage=(()=>{try{localStorage.setItem('__p','1');localStorage.removeItem('__p');return 'OK'}catch{return 'ERRO'}})();
+ const pwa=('serviceWorker' in navigator)?'OK':'N/D';
+ const mic=('SpeechRecognition' in window||'webkitSpeechRecognition' in window)?'OK':'N/D';
+ const voice=('speechSynthesis' in window)?'OK':'N/D';
+ const notify=('Notification' in window)?(Notification.permission==='granted'?'ATIVA':Notification.permission.toUpperCase()):'N/D';
+ if($('devAI'))$('devAI').textContent=provider.toUpperCase();
+ if($('devStorage'))$('devStorage').textContent=storage;
+ if($('devPWA'))$('devPWA').textContent=pwa;
+ if($('devMic'))$('devMic').textContent=mic;
+ if($('devVoice'))$('devVoice').textContent=voice;
+ if($('devNotify'))$('devNotify').textContent=notify;
+ if($('devPanelMode'))$('devPanelMode').textContent='Varredura concluída em '+new Date().toLocaleString('pt-BR');
+ devLog('Diagnóstico executado · IA='+provider+' · PWA='+pwa+' · microfone='+mic+' · voz='+voice);
+ toast('Diagnóstico do Dev Panel concluído');
+}
+function updateOSDashboard(){if($('osTasks'))$('osTasks').textContent=(data.tasks||[]).filter(x=>!x.done).length+' pendentes';if($('osEvents'))$('osEvents').textContent=(data.events||[]).length+' eventos';if($('osMemory'))$('osMemory').textContent=(data.memories||[]).length+' registros'}
+function updateBackupStatus(){const b=$('backupStatus');if(!b)return;const last=localStorage.getItem('primoris_last_backup');b.textContent=last?'Último backup exportado em '+new Date(last).toLocaleString('pt-BR')+'.':'Backup local disponível. Exporte seus dados para guardar uma cópia completa.'}
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
+  document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
+  window.scrollTo(0,0);
+  if(p==='news') loadNews();
+  if(p==='climate') loadClimate();
+  if(p==='intelligence') renderIntelligence();
+  if(p==='email') loadEmails();
+  if(p==='agenda') renderAgenda();
+  if(p==='memory') renderMemories();
+  if(p==='finance' && typeof renderFinancas==='function') renderFinancas();
+  if(p==='skills')renderSkills();
+  if(p==='os')updateOSDashboard();
+  if(p==='devpanel'){renderDevLog();runDevPanelScan();}
+
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function render(){
+  $('statTasks').textContent=(data.tasks||[]).filter(x=>!x.done).length;
+  renderTasks();
+  $('statEvents').textContent=(data.events||[]).length;
+  $('statStudies').textContent=(data.studies||[]).length;
+  $('brief').textContent=`Você tem ${(data.tasks||[]).filter(x=>!x.done).length} tarefa(s) pendente(s), ${(data.events||[]).length} evento(s) sincronizado(s) e ${(data.studies||[]).length} registro(s) de estudo.`;
+  renderAgenda();renderStudies();renderOpps();renderDashboard();renderTasksManager();
+}
+
+
+let taskEditId=null;
+function renderTaskMarkup(t){
+  const priority=t.priority||'media',due=t.dueDate?`Prazo: ${escapeHtml(t.dueDate)}${t.dueTime?' às '+escapeHtml(t.dueTime):''}`:'Sem prazo definido';
+  return `<div class="item"><div><b style="${t.done?'text-decoration:line-through;opacity:.6':''}">${escapeHtml(t.title||'Tarefa')}</b><div class="event-meta">${due} · <span class="priority-${priority==='alta'?'high':priority==='baixa'?'low':'medium'}">Prioridade ${escapeHtml(priority)}</span></div></div><div class="item-actions"><button class="btn" onclick="toggleTaskById('${escapeHtml(t.id)}')">${t.done?'Reabrir':'Concluir'}</button><button class="btn" onclick="editTask('${escapeHtml(t.id)}')">Editar</button><button class="btn danger" onclick="deleteTaskById('${escapeHtml(t.id)}')">Excluir</button></div></div>`;
+}
+function renderTasks(){
+  const box=$('taskList');if(!box)return;const tasks=(data.tasks||[]).filter(x=>!x.done).slice(0,8);
+  box.innerHTML=tasks.length?tasks.map(renderTaskMarkup).join(''):'<div class="muted">Nenhuma tarefa pendente.</div>';
+}
+function renderTasksManager(){
+  const pending=$('pendingTasks'),completed=$('completedTasks');if(!pending||!completed)return;
+  pending.innerHTML=(data.tasks||[]).filter(x=>!x.done).map(renderTaskMarkup).join('')||'<div class="muted">Nenhuma tarefa pendente.</div>';
+  completed.innerHTML=(data.tasks||[]).filter(x=>x.done).map(renderTaskMarkup).join('')||'<div class="muted">Nenhuma tarefa concluída.</div>';
+}
+function toggleTask(index){const t=(data.tasks||[])[index];if(!t)return;t.done=!t.done;save();render();}
+function toggleTaskById(id){const t=(data.tasks||[]).find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;save();render();}
+function deleteTask(index){const t=(data.tasks||[])[index];if(t)deleteTaskById(t.id)}
+function deleteTaskById(id){if(!confirm('Excluir esta tarefa permanentemente?'))return;data.tasks=(data.tasks||[]).filter(x=>String(x.id)!==String(id));save();render();}
+function editTask(id){const t=(data.tasks||[]).find(x=>String(x.id)===String(id));if(!t)return;taskEditId=id;$('taskTitle').value=t.title||'';$('taskDueDate').value=t.dueDate||'';$('taskDueTime').value=t.dueTime||'';$('taskPriority').value=t.priority||'media';$('taskFormTitle').textContent='Editar tarefa';$('taskCancel').hidden=false;showPage('tasks')}
+function cancelTaskEdit(){taskEditId=null;$('taskForm').reset();$('taskFormTitle').textContent='Nova tarefa';$('taskCancel').hidden=true}
+$('taskForm').onsubmit=e=>{e.preventDefault();const title=$('taskTitle').value.trim();if(!title)return;const old=(data.tasks||[]).find(x=>String(x.id)===String(taskEditId));const t={...(old||{}),id:taskEditId||crypto.randomUUID(),title,dueDate:$('taskDueDate').value||null,dueTime:$('taskDueTime').value||null,priority:$('taskPriority').value,done:old?.done||false,source:old?.source||'interface'};if(taskEditId)data.tasks=data.tasks.map(x=>String(x.id)===String(taskEditId)?t:x);else data.tasks.push(t);save();cancelTaskEdit();render();toast('Tarefa salva')};
+function renderAgenda(){const ev=(data.events||[]).slice().sort((a,b)=>new Date(a.date||0)-new Date(b.date||0)),d=new Date(),today=new Date(d.getFullYear(),d.getMonth(),d.getDate()),tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);const end=new Date(tomorrow);end.setDate(end.getDate()+1);const put=(id,a)=>{const el=$(id);if(el)el.innerHTML=a.length?a.map(eventMarkup).join(''):'<div class="muted">Nenhum evento.</div>'};put('agendaToday',ev.filter(x=>new Date(x.date)>=today&&new Date(x.date)<tomorrow));put('agendaTomorrow',ev.filter(x=>new Date(x.date)>=tomorrow&&new Date(x.date)<end));put('agendaList',ev)}
+function eventMarkup(e){const d=new Date(e.date),when=!isNaN(d)?d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'Data não informada';return `<div class="item"><div><b>${escapeHtml(e.title||'Evento')}</b><div class="event-meta">${escapeHtml(when)} · ${e.source==='local'?'Local':'Google Calendar'}</div></div><div class="item-actions"><button class="btn" onclick="editEvent('${escapeHtml(e.id||'')}')">Editar</button><button class="btn danger" onclick="deleteEvent('${escapeHtml(e.id||'')}')">Excluir</button></div></div>`}
+
+function renderStudies(){
+  const box=$('studyList');const arr=data.studies||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><br><small>${escapeHtml(x.kind||'Sessão')} · ${x.minutes?escapeHtml(x.minutes)+' min · ':''}${x.date?escapeHtml(String(x.date).slice(0,10))+' · ':''}${x.grade!==null&&x.grade!==undefined&&x.grade!==''?'Nota: '+escapeHtml(x.grade)+' · ':''}${escapeHtml(x.notes||'Sem observações')}</small></div>`).join(''):'<div class="muted">Nenhum estudo registrado.</div>';
+}
+function renderOpps(){
+  const box=$('oppList');const arr=data.opportunities||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map((x,i)=>`<div class="item"><b>${escapeHtml(x.title)}</b>${x.link?`<br><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:var(--cyan)">Abrir link</a>`:''}<br><small>${escapeHtml(x.notes||'')}</small></div>`).join(''):'<div class="muted">Nenhuma oportunidade salva.</div>';
+}
+
+$('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({title:$('studyTitle').value,kind:$('studyKind').value,minutes:Number($('studyTime').value)||0,grade:$('studyGrade').value||null,notes:$('studyNotes').value,date:$('studyDate').value||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString()});save();e.target.reset();render();toast('Estudo registrado')};
+$('oppForm').onsubmit=e=>{e.preventDefault();data.opportunities.push({title:$('oppTitle').value,link:$('oppLink').value,notes:$('oppNotes').value,date:new Date().toISOString()});save();e.target.reset();render();toast('Oportunidade salva')};
+$('gmailDraftForm')?.addEventListener('submit',createGmailDraft);
+
+function isPotentialActionRequest(q){
+  return /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|preciso|quero|gostaria|poderia|pode)\b/i.test(q)
+    && /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|despesa|gasto|tarefa|compromisso|evento|reuni[aã]o|consulta|estudar|estudo|estudos|oportunidade|oportunidades|plano de estudos|sess[aã]o)\b/i.test(q);
+}
+function parseLocalAppointment(q){
+  const intent=/(?:\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b.*\b(?:compromisso|evento|reuni[aã]o|consulta)\b|\b(?:compromisso|evento|reuni[aã]o|consulta)\b.*\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b)/i;
+  if(!intent.test(q))return null;
+  const now=new Date();let date=null;
+  if(/\bdepois de amanh[ãa]\b/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+2);
+  else if(/\bhoje\b/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  else if(/amanh[ãa]/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  else {
+    const iso=q.match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
+    const br=q.match(/\b(?:dia\s*)?(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/i);
+    const dayOnly=q.match(/\bdia\s+(\d{1,2})\b/i);
+    if(iso){const y=Number(iso[1]),m=Number(iso[2]),d=Number(iso[3]);date=new Date(y,m-1,d);if(date.getFullYear()!==y||date.getMonth()!==m-1||date.getDate()!==d)return {clarification:'Essa data não é válida. Pode informar novamente?'};}
+    else if(br){let year=br[3]?Number(br[3]):now.getFullYear();if(year<100)year+=2000;const month=Number(br[2]),day=Number(br[1]);date=new Date(year,month-1,day);if(date.getFullYear()!==year||date.getMonth()!==month-1||date.getDate()!==day)return {clarification:'Essa data não é válida. Pode informar novamente?'};}
+    else if(dayOnly){const day=Number(dayOnly[1]);date=new Date(now.getFullYear(),now.getMonth(),day);if(date.getDate()!==day)return {clarification:'Esse dia não é válido. Pode informar novamente?'};if(date<new Date(now.getFullYear(),now.getMonth(),now.getDate()))date.setMonth(date.getMonth()+1);}
+  }
+  const tm=q.match(/(?:^|\s)(?:às|as|a)\s*(\d{1,2})(?::(\d{2})|h(\d{2})?)?\s*(?:h|horas)?(?=\s|$|[,;.])/i)||q.match(/(?:^|\s)(\d{1,2})(?::(\d{2})|h(\d{2})|h|horas)(?=\s|$|[,;.])/i);
+  const hour=tm?Number(tm[1]):null,minute=tm?Number(tm[2]||tm[3]||0):0;
+  let cleaned=q
+    .replace(/^\s*(?:por favor[, ]*)?(?:(?:eu|voce|você)\s+)?(?:quero|gostaria de|preciso|pode|poderia|me ajuda a|vamos|vou)?\s*(?:ir\s+a\s+)?(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\s*/i,'')
+    .replace(/depois de amanh[ãa]|amanh[ãa]|hoje/gi,' ')
+    .replace(/20\d{2}-\d{2}-\d{2}|\d{1,2}\/\d{1,2}(?:\/\d{2,4})?/g,' ')
+    .replace(/dia\s+\d{1,2}/gi,' ')
+    .replace(/(?:às|as|a)\s*\d{1,2}(?::\d{2}|h\d{0,2})?\s*(?:h|horas)?/gi,' ')
+    .replace(/\b\d{1,2}(?::\d{2}|h\d{0,2})\s*(?:h|horas)?\b/gi,' ')
+    .replace(/por favor|pra mim|para mim|para|pra|no dia|dia|no|na|um|uma/gi,' ')
+    .replace(/\s+/g,' ').replace(/^[,;: -]+|[,;: -]+$/g,'').trim();
+  const kind=cleaned.match(/compromisso|evento|reuni[aã]o|consulta/i);
+  let title=cleaned;
+  if(kind){const tail=cleaned.slice(kind.index+kind[0].length).trim();title=kind[0]+(tail?' '+tail:'');}
+  if(!title)title='Compromisso';
+  title=title.charAt(0).toLocaleUpperCase('pt-BR')+title.slice(1);
+  if(!date)return {clarification:'Para qual dia devo marcar esse compromisso? (Ex.: amanhã ou 20/11)'};
+  if(hour===null||hour>23||minute>59)return {clarification:'Que horário devo colocar? (Ex.: às 14h ou 14:30)'};
+  date.setHours(hour,minute,0,0);
+  if(date.getTime()<=Date.now())return {clarification:'Esse horário já passou. Qual data e horário futuros devo usar?'};
+  return {title,date};
+}
+async function createLocalAppointment(parsed){
+  const start=parsed.date,end=new Date(start);end.setHours(end.getHours()+1);
+  const id=window.crypto?.randomUUID?crypto.randomUUID():`ev-${Date.now()}`;
+  const event={id,title:parsed.title,date:start.toISOString(),description:'Criado pelo assistente PRIMORIS',source:'local'};
+  try{
+    const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:event.title,description:event.description,start:start.toISOString(),end:end.toISOString()})});
+    if(r.ok){const j=await r.json();event.id=j.event?.id||j.id||event.id;event.source='google';}
+    else if(r.status!==401){const j=await r.json().catch(()=>({}));return {error:j.message||'O servidor não confirmou a criação do compromisso.'};}
+  }catch(err){if(!navigator.onLine)return {error:'Sem conexão: não consegui confirmar o compromisso.'};}
+  data.events.push(event);save();renderAgenda();render();
+  return {message:event.source==='google'?`Compromisso “${event.title}” criado no Google Calendar para ${start.toLocaleString('pt-BR')}.`:`Compromisso “${event.title}” salvo na agenda local para ${start.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronizar.`};
+}
+function actionDateTime(date,time){
+  if(!date)return null;
+  const hhmm=time||'09:00';
+  const d=new Date(`${date}T${hhmm}:00`);
+  return Number.isNaN(d.getTime())?null:d;
+}
+async function requestAIAction(q){
+  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
+  if(j.clarification&&!j.action)return {clarification:j.clarification};
+  return j.action||null;
+}
+async function applyAIAction(a){
+  if(!a||!a.type)return null;
+  const id=()=>window.crypto?.randomUUID?crypto.randomUUID():`p-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  if(a.type==='study'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual assunto devo adicionar aos estudos?';
+    const study={id:id(),title,kind:a.kind||'matéria',minutes:Number(a.minutes)||0,grade:null,notes:a.notes||'',date:a.date||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString(),source:'assistant'};
+    data.studies.push(study);save();render();showPage('studies');return `Pronto! O estudo “${title}” foi salvo na área Estudos${study.minutes?` como sessão de ${study.minutes} minutos`:''}.`;
+  }
+  if(a.type==='opportunity'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual oportunidade devo salvar?';
+    data.opportunities.push({id:id(),title,link:a.link||'',notes:a.notes||'',date:new Date().toISOString(),source:'assistant'});save();render();showPage('opportunities');return `Oportunidade “${title}” salva na área Oportunidades.`;
+  }
+  if(a.type==='delete_task'){
+    const q=(a.target||a.title||'').toLocaleLowerCase('pt-BR').trim();const matches=(data.tasks||[]).filter(x=>q&&(String(x.title||'').toLocaleLowerCase('pt-BR').includes(q)||q.includes(String(x.title||'').toLocaleLowerCase('pt-BR'))));
+    if(matches.length!==1)return matches.length?'Encontrei mais de uma tarefa parecida. Qual delas você quer excluir?':'Não consegui identificar a tarefa com segurança. Qual é o título?';
+    if(!confirm(`Excluir a tarefa “${matches[0].title}”?`))return 'Tudo bem, não excluí a tarefa.';
+    data.tasks=data.tasks.filter(x=>x.id!==matches[0].id);save();render();return `A tarefa “${matches[0].title}” foi excluída.`;
+  }
+  if(a.type==='note'){
+    normalizeMemories();const note=(a.description||a.title||'').trim();if(!note)return 'O que você gostaria que eu anotasse?';
+    data.memories.push({id:id(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na sua Memória: “${note}”.`;
+  }
+  if(a.type==='task'||a.type==='reminder'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual tarefa devo adicionar?';
+    const due=actionDateTime(a.date,a.time);if(a.date&&!due)return 'Não consegui interpretar a data e o horário. Pode informar novamente?';
+    const priority=['alta','media','baixa'].includes(String(a.priority||'').toLowerCase())?String(a.priority).toLowerCase():'media';
+    const task={id:id(),title,date:due?due.toISOString():new Date().toISOString(),dueDate:a.date||null,dueTime:a.time||null,done:false,priority,source:'assistant'};
+    data.tasks.push(task);save();render();
+    if(a.type==='reminder'&&due){
+      const end=new Date(due);end.setHours(end.getHours()+1);let synced=false;
+      try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:'Lembrete: '+title,description:'Criado pelo assistente PRIMORIS',start:due.toISOString(),end:end.toISOString()})});
+        if(r.ok){const j=await r.json();if(j.event){data.events.push({id:j.event.id,title:j.event.summary||('Lembrete: '+title),description:j.event.description||'',date:j.event.start?.dateTime||due.toISOString(),source:'google'});synced=true;}}
+      }catch(err){console.warn('Calendar reminder:',err)}
+      if(!synced)data.events.push({id:id(),title:'Lembrete: '+title,description:'Lembrete criado pelo PRIMORIS',date:due.toISOString(),source:'local'});
+      save();renderAgenda();render();
+      return synced?`Lembrete e tarefa registrados; também adicionei ao Google Calendar para ${due.toLocaleString('pt-BR')}.`:`Lembrete e tarefa registrados no PRIMORIS para ${due.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronização externa.`;
+    }
+    return a.type==='reminder'?`Lembrete registrado como tarefa para ${due?due.toLocaleString('pt-BR'):'a data informada'}.`:`Tarefa “${title}” adicionada ao PRIMORIS.`;
+  }
+  if(a.type==='expense'){
+    const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da despesa?';
+    const description=(a.title||a.description||'Despesa registrada pela IA').trim();
+    const category=(a.category||'Outros').trim();const f=loadFinanceData();
+    f.transactions.push({id:id(),description,type:'gasto',amount,category,date:a.date||new Date().toISOString().slice(0,10)});
+    saveFinanceData(f);renderFinancas();return `Despesa de ${moneyBR(amount)} registrada em ${category}: ${description}.`;
+  }
+  if(a.type==='event'){
+    const title=(a.title||a.description||'Compromisso').trim();if(!a.date||!a.time)return 'Qual data e horário devo usar para esse compromisso?';
+    const start=actionDateTime(a.date,a.time);if(!start)return 'Não consegui interpretar a data e o horário do compromisso.';
+    const end=new Date(start);end.setHours(end.getHours()+1);let ev={id:id(),title,date:start.toISOString(),description:a.description||'',source:'local'};
+    try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:title,description:ev.description,location:$('eventLocation')?.value?.trim()||'',start:start.toISOString(),end:end.toISOString()})});
+      if(r.ok){const j=await r.json();ev.id=j.event?.id||ev.id;ev.source='google';}
+      else if(r.status!==401){const j=await r.json().catch(()=>({}));throw new Error(j.message||'O Google Calendar não confirmou a criação.');}
+    }catch(err){if(!navigator.onLine)return 'Sem conexão: não consegui confirmar o compromisso.';if(String(err.message).includes('não confirmou'))return err.message;}
+    data.events.push(ev);save();renderAgenda();render();return ev.source==='google'?`Compromisso “${title}” criado no Google Calendar para ${start.toLocaleString('pt-BR')}.`:`Compromisso “${title}” salvo localmente para ${start.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronizá-lo.`;
+  }
+  return null;
+}
+
+$('chatForm').onsubmit=async e=>{
+  e.preventDefault();const q=$('chatInput').value.trim();if(!q)return;
+  addChat(q,'user');$('chatInput').value='';
+  addChat('Processando...','ai');const placeholder=$('chat').lastElementChild;
+  try{
+    const whatsappResult=handleWhatsAppChatRequest(q);
+    if(whatsappResult){placeholder.textContent=whatsappResult;placeholder.className='bubble ai';speakText(whatsappResult);return;}
+    const pending=data.pendingAppointment;
+    const actionQuery=pending?`${pending.original} ${q}`:q;
+    if(pending){delete data.pendingAppointment;save();}
+    if(pending||isPotentialActionRequest(q)){
+      // Compromissos explícitos são interpretados localmente primeiro:
+      // não dependem de uma resposta do Gemini para reconhecer data e horário.
+      const parsed=parseLocalAppointment(actionQuery);
+      if(parsed?.clarification){
+        if(/marcar|agendar|compromisso|evento|reuni[aã]o|consulta/i.test(actionQuery)){data.pendingAppointment={original:actionQuery};save();}
+        placeholder.textContent=parsed.clarification;placeholder.className='bubble ai';speakText(parsed.clarification);return;
+      }
+      if(parsed){
+        const created=await createLocalAppointment(parsed);
+        if(created.error)throw new Error(created.error);
+        placeholder.textContent=created.message;placeholder.className='bubble ai';speakText(created.message);return;
+      }
+
+      // Para outras ações, usa a interpretação da IA. Se o endpoint/Gemini falhar,
+      // a falha não deve impedir os comandos de compromisso que têm parser local.
+      const interpreted=await requestAIAction(actionQuery);
+      if(interpreted?.clarification){
+        placeholder.textContent=interpreted.clarification;placeholder.className='bubble ai';speakText(interpreted.clarification);return;
+      }
+      if(interpreted){const result=await applyAIAction(interpreted);if(result){placeholder.textContent=result;placeholder.className='bubble ai';speakText(result);return;}}
+    }
+    const devResult=await handleDeveloperRequest(q);if(devResult){placeholder.textContent=devResult;placeholder.className='bubble ai';speakText(devResult);return;}
+    const action=await handleNaturalAction(q);if(action){placeholder.textContent=action;placeholder.className='bubble ai';speakText(action);return;}
+    const recentChat=Array.from($('chat')?.children||[])
+      .filter(x=>(x.classList.contains('user')||x.classList.contains('ai'))&&x.textContent?.trim()&&x.textContent.trim()!=='Processando...')
+      .slice(0,-1)
+      .slice(-10)
+      .map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent.trim().slice(0,1800)}));
+    const context={...data,userProfile:{name:'Anthony'},userName:'Anthony',calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),recentChat,currentDate:new Date().toISOString()};
+    const selectedProvider=getAIProvider();
+    const controller=new AbortController();
+    const aiTimeout=setTimeout(()=>controller.abort(),35000);
+    let r;
+    try{
+      r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',signal:controller.signal,body:JSON.stringify({message:q,context,provider:selectedProvider})});
+    }finally{clearTimeout(aiTimeout);}
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      const detail=j.details||j.error||('HTTP '+r.status);
+      const providerName=aiProviderLabel(j.provider||selectedProvider);
+      throw new Error(providerName+' · '+detail+(j.model?' · modelo: '+j.model:''));
+    }
+    if(!j.text)throw new Error(aiProviderLabel(j.provider||selectedProvider)+' não retornou texto. Verifique o teste de IA nas Configurações.');
+    placeholder.textContent=j.text;placeholder.className='bubble ai';speakText(j.text);
+  }catch(err){
+    const message=err?.name==='AbortError'?'A IA demorou mais de 35 segundos para responder.':(err?.message||'Falha desconhecida ao chamar a IA.');
+    const visible=isPotentialActionRequest(q)?'Não consegui concluir esse comando. Nenhuma alteração foi feita. Detalhe: '+message:'Não consegui obter resposta da IA. Detalhe: '+message;
+    placeholder.textContent=visible;placeholder.className='bubble ai';speakText(visible);console.error('PRIMORIS AI:',err);
+  }
+};
+function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai">Olá, Anthony. PRIMORIS online. Pode falar.</div>'}
+function localAI(q){
+  const t=q.toLowerCase();
+  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá, Anthony. PRIMORIS online e pronto para ajudar.';
+  if(/hora/.test(t))return 'Agora são '+new Date().toLocaleTimeString('pt-BR')+'.';
+  if(/agenda|calendário|calendario|compromisso|evento|marcado|programado|o que tenho|o que vou fazer/.test(t))return data.events?.length?'Você tem '+data.events.length+' evento(s) sincronizado(s). Abra a Agenda para ver os detalhes.':'Não há eventos sincronizados no momento.';
+  if(/tarefa/.test(t))return 'Você tem '+(data.tasks||[]).filter(x=>!x.done).length+' tarefa(s) pendente(s).';
+  if(/lembrete/.test(t)){const r=(data.tasks||[]).filter(x=>!x.done&&x.dueDate);return r.length?'Você tem '+r.length+' lembrete(s)/tarefa(s) com data definida.':'Não há lembretes com data definidos.';}
+  if(/estud|estudo/.test(t)){const st=data.studies||[];return st.length?'Você tem '+st.length+' registro(s) de estudo. O último foi '+(st[st.length-1].title||'um estudo')+'.':'Ainda não há registros de estudo.';}
+  if(/mem[oó]ria|lembrar de mim|o que voc[eê] sabe/.test(t)){const ms=data.memories||[];return ms.length?'Tenho '+ms.length+' memória(s) salva(s). Você pode abrir a área Memória para ver e editar.':'Ainda não há memórias salvas.';}
+  if(/notifica/.test(t))return (data.notifications||[]).filter(n=>!n.read).length?'Você tem '+(data.notifications||[]).filter(n=>!n.read).length+' notificação(ões) pendente(s).':'Não há notificações pendentes.';
+  if(/quanto.*(gastar|tenho|devo)|saldo|financeir/.test(t)){const f=loadFinanceData();return `Saldo: ${moneyBR(financeBalance(f))}. Gastos: ${moneyBR(monthlySpent(f))}. Dívidas: ${moneyBR(financeDebt(f))}. Disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}`;}
+  if(/como.*(responder|respostas)|minha prefer[eê]ncia/.test(t)){const prefs=(data.memories||[]).filter(m=>m.category==='Preferências');if(prefs.length)return 'Vou considerar estas preferências salvas: '+prefs.map(m=>m.text).join('; ');}
+  return window.primorisAIConnected?'Estou conectado ao '+aiProviderLabel(getAIProvider())+' e pronto para ajudar.':'O servidor da IA não está disponível neste momento. Verifique a conexão do PRIMORIS.';
+}
+
+async function syncCalendar(){
+  try{
+    const r=await fetch('/api/calendar/events?ts='+Date.now(),{cache:'no-store'});
+      if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||err.details||('HTTP '+r.status));}
+      const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Não conectado');
+    data.events=(j.events||[]).map(e=>({id:e.id,title:e.summary||'Evento',description:e.description||'',date:e.start?.dateTime||e.start?.date,source:'google'}));
+    save();render();$('calendarStatus').textContent='Google Calendar conectado e sincronizado.';toast('Agenda sincronizada');
+  }catch(e){$('calendarStatus').textContent='Não foi possível sincronizar. Use Conectar para autorizar o Google Calendar.';toast('Agenda não sincronizada')}
+}
+function connectCalendar(){location.href='/auth/google'}
+
+async function loadClimate(){
+  const city=localStorage.getItem('primoris_climate_city')||'';
+  if($('climateCityInput')&&!$('climateCityInput').value) $('climateCityInput').value=city;
+  const state=$('climateUpdated');
+  if(!city){
+    if($('climateCity'))$('climateCity').textContent='Escolha sua cidade';
+    if(state)state.textContent='Digite sua cidade para carregar o clima em tempo real.';
+    return;
+  }
+  if(state)state.textContent='Atualizando clima em tempo real...';
+  try{
+    const r=await fetch('/api/weather?city='+encodeURIComponent(city)+'&t='+Date.now(),{cache:'no-store'});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.details||j.error||'Não foi possível consultar o clima.');
+    const c=j.current||{},w=j.weather||{};
+    $('climateCity').textContent=j.location?.name+(j.location?.admin1?', '+j.location.admin1:'');
+    $('climateCityInput').value=city;
+    $('climateTemp').textContent=Math.round(c.temperature)+'°';
+    $('climateCondition').textContent=c.condition||'Condição atual';
+    $('climateFeels').textContent='Sensação: '+Math.round(c.apparentTemperature)+'°';
+    $('climateHumidity').textContent=Math.round(c.humidity)+'%';
+    $('climateWind').textContent=Math.round(c.windSpeed)+' km/h';
+    $('climateRain').textContent=Math.round(c.precipitationProbability||0)+'%';
+    $('climateIcon').textContent=c.icon||'☁';
+    state.textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    $('climateHourly').innerHTML=(w.hourly||[]).slice(0,12).map(x=>`<div class="climate-hour"><strong>${escapeHtml(x.time)}</strong><div class="climate-mini-icon">${x.icon||'☁'}</div><div>${Math.round(x.temperature)}°</div><small class="muted">Chuva ${Math.round(x.rain||0)}%</small></div>`).join('')||'<div class="muted">Sem previsão horária disponível.</div>';
+    $('climateDaily').innerHTML=(w.daily||[]).slice(0,7).map(x=>`<div class="climate-day"><strong>${escapeHtml(x.day)}</strong><div class="climate-mini-icon">${x.icon||'☁'}</div><div>${Math.round(x.max)}° / ${Math.round(x.min)}°</div><small class="muted">Chuva ${Math.round(x.rain||0)}%</small></div>`).join('')||'<div class="muted">Sem previsão diária disponível.</div>';
+  }catch(e){
+    if(state)state.textContent=e.message||'Falha ao atualizar o clima.';
+    if($('climateCondition'))$('climateCondition').textContent='Não foi possível atualizar agora';
+  }
+}
+function saveClimateCity(){const city=String($('climateCityInput')?.value||'').trim();if(!city)return toast('Digite sua cidade.');localStorage.setItem('primoris_climate_city',city);loadClimate();toast('Cidade do clima salva.');}
+function useMyLocationForClimate(){
+  if(!navigator.geolocation)return toast('Seu navegador não oferece localização.');
+  toast('Solicitando sua localização...');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{const r=await fetch(`/api/weather/reverse?lat=${encodeURIComponent(pos.coords.latitude)}&lon=${encodeURIComponent(pos.coords.longitude)}`,{cache:'no-store'});const j=await r.json();if(!r.ok)throw new Error(j.details||'Não foi possível identificar a cidade.');localStorage.setItem('primoris_climate_city',j.city);if($('climateCityInput'))$('climateCityInput').value=j.city;loadClimate();toast('Localização do clima atualizada.');}catch(e){toast(e.message||'Não foi possível usar sua localização.');}
+  },()=>toast('Permissão de localização não concedida.'),{enableHighAccuracy:false,timeout:10000,maximumAge:300000});
+}
+
+function renderIntelligence(){
+  const upcoming=(data.events||[]).filter(x=>new Date(x.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+  $('intelAgenda').innerHTML=upcoming.length?upcoming.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div></div>`).join(''):'<div class="muted">Nenhum compromisso próximo.</div>';
+  const tasks=(data.tasks||[]).filter(x=>!x.done).sort((a,b)=>new Date(a.dueDate||a.date||'2999')-new Date(b.dueDate||b.date||'2999')).slice(0,5);
+  $('intelTasks').innerHTML=tasks.length?tasks.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${x.dueDate?new Date(x.dueDate+'T12:00:00').toLocaleDateString('pt-BR'):'Sem prazo'}</div></div>`).join(''):'<div class="muted">Nenhuma tarefa pendente.</div>';
+  const studies=(data.studies||[]).slice(-5).reverse();
+  $('intelStudies').innerHTML=studies.length?studies.map(x=>`<div class="item"><b>${escapeHtml(x.title||'Estudo')}</b><div class="event-meta">${x.minutes?x.minutes+' min · ':''}${x.date?new Date(x.date).toLocaleDateString('pt-BR'):''}</div></div>`).join(''):'<div class="muted">Nenhum estudo registrado.</div>';
+  const newsItems=[...document.querySelectorAll('#newsList .card')].slice(0,5);
+  $('intelNews').innerHTML=newsItems.length?newsItems.map(a=>`<a class="item intel-news-link" href="${a.href}" target="_blank" rel="noopener"><b>${a.querySelector('h3')?.textContent||'Notícia'}</b><div class="event-meta">${a.querySelector('.muted')?.textContent||'Informações'}</div></a>`).join(''):'<div class="muted">Abra Informações para carregar as notícias.</div>';
+}
+
+async function createGmailDraft(event){
+  event?.preventDefault();
+  const to=String($('gmailDraftTo')?.value||'').trim();
+  const subject=String($('gmailDraftSubject')?.value||'').trim();
+  const body=String($('gmailDraftBody')?.value||'').trim();
+  const status=$('gmailDraftStatus');
+  if(!to||!subject||!body){if(status)status.textContent='Preencha destinatário, assunto e mensagem.';return;}
+  if(status)status.textContent='Salvando rascunho no Gmail...';
+  try{
+    const r=await fetch('/api/gmail/draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject,body})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.details||j.error||'Não foi possível criar o rascunho.');
+    if(status)status.textContent='✓ Rascunho salvo no Gmail.';
+    toast('Rascunho salvo no Gmail');
+    event?.target?.reset?.();
+  }catch(e){
+    if(status)status.textContent=e.message||'Falha ao salvar o rascunho.';
+    toast('Não foi possível salvar o rascunho');
+  }
+}
+function clearGmailDraft(){
+  const f=$('gmailDraftForm');if(f)f.reset();
+  const s=$('gmailDraftStatus');if(s)s.textContent='';
+}
+async function loadEmails(){
+  const box=$('emailList'),state=$('emailState');if(!box||!state)return;
+  state.textContent='Consultando sua caixa de entrada...';box.innerHTML='<div class="muted">Carregando e-mails...</div>';
+  try{
+    const q=String($('emailSearch')?.value||'').trim();const r=await fetch('/api/gmail/messages?max=20'+(q?'&q='+encodeURIComponent(q):''),{cache:'no-store'});const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.details||j.error||'Gmail não conectado.');
+    const items=j.messages||[];state.textContent=items.length?`${items.length} mensagens encontradas.`:'Nenhuma mensagem encontrada.';
+    box.innerHTML=items.length?items.map(m=>`<div class="item email-item ${m.unread?'unread':''}" onclick="openEmail('${escapeHtml(m.id)}')"><div class="email-from">${escapeHtml(m.from||'Remetente desconhecido')}</div><h3>${escapeHtml(m.subject||'(Sem assunto)')}</h3><div class="event-meta">${escapeHtml(m.date||'')}</div><small class="muted">${escapeHtml(m.snippet||'')}</small></div>`).join(''):'<div class="muted">Sua caixa de entrada está vazia ou a pesquisa não encontrou resultados.</div>';
+  }catch(e){state.textContent=e.message||'Falha ao consultar Gmail.';box.innerHTML='<div class="card"><h3>Gmail não disponível</h3><p class="muted">Conecte sua conta Google em Integrações para visualizar seus e-mails.</p><button class="btn primary" onclick="connectCalendar()">Conectar Google</button></div>';}
+}
+async function openEmail(id){const viewer=$('emailViewer');if(!viewer)return;viewer.innerHTML='<div class="muted">Abrindo mensagem...</div>';try{const r=await fetch('/api/gmail/message/'+encodeURIComponent(id),{cache:'no-store'});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.details||j.error||'Não foi possível abrir a mensagem.');viewer.innerHTML=`<div class="email-subject">${escapeHtml(j.subject||'(Sem assunto)')}</div><div class="email-meta"><b>De:</b> ${escapeHtml(j.from||'')}<br><b>Data:</b> ${escapeHtml(j.date||'')}</div><div class="email-body">${escapeHtml(j.body||j.snippet||'')}</div>`;}catch(e){viewer.innerHTML=`<div class="muted">${escapeHtml(e.message||'Falha ao abrir o e-mail.')}</div>`;}}
+
+async function loadNews(){
+  const box=$('newsList'),state=$('newsState');
+  box.innerHTML='<div class="card">Atualizando notícias...</div>';state.textContent='Consultando Google News em tempo real...';
+  try{
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
+    const r=await fetch('/api/news?t='+Date.now(),{method:'GET',cache:'no-store',signal:controller.signal});clearTimeout(timer);
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Servidor retornou erro');
+    const items=j.items||[];
+    if(!items.length){box.innerHTML='<div class="card">Nenhuma notícia disponível neste momento.</div>';state.textContent='Sem resultados agora.';return}
+    box.innerHTML=items.map(n=>`<a class="card" href="${escapeHtml(n.link)}" target="_blank" rel="noopener"><span class="badge">${escapeHtml(n.category||'Notícia')}</span><h3>${escapeHtml(n.title)}</h3><p class="muted">${escapeHtml(n.source||'Google News')}</p></a>`).join('');
+    state.textContent=`Atualizado agora · ${items.length} notícias`;
+  }catch(e){
+    box.innerHTML=`<div class="card"><h3>Não foi possível atualizar</h3><p class="muted">${escapeHtml(e.message||'Erro desconhecido')}</p><button class="btn" onclick="loadNews()">Tentar novamente</button></div>`;
+    state.textContent='Falha ao consultar notícias.';
+  }
+}
+
+let primorisAIConnected=false;
+let primorisDevEnabled=false;
+let primorisDevAuthenticated=false;
+const DEV_KEY_STORAGE='primoris_dev_key_session';
+
+function isDeveloperRequest(q){
+  return /\b(mude|mudar|altere|alterar|modifique|modificar|troque|trocar|adicione|adicionar|remova|remover|apague|apagar|crie|criar|coloque|retire|faça|faca|deixe|transforme|edite|editar|corrija|corrigir)\b/i.test(String(q||'')) && /\b(site|página|pagina|visual|cor|tema|bot[aã]o|botões|botoes|texto|t[ií]tulo|fun[cç][aã]o|menu|tela|layout|design|html|pr[ií]moris)\b/i.test(String(q||''));
+}
+
+function updateDevUI(){
+  const status=$('devStatus'),badge=$('devBadge');
+  if(!status||!badge)return;
+  if(primorisDevAuthenticated){status.textContent='Modo desenvolvedor autorizado. A IA pode aplicar alterações no site.';badge.textContent='ATIVO';badge.classList.add('dev-on');}
+  else if(primorisDevEnabled){status.textContent='Disponível. Informe a chave criada no Render para ativar.';badge.textContent='BLOQUEADO';badge.classList.remove('dev-on');}
+  else{status.textContent='Modo desenvolvedor não configurado no servidor.';badge.textContent='DESATIVADO';badge.classList.remove('dev-on');}
+}
+
+async function refreshDeveloperStatus(){
+  try{
+    const saved=sessionStorage.getItem(DEV_KEY_STORAGE)||'';
+    const r=await fetch('/api/dev/status?ts='+Date.now(),{cache:'no-store',headers:saved?{'x-dev-key':saved}:{}});
+    const j=await r.json();
+    primorisDevEnabled=!!j.enabled;
+    primorisDevAuthenticated=!!j.authenticated;
+    if(primorisDevAuthenticated && saved){$('devKeyInput').value=saved;}
+  }catch(e){primorisDevEnabled=false;primorisDevAuthenticated=false;}
+  updateDevUI();
+}
+
+async function unlockDeveloperMode(){
+  const input=$('devKeyInput');const key=(input?.value||'').trim();
+  if(!key){toast('Digite a chave do modo desenvolvedor.');return;}
+  try{
+    const r=await fetch('/api/dev/status?ts='+Date.now(),{cache:'no-store',headers:{'x-dev-key':key}});
+    const j=await r.json();
+    primorisDevEnabled=!!j.enabled;
+    if(!r.ok||!j.authenticated){sessionStorage.removeItem(DEV_KEY_STORAGE);primorisDevAuthenticated=false;updateDevUI();toast('Chave do modo desenvolvedor incorreta.');return;}
+    sessionStorage.setItem(DEV_KEY_STORAGE,key);primorisDevAuthenticated=true;updateDevUI();toast('Modo desenvolvedor ativado.');
+  }catch(e){toast('Não foi possível verificar o modo desenvolvedor.');}
+}
+
+function lockDeveloperMode(){sessionStorage.removeItem(DEV_KEY_STORAGE);primorisDevAuthenticated=false;const input=$('devKeyInput');if(input)input.value='';updateDevUI();toast('Modo desenvolvedor bloqueado.');}
+
+async function requestDeveloperEdit(request){
+  const key=sessionStorage.getItem(DEV_KEY_STORAGE)||'';
+  if(!key)throw new Error('Ative o modo desenvolvedor nas Configurações antes de pedir alterações no site.');
+  const r=await fetch('/api/dev/edit',{method:'POST',headers:{'Content-Type':'application/json','x-dev-key':key},body:JSON.stringify({request})});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){lockDeveloperMode();throw new Error('A autorização do modo desenvolvedor expirou. Ative novamente nas Configurações.');}
+  if(!r.ok)throw new Error(j.details||j.error||'Não foi possível aplicar a alteração.');
+  return j;
+}
+
+async function handleDeveloperRequest(q){
+  if(!isDeveloperRequest(q))return null;
+  if(!primorisDevAuthenticated)return 'Esse é um comando de alteração do site. Ative o Modo desenvolvedor em Configurações e depois repita o comando.';
+  const result=await requestDeveloperEdit(q);
+  return (result.summary||'Alteração aplicada.')+' Arquivo(s) alterado(s): '+((result.changed||[]).join(', ')||'nenhum')+'.';
+}
+
+const AI_PROVIDER_STORAGE='primoris_ai_provider';
+function getAIProvider(){const p=localStorage.getItem(AI_PROVIDER_STORAGE)||'openrouter';return ['openrouter','gemini','groq','cloudflare','auto'].includes(p)?p:'openrouter';}
+function aiProviderLabel(p){return ({openai:'OpenAI',gemini:'Google Gemini',groq:'Groq',cloudflare:'Cloudflare AI',auto:'Automático',openrouter:'OpenRouter'})[p]||'OpenRouter';}
+async function setAIProvider(provider){
+  provider=['openrouter','gemini','groq','cloudflare','auto'].includes(provider)?provider:'openrouter';
+  try{
+    const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});
+    const j=await r.json();
+    const available=provider==='auto'?Object.values(j?.providers||{}).some(x=>x.available):!!j?.providers?.[provider]?.available;
+    if(!available){
+      toast(aiProviderLabel(provider)+' não está configurado no servidor.');
+      updateAIProviderUI(j);
+      return;
+    }
+  }catch(e){toast('Não foi possível verificar a IA.');return;}
+  localStorage.setItem(AI_PROVIDER_STORAGE,provider);
+  updateAIProviderUI();
+  toast('IA selecionada: '+aiProviderLabel(provider));
+}
+function updateAIProviderUI(status){
+  const select=$('aiProviderSelect');const label=$('aiProviderStatus');if(!select)return;
+  const p=getAIProvider();select.value=p;
+  const providers=status?.providers;
+  if(providers){
+    const available=p==='auto'?Object.values(providers).some(x=>x.available):!!providers[p]?.available;
+    label.textContent=available?'● '+aiProviderLabel(p)+' disponível':'● '+aiProviderLabel(p)+' não configurado';
+  }else label.textContent='IA escolhida: '+aiProviderLabel(p);
+}
+async function loadAIProvider(){
+  updateAIProviderUI();
+  try{const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();updateAIProviderUI(j);}catch{}
+}
+
+async function testAI(){
+ try{const r=await fetch('/api/ai/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:getAIProvider()})});const j=await r.json().catch(()=>({}));const ok=!!j.ok;primorisAIConnected=ok;const first=(j.results||[]).find(x=>x.ok);$('systemStatus').textContent=ok?`${aiProviderLabel(first.provider)} respondeu em ${first.elapsedMs} ms.`:(j.results||[]).map(x=>x.error).join('; ')||'Nenhum provedor respondeu.';toast(ok?'Teste real da IA concluído.':'Falha no teste da IA.');}
+ catch(e){primorisAIConnected=false;$('systemStatus').textContent='Falha no teste: '+e.message;toast('Falha na IA')}
+}
+
+async function runAllAITests(){
+ const box=$('diagAI'),details=$('diagDetails');
+ box.innerHTML='<div class="muted">Testando todos os provedores em paralelo...</div>';
+ details.innerHTML='';
+ try{
+   const r=await fetch('/api/ai/test',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({provider:'auto'})});
+   const j=await r.json().catch(()=>({}));
+   const labels={openai:'OpenAI',openrouter:'OpenRouter',gemini:'Google Gemini',groq:'Groq',cloudflare:'Cloudflare AI'};
+   const statusLabel=x=>x.ok?'✓ Funcionando':
+     x.errorCode==='provider_not_configured'?'🔑 Chave não configurada':
+     x.status===429?'⏳ Limite ou cota atingida':
+     x.status===401||x.status===403?'❌ Falha de autenticação':
+     x.status===504?'⌛ Tempo limite excedido':
+     x.status===503?'⏳ Provedor temporariamente indisponível':
+     x.status>=500?'❌ Erro no provedor/servidor':'❌ Falha no teste';
+   const results=Array.isArray(j.results)?j.results:[];
+   box.innerHTML=results.map(x=>`<div class="item"><b>${labels[x.provider]||escapeHtml(x.provider||'Provedor')}</b><div>${statusLabel(x)} ${x.elapsedMs?`· ${x.elapsedMs} ms`:''} · HTTP ${Number(x.status)||'—'}</div><small>${escapeHtml(x.model||'Modelo não informado')}${x.error?' · '+escapeHtml(x.error):''}</small></div>`).join('')||
+     `<div class="item">❌ ${escapeHtml(j.details||j.error||('Nenhum resultado retornado. HTTP '+r.status))}</div>`;
+   details.innerHTML=results.map(x=>`<div class="item"><b>${labels[x.provider]||escapeHtml(x.provider||'Provedor')}</b><div>${x.ok?'Resposta: '+escapeHtml(x.text||'OK'):'Erro: '+escapeHtml(x.error||'O servidor não informou detalhes.')}</div><small>HTTP ${Number(x.status)||'—'}${x.errorCode?' · Código: '+escapeHtml(x.errorCode):''}${x.model?' · Modelo: '+escapeHtml(x.model):''}${x.responseInfo?' · choices: '+x.responseInfo.choices+' · content: '+escapeHtml(x.responseInfo.contentType):''}${x.responseInfo?.finishReason?' · finish: '+escapeHtml(x.responseInfo.finishReason):''}</small></div>`).join('')||
+     '<div class="muted">O servidor não retornou detalhes dos testes.</div>';
+   primorisAIConnected=!!j.ok;
+   return j;
+ }catch(e){
+   box.innerHTML='<div class="item">❌ Não foi possível executar os testes: '+escapeHtml(e.message)+'</div>';
+   details.innerHTML='<div class="muted">Verifique a conexão com o servidor e tente novamente.</div>';
+   primorisAIConnected=false;
+   return null;
+ }
+}
+async function runFullDiagnostics(){
+ const box=$('diagSystem');box.innerHTML='<div class="muted">Verificando servidor, frontend e armazenamento...</div>';const results=[];
+ try{const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();results.push(['Servidor',r.ok&&j.ok,'HTTP '+r.status]);results.push(['Configurações',r.ok,'Endpoint de status acessível']);}catch(e){results.push(['Servidor',false,e.message]);}
+ try{const probe='primoris_diag_'+Date.now();localStorage.setItem(probe,'ok');const ok=localStorage.getItem(probe)==='ok';localStorage.removeItem(probe);results.push(['Armazenamento local',ok,'Teste de gravação/leitura']);}catch(e){results.push(['Armazenamento local',false,e.message]);}
+ results.push(['Frontend',!!document.getElementById('page-home')&&!!document.getElementById('chatForm'),'DOM principal carregado']);
+ for(const [label,url] of [['Google Calendar','/api/calendar/events'],['Gmail','/api/gmail/messages?max=1']]){
+   try{const r=await fetch(url,{cache:'no-store'});const j=await r.json().catch(()=>({}));results.push([label,r.ok,r.ok?'Conexão autenticada e endpoint respondeu':r.status===401?'Não conectado — requer autorização Google':(j.details||j.message||j.error||'HTTP '+r.status)]);}
+   catch(e){results.push([label,false,e.message]);}
+ }
+ box.innerHTML=results.map(x=>`<div class="item">${x[1]?'✓':/Não conectado/.test(x[2])?'⚠️':'❌'} <b>${escapeHtml(x[0])}</b><small> · ${escapeHtml(x[2])}</small></div>`).join('');await runAllAITests();
+}
+async function checkStatus(){
+  try{
+    const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();
+    primorisAIConnected=!!j.ai;
+    $('systemStatus').textContent=j.ai?(aiProviderLabel(getAIProvider())+' conectado.'):'IA externa não configurada.';
+    updateAIProviderUI(j);
+  }catch{primorisAIConnected=false;$('systemStatus').textContent='Servidor não respondeu.'}
+  refreshDeveloperStatus();
+}
+
+function exportData(){
+  try{
+    const financeRaw=localStorage.getItem('primoris_financas_v1');
+    const finances=financeRaw?JSON.parse(financeRaw):{tenho:0,gastei:0,posso:0,devo:0};
+    const backup={version:2,exportedAt:new Date().toISOString(),primoris:data,finances:loadFinanceData()};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const today=new Date();
+    const date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    a.href=url;a.download=`PRIMORIS-backup-${date}.json`;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    localStorage.setItem('primoris_last_backup',new Date().toISOString());updateBackupStatus();devLog('Backup completo exportado');toast('Backup completo exportado');
+  }catch(err){console.error('Erro ao exportar backup:',err);toast('Não foi possível exportar os dados')}
+}
+$('importFile').onchange=e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const backup=JSON.parse(reader.result);
+      const validObject=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+      if(!validObject(backup)||![1,2].includes(backup.version)||!validObject(backup.primoris)||!validObject(backup.finances))throw new Error('Formato de backup não reconhecido');
+      const requiredArrays=['tasks','events','studies','opportunities'];
+      if(!requiredArrays.every(key=>Array.isArray(backup.primoris[key])))throw new Error('Dados principais incompletos');
+      if(backup.version===1&&!['tenho','gastei','posso','devo'].every(key=>Number.isFinite(Number(backup.finances[key]))))throw new Error('Dados financeiros inválidos');
+      if(backup.version===2&&(!Number.isFinite(Number(backup.finances.opening))||!Array.isArray(backup.finances.transactions)))throw new Error('Dados financeiros inválidos');
+      if(!confirm('Importar este backup substituirá os dados atuais do PRIMORIS e as finanças. Deseja continuar?'))return;
+      const previousMain=localStorage.getItem(KEY);
+      const previousFinances=localStorage.getItem('primoris_financas_v1');
+      try{
+        localStorage.setItem(KEY,JSON.stringify(backup.primoris));
+        localStorage.setItem('primoris_financas_v1',JSON.stringify(backup.version===1?{opening:Number(backup.finances.tenho)||0,transactions:[],legacy:{gastei:Number(backup.finances.gastei)||0,devo:Number(backup.finances.devo)||0}}:backup.finances));
+      }catch(storageError){
+        if(previousMain===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,previousMain);
+        if(previousFinances===null)localStorage.removeItem('primoris_financas_v1');else localStorage.setItem('primoris_financas_v1',previousFinances);
+        throw storageError;
+      }
+      data=backup.primoris;
+      render();
+      if(typeof renderMemories==='function')renderMemories();
+      if(typeof renderFinancas==='function')renderFinancas();
+      toast('Restauração do PRIMORIS concluída');
+    }catch(err){console.error('Erro ao importar backup:',err);toast(err.message==='Formato de backup não reconhecido'||err.message==='Dados principais incompletos'||err.message==='Dados financeiros inválidos'?err.message:'Não foi possível restaurar o backup')}
+    finally{e.target.value=''}
+  };
+  reader.onerror=()=>{toast('Não foi possível ler o arquivo');e.target.value=''};
+  reader.readAsText(file);
+}
+function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();localStorage.removeItem('primoris_last_backup');devLog('Dados locais apagados');toast('Dados locais apagados')}}
+
+
+function notificationKey(type,id){return `${type}:${id}`}
+function addSmartNotification(type,title,message,sourceId){
+  data.notifications=Array.isArray(data.notifications)?data.notifications:[];
+  const key=notificationKey(type,sourceId||title);
+  if(data.notifications.some(n=>n.key===key&&!n.read))return;
+  data.notifications.unshift({id:id(),key,type,title,message,read:false,createdAt:new Date().toISOString()});
+  data.notifications=data.notifications.slice(0,50);save();
+}
+function markNotificationRead(nid){data.notifications=(data.notifications||[]).map(n=>n.id===nid?{...n,read:true}:n);save();renderDashboard()}
+function clearNotifications(){data.notifications=[];save();renderDashboard();toast('Notificações limpas')}
+async function enableNotifications(){
+  if(!('Notification' in window)){toast('Este navegador não oferece notificações.');return}
+  try{const p=await Notification.requestPermission();toast(p==='granted'?'Notificações ativadas.':'Permissão de notificações não concedida.');checkSmartNotifications()}catch(e){toast('Não foi possível ativar as notificações.')}
+}
+function showBrowserNotification(title,message){if(!('Notification' in window)||Notification.permission!=='granted')return;try{new Notification(title,{body:message,tag:'primoris-'+title})}catch(e){}}
+function checkSmartNotifications(){
+  const now=new Date();
+  (data.tasks||[]).filter(t=>!t.done).forEach(t=>{
+    if(!t.dueDate)return;
+    const due=new Date(`${t.dueDate}T${t.dueTime||'09:00'}:00`);if(Number.isNaN(due.getTime()))return;
+    const diff=due-now;
+    if(diff>=0&&diff<=60*60*1000){
+      const msg=`Tarefa: ${t.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
+      const before=(data.notifications||[]).find(n=>n.key===notificationKey('task',t.id));
+      if(!before||before.read){addSmartNotification('task','Tarefa próxima',msg,t.id);showBrowserNotification('PRIMORIS · Tarefa próxima',msg)}
+    }
+  });
+  (data.events||[]).filter(e=>e.date).forEach(e=>{
+    const due=new Date(e.date);if(Number.isNaN(due.getTime()))return;const diff=due-now;
+    if(diff>=0&&diff<=60*60*1000){
+      const msg=`${e.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
+      const before=(data.notifications||[]).find(n=>n.key===notificationKey('event',e.id));
+      if(!before||before.read){addSmartNotification('event','Compromisso próximo',msg,e.id);showBrowserNotification('PRIMORIS · Compromisso próximo',msg)}
+    }
+  });
+  renderDashboardNotifications();
+}
+function renderDashboardNotifications(){
+  const box=$('notificationList');if(!box)return;
+  const arr=(data.notifications||[]).filter(n=>!n.read).slice(0,8);
+  box.innerHTML=arr.length?arr.map(n=>`<div class="item"><div><b>${escapeHtml(n.title)}</b><div class="event-meta">${escapeHtml(n.message)}</div></div><button class="btn" type="button" onclick="markNotificationRead('${escapeHtml(n.id)}')">OK</button></div>`).join(''):'<div class="muted">Nenhuma notificação pendente.</div>';
+}
+function smartDashboardBrief(){
+  const pending=(data.tasks||[]).filter(t=>!t.done).length;
+  const today=new Date();const start=new Date(today.getFullYear(),today.getMonth(),today.getDate()),end=new Date(start);end.setDate(end.getDate()+1);
+  const todayEvents=(data.events||[]).filter(e=>{const d=new Date(e.date);return d>=start&&d<end}).length;
+  const studies=(data.studies||[]).filter(x=>String(x.date||'').slice(0,10)===today.toISOString().slice(0,10)).length;
+  const parts=[];if(todayEvents)parts.push(`${todayEvents} compromisso(s) hoje`);if(pending)parts.push(`${pending} tarefa(s) pendente(s)`);if(studies)parts.push(`${studies} estudo(s) registrado(s) hoje`);
+  return parts.length?parts.join(' · ')+'.':'Seu dia está livre de registros urgentes. Você venceu a agenda, por enquanto.';
+}
+
+function renderDashboard(){
+ const ev=(data.events||[]).filter(x=>new Date(x.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+ $('dashEvents').innerHTML=ev.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum compromisso futuro registrado.</div>';
+ const rem=(data.reminders||[]).filter(x=>!x.done&&x.date).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+ $('dashReminders').innerHTML=rem.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum lembrete futuro registrado.</div>';
+ if(typeof loadFinanceData==='function') { const f=loadFinanceData();$('dashFinance').textContent=`Saldo ${moneyBR(financeBalance(f))} · Gastos no mês ${moneyBR(monthlySpent(f))} · Dívidas ${moneyBR(financeDebt(f))}`; }
+ $('dashStudies').innerHTML=(data.studies||[]).slice(-4).reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${escapeHtml(x.kind||'Estudo')}${x.grade!==null&&x.grade!==undefined?' · Nota '+escapeHtml(x.grade):''}</div></div>`).join('')||'<div class="muted">Nenhum registro de estudo.</div>';
+ renderDashboardNotifications();if($('brief'))$('brief').textContent=smartDashboardBrief();
+}
+function renderGlobalSearch(){
+ const q=($('globalSearch')?.value||'').trim().toLocaleLowerCase('pt-BR'),box=$('globalSearchResults');if(!box)return;if(!q){box.innerHTML='<div class="muted">Digite um termo para pesquisar nos seus dados locais.</div>';return}
+ const out=[],add=(type,title,detail,page)=>{if((title+' '+detail).toLocaleLowerCase('pt-BR').includes(q))out.push({type,title,detail,page})};
+ (data.tasks||[]).forEach(x=>add('Tarefa',x.title,`${x.dueDate||''} ${x.priority||''}`,'tasks'));
+ (data.memories||[]).forEach(x=>add('Memória',x.text,x.category||'','memory'));
+ (data.events||[]).forEach(x=>add('Compromisso',x.title,`${x.date||''} ${x.description||''}`,'agenda'));
+ (data.studies||[]).forEach(x=>add('Estudos',x.title,`${x.kind||''} ${x.notes||''} ${x.date||''}`,'studies'));
+ loadFinanceData().transactions.forEach(x=>add('Movimentação',x.description,`${x.category} ${x.type} ${x.amount} ${x.date}`,'finance'));
+ box.innerHTML=out.length?out.slice(0,80).map(x=>`<div class="item"><span class="badge">${escapeHtml(x.type)}</span><b>${escapeHtml(x.title)}</b><div class="event-meta">${escapeHtml(x.detail)}</div><button class="btn" onclick="showPage('${x.page}')">Abrir</button></div>`).join(''):'<div class="muted">Nenhum resultado encontrado.</div>';
+}
+function clock(){
+  const d=new Date();$('clock').textContent=d.toLocaleTimeString('pt-BR');
+  $('date').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+}
+setInterval(clock,1000);clock();render();clearChat();checkStatus();
+loadAIProvider();loadNews();if(localStorage.getItem('primoris_climate_city'))loadClimate();setAppearance(localStorage.getItem('primoris_appearance')||'default');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
+showPage('home');
 </script>
+
+<script id="primoris-gemini-test">
+async function testarGemini(){
+  const el=document.getElementById("aiStatus")||document.getElementById("statusAI")||document.getElementById("aiProviderStatus");
+  try{
+    const r=await fetch("/api/ai/test",{method:"POST",headers:{"Content-Type":"application/json"},cache:"no-store",body:JSON.stringify({provider:"gemini"})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok){
+      const detalhe=j.error||j.details||("HTTP "+r.status);
+      if(el)el.textContent="Gemini: erro "+r.status+" · "+detalhe;
+      toast("Gemini não respondeu: "+detalhe);
+      return j;
+    }
+    if(el)el.textContent="● Google Gemini funcionando · "+j.model;
+    toast("Google Gemini funcionando");
+    return j;
+  }catch(e){
+    if(el)el.textContent="Gemini: servidor indisponível";
+    toast("Não foi possível testar o Gemini");
+    return {ok:false,error:e.message||"erro"};
+  }
+}
+</script>
+
+
+<script id="primoris-finance-js">
+const FIN_KEY='primoris_financas_v1';let financeEditId=null,eventEditId=null,memoryEditId=null;
+function loadFinanceData(){try{let x=JSON.parse(localStorage.getItem(FIN_KEY)||'{}');return{opening:Number(x.opening??x.tenho??0),transactions:Array.isArray(x.transactions)?x.transactions:[],legacy:{gastei:Number(x.gastei||0),devo:Number(x.devo||0)}}}catch{return{opening:0,transactions:[],legacy:{gastei:0,devo:0}}}}
+function saveFinanceData(f){localStorage.setItem(FIN_KEY,JSON.stringify(f))}
+function moneyBR(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function financeBalance(f){return f.opening+f.transactions.reduce((n,x)=>n+(x.type==='entrada'?x.amount:x.type==='gasto'||x.type==='pagamento'?-x.amount:0),0)}
+function monthlySpent(f){let m=new Date().toISOString().slice(0,7);return f.transactions.filter(x=>x.type==='gasto'&&String(x.date).startsWith(m)).reduce((n,x)=>n+x.amount,0)+(f.transactions.length?0:f.legacy.gastei)}
+function financeDebt(f){return Math.max(0,f.transactions.reduce((n,x)=>n+(x.type==='divida'?x.amount:x.type==='pagamento'?-x.amount:0),0)+(f.transactions.length?0:f.legacy.devo))}
+function renderFinancas(){let f=loadFinanceData(),bal=financeBalance(f),spent=monthlySpent(f),debt=financeDebt(f),avail=Math.max(0,bal-debt-(f.transactions.length?0:f.legacy.gastei));[['finTenho',bal],['finGastei',spent],['finPosso',avail],['finDevo',debt]].forEach(([id,v])=>{if($(id))$(id).textContent=moneyBR(v)});if($('finResumo'))$('finResumo').textContent=`Saldo ${moneyBR(bal)} · Gastos ${moneyBR(spent)} · Dívidas ${moneyBR(debt)} · Disponível ${moneyBR(avail)}`;if($('financeHistory'))$('financeHistory').innerHTML=f.transactions.length?f.transactions.slice().reverse().map(x=>`<div class=\"item movement-item\"><div><b>${escapeHtml(x.description)}</b><div class=\"event-meta\">${escapeHtml(x.category)} · ${escapeHtml(x.date)} · ${escapeHtml(x.type)}</div><strong>${moneyBR(x.amount)}</strong></div><div class=\"item-actions\"><button class=\"btn\" onclick=\"editFinance('${x.id}')\">Editar</button><button class=\"btn danger\" onclick=\"deleteFinance('${x.id}')\">Excluir</button></div></div>`).join(''):'<div class=\"muted\">Nenhuma movimentação.</div>';if($('financeChart')){let ts=['entrada','gasto','divida','pagamento'],ls=['Entradas','Gastos','Dívidas','Pagamentos'],mo=new Date().toISOString().slice(0,7),vs=ts.map(t=>f.transactions.filter(x=>x.type===t&&String(x.date).startsWith(mo)).reduce((n,x)=>n+x.amount,0)),mx=Math.max(1,...vs);$('financeChart').innerHTML=vs.map((v,i)=>`<div class=\"finance-bar\" style=\"height:${Math.max(4,v/mx*110)}px\" title=\"${ls[i]} ${moneyBR(v)}\"><small>${ls[i]}</small></div>`).join('')}}
+$('financeForm').onsubmit=e=>{e.preventDefault();let f=loadFinanceData(),x={id:financeEditId||crypto.randomUUID(),description:$('finDescription').value.trim(),type:$('finType').value,amount:Number($('finAmount').value),category:$('finCategory').value.trim(),date:$('finDate').value};if(!x.description||!x.category||x.amount<=0)return toast('Preencha os campos corretamente');if(financeEditId)f.transactions=f.transactions.map(v=>v.id===financeEditId?x:v);else f.transactions.push(x);saveFinanceData(f);e.target.reset();$('finDate').value=new Date().toISOString().slice(0,10);financeEditId=null;$('finCancel').hidden=true;renderFinancas();toast('Movimentação salva')};
+function editFinance(id){let x=loadFinanceData().transactions.find(v=>v.id===id);if(!x)return;financeEditId=id;$('finDescription').value=x.description;$('finType').value=x.type;$('finAmount').value=x.amount;$('finCategory').value=x.category;$('finDate').value=x.date;$('finCancel').hidden=false}
+function cancelFinanceEdit(){financeEditId=null;$('financeForm').reset();$('finDate').value=new Date().toISOString().slice(0,10);$('finCancel').hidden=true}
+function deleteFinance(id){if(!confirm('Excluir movimentação?'))return;let f=loadFinanceData();f.transactions=f.transactions.filter(x=>x.id!==id);saveFinanceData(f);renderFinancas()}
+function editarFinancas(){let f=loadFinanceData(),v=prompt('Saldo inicial (R$):',String(f.opening).replace('.',','));if(v===null)return;let n=Number(String(v).replace(/\\./g,'').replace(',','.'));if(!Number.isFinite(n)||n<0)return toast('Valor inválido');f.opening=n;saveFinanceData(f);renderFinancas()}
+function limparFinancas(){if(!confirm('Apagar movimentações e saldo inicial?'))return;saveFinanceData({opening:0,transactions:[],legacy:{gastei:0,devo:0}});renderFinancas()}
+function normalizeMemories(){if(!Array.isArray(data.memories))data.memories=[];if(data.memory&&!data.memories.length){data.memories.push({id:crypto.randomUUID(),text:data.memory,category:'Observações',createdAt:new Date().toISOString()});data.memory='';save()}}
+function renderMemories(){normalizeMemories();let box=$('memoryList');if(!box)return;let q=($('memorySearch')?.value||'').toLowerCase(),cat=$('memoryFilter')?.value||'',arr=data.memories.filter(m=>(!cat||m.category===cat)&&(!q||(m.text+' '+m.category).toLowerCase().includes(q)));box.innerHTML=arr.length?arr.slice().reverse().map(m=>`<div class=\"item memory-item\"><div><span class=\"badge\">${escapeHtml(m.category)}</span><div>${escapeHtml(m.text)}</div></div><div class=\"item-actions\"><button class=\"btn\" onclick=\"editMemory('${m.id}')\">Editar</button><button class=\"btn danger\" onclick=\"deleteMemory('${m.id}')\">Excluir</button></div></div>`).join(''):'<div class=\"muted\">Nenhuma memória encontrada.</div>'}
+$('memoryForm').onsubmit=e=>{e.preventDefault();normalizeMemories();let x={id:memoryEditId||crypto.randomUUID(),text:$('memoryText').value.trim(),category:$('memoryCategory').value,createdAt:new Date().toISOString()};if(!x.text)return;if(memoryEditId)data.memories=data.memories.map(v=>v.id===memoryEditId?x:v);else data.memories.push(x);save();e.target.reset();memoryEditId=null;$('memorySubmit').textContent='Adicionar memória';$('memoryCancel').hidden=true;renderMemories();toast('Memória salva para o contexto da IA')};
+function editMemory(id){let m=data.memories.find(x=>x.id===id);if(!m)return;memoryEditId=id;$('memoryText').value=m.text;$('memoryCategory').value=m.category;$('memorySubmit').textContent='Salvar alterações';$('memoryCancel').hidden=false}
+function cancelMemoryEdit(){memoryEditId=null;$('memoryForm').reset();$('memorySubmit').textContent='Adicionar memória';$('memoryCancel').hidden=true}
+function deleteMemory(id){if(!confirm('Excluir memória?'))return;data.memories=data.memories.filter(x=>x.id!==id);save();renderMemories()}
+async function editEvent(id){let x=data.events.find(v=>String(v.id||'')===id);if(!x)return;eventEditId=id;$('eventTitle').value=x.title;$('eventDate').value=new Date(x.date).toISOString().slice(0,16);$('eventDescription').value=x.description||'';$('agendaFormTitle').textContent='Editar compromisso';$('eventCancel').hidden=false}
+function cancelEventEdit(){eventEditId=null;$('agendaForm').reset();$('agendaFormTitle').textContent='Novo compromisso';$('eventCancel').hidden=true}
+async function deleteEvent(id){let x=data.events.find(v=>String(v.id||'')===id);if(!x||!confirm('Excluir evento?'))return;if(x.source==='google'){try{let r=await fetch('/api/calendar/delete/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)throw new Error('Não foi possível excluir no Google Calendar')}catch(e){toast(e.message);return}}data.events=data.events.filter(v=>String(v.id||'')!==id);save();renderAgenda();render();toast('Evento excluído')}
+$('agendaForm').onsubmit=async e=>{e.preventDefault();let x={id:eventEditId||crypto.randomUUID(),title:$('eventTitle').value.trim(),date:new Date($('eventDate').value).toISOString(),description:$('eventDescription').value.trim(),source:'local'};if(!x.title)return;let previous=eventEditId?data.events.find(v=>String(v.id||'')===eventEditId):null;try{if(previous?.source==='google'){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/edit/'+encodeURIComponent(eventEditId),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(!r.ok)throw new Error('Google Calendar não confirmou a edição');x.source='google'}else if(!eventEditId){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||j.id||x.id;x.source='google'}else if(r.status!==401){let j=await r.json().catch(()=>({}));throw new Error(j.message||'Falha ao criar evento no Google Calendar')}}}catch(err){if(previous?.source==='google'){toast(err.message);return}if(!navigator.onLine){toast('Sem conexão: evento salvo localmente')}else if(!String(err.message).includes('Google Calendar')){toast(err.message);return}}
+if(eventEditId)data.events=data.events.map(v=>String(v.id||'')===eventEditId?x:v);else data.events.push(x);save();e.target.reset();cancelEventEdit();renderAgenda();render();toast(x.source==='google'?'Evento salvo no Google Calendar':'Evento salvo neste aparelho')};
+async function handleNaturalAction(q){let t=q.toLowerCase(),m;
+ if(/\b(crie|cria|adicione|adiciona|registre|registra|monte|monta|faça|faz)\b/i.test(q)&&/\b(estudo|estudos|plano de estudos|sess[aã]o de estudo|estudar)\b/i.test(q)){
+   let title=(q.match(/(?:sobre|de|para|em)\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||(q.match(/estudar\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Novo estudo';
+   const minutes=Number((q.match(/(\d{1,3})\s*minutos?/i)||[])[1]||0);
+   const study={id:crypto.randomUUID(),title:title.trim(),kind:/plano de estudos/i.test(q)?'Plano de estudos':/sess[aã]o/i.test(q)?'Sessão':'matéria',minutes,grade:null,notes:q,date:new Date().toISOString().slice(0,10),createdAt:new Date().toISOString(),source:'assistant'};
+   data.studies.push(study);save();render();showPage('studies');return `Pronto! O estudo “${study.title}” foi salvo na área Estudos.`;
+ }
+ if(/\b(crie|cria|adicione|adiciona|registre|registra|salve|salva)\b/i.test(q)&&/\boportunidade\b/i.test(q)){
+   let title=(q.match(/(?:chamada?|nomeada?)\s+(.+?)$/i)||q.match(/oportunidade\s+(?:para|de|sobre)?\s*(.+?)$/i)||q.match(/(?:aprender|pesquisar|fazer|estudar)\s+(.+?)$/i)||[])[1]||q.replace(/.*oportunidade(?:\s+(?:para|de|sobre))?\s*/i,'');
+   title=title.trim()||'Nova oportunidade';data.opportunities.push({id:crypto.randomUUID(),title,link:'',notes:q,date:new Date().toISOString(),source:'assistant'});save();render();showPage('opportunities');return `Oportunidade “${title}” salva na área Oportunidades.`;
+ }
+if((m=t.match(/(?:lembra|anota|registre|registra|salva|guarda)(?:\s+que)?\s+(.+)/i))&&/(prefiro|gosto|não gosto|nao gosto|sou|tenho|estudo|rotina|importante)/i.test(m[1])&&!/estudei\s+.+\s+por\s+\d+\s+minutos?/.test(m[1])){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:m[1].replace(/[.!?]+$/,''),category:/estud/i.test(m[1])?'Estudos':/rotina|amanh|todo dia/i.test(m[1])?'Rotina':/prefiro|gosto/i.test(m[1])?'Preferências':'Observações',createdAt:new Date().toISOString()});save();renderMemories();return'Memória registrada e será enviada no contexto das próximas conversas.'}
+if((m=t.match(/(?:registra|anota|registre)\s+que\s+estudei\s+(.+?)\s+por\s+(\d+)\s+minutos?/i))){data.studies.push({title:m[1],minutes:Number(m[2]),notes:'Registrado pelo assistente',date:new Date().toISOString()});save();render();return`Estudo de ${m[1]} registrado por ${m[2]} minutos.`}
+if(/quanto.*(posso gastar|tenho|devo)|saldo/.test(t)){let f=loadFinanceData();return`Saldo: ${moneyBR(financeBalance(f))}; gastos: ${moneyBR(monthlySpent(f))}; dívidas: ${moneyBR(financeDebt(f))}; disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}.`}
+if(/o que eu tenho hoje|compromissos de hoje|agenda de hoje/.test(t)){let d=new Date().toDateString(),xs=data.events.filter(x=>new Date(x.date).toDateString()===d);return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Você não tem eventos registrados para hoje.'}
+if(/amanh[ãa]/.test(t)&&/(agenda|compromisso|evento|o que tenho|mostra)/.test(t)){let d=new Date();d.setDate(d.getDate()+1);let xs=data.events.filter(x=>new Date(x.date).toDateString()===d.toDateString());return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Não há eventos registrados para amanhã.'}
+if(/(?:cria|crie|marca|marque|agenda|agende).*(?:evento|compromisso|reuni[aã]o)/i.test(q)&&/(hoje|amanh[ãa]|\d{1,2}\/\d{1,2})/i.test(q)){let title=(q.match(/(?:evento|compromisso|reuni[aã]o)\s+(?:chamado\s+)?(.+?)(?=\s+(?:hoje|amanh[ãa]|\d{1,2}\/\d{1,2})|\s+às?\s+\d|$)/i)||[])[1]||'Compromisso';let d=new Date();if(/amanh[ãa]/i.test(q))d.setDate(d.getDate()+1);let dm=q.match(/(\d{1,2})\/(\d{1,2})/);if(dm)d.setMonth(Number(dm[2])-1,Number(dm[1]));let tm=q.match(/(?:às?|as)\s*(\d{1,2})(?::(\d{2}))?/i);if(!tm)return'Qual horário devo usar para esse evento?';d.setHours(Number(tm[1]),Number(tm[2]||0),0,0);let end=new Date(d);end.setHours(end.getHours()+1);let x={id:crypto.randomUUID(),title:title.trim(),date:d.toISOString(),source:'local'};try{let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,start:d.toISOString(),end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||x.id;x.source='google'}else if(r.status!==401)throw new Error('O servidor não confirmou a criação do evento.')}catch(err){if(!navigator.onLine)return'Estou sem conexão e não consegui confirmar a criação do evento.';if(err.message.includes('não confirmou'))return err.message}data.events.push(x);save();renderAgenda();render();return x.source==='google'?'Evento criado no Google Calendar.':'Google Calendar não conectado: evento salvo apenas neste aparelho.'}
+if(/(?:anota|lembra|cria|marca).*(?:estudar|estudo|tarefa).*(?:amanh[ãa]|hoje)/.test(t)||/(?:anota|lembra).*(?:amanh[ãa]|hoje).*(?:estudar|estudo)/.test(t)){let title=(q.match(/estudar\s+(.+?)(?:\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Estudar matemática';let due=new Date();if(/amanh[ãa]/i.test(q))due.setDate(due.getDate()+1);data.tasks.push({id:crypto.randomUUID(),title:'Estudar '+title.trim(),date:due.toISOString(),dueDate:due.toISOString().slice(0,10),done:false});save();render();return`Tarefa “Estudar ${title.trim()}” anotada para ${due.toLocaleDateString('pt-BR')}.`}
+// Fallback de ações locais para comandos explícitos quando o Gemini não estiver disponível.
+if(/(?:registre|registra|anote|anota|lance|lança).*(?:despesa|gasto)/i.test(q)){
+  const vm=q.match(/r\$\s*([\d.,]+)|(?:de|por)\s*([\d.,]+)\s*(?:reais)?/i);const raw=vm?(vm[1]||vm[2]):'';const amount=raw?Number(raw.replace(/\./g,'').replace(',','.')):0;
+  if(amount>0){const cm=q.match(/(?:com|em)\s+(.+?)(?:[.!?]|$)/i);const category=(cm?.[1]||'Outros').trim();const f=loadFinanceData();f.transactions.push({id:crypto.randomUUID(),description:'Despesa com '+category,type:'gasto',amount,category,date:new Date().toISOString().slice(0,10)});saveFinanceData(f);renderFinancas();return `Despesa de ${moneyBR(amount)} registrada em ${category}.`;}
+}
+if(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\b/i.test(q)){
+  const title=q.replace(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\s*(?:para|de)?\s*/i,'').trim();
+  if(title){data.tasks.push({id:crypto.randomUUID(),title,date:new Date().toISOString(),dueDate:null,dueTime:null,done:false,source:'assistant'});save();render();return `Tarefa “${title}” adicionada ao PRIMORIS.`;}
+}
+if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){
+  const note=q.replace(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i,'').trim();
+  if(note){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na Memória: “${note}”.`;}
+}
+return null}
+document.addEventListener('DOMContentLoaded',()=>{$('finDate').value=new Date().toISOString().slice(0,10);normalizeMemories();renderMemories();renderFinancas()});renderFinancas();
+if(typeof renderDashboard==='function')renderDashboard();
+if(typeof renderSkills==='function')renderSkills();
+if(typeof renderDevLog==='function')renderDevLog();
+if(typeof updateBackupStatus==='function')updateBackupStatus();
+</script>
+
+
+<script id="primoris-voice-js">
+let voiceRecognition=null,voiceListening=false,voiceFinalText='',voiceManualStop=false,voiceRestartTimer=null,voiceStopTimer=null,lastAIResponse='';
+function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
+function speechSupported(){return 'speechSynthesis' in window}
+function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o PRIMORIS')}}
+function initVoiceRecognition(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
+ voiceRecognition=new SR();voiceRecognition.lang='pt-BR';voiceRecognition.continuous=false;voiceRecognition.interimResults=true;voiceRecognition.maxAlternatives=1;
+ voiceRecognition.onstart=()=>{voiceListening=true;voiceManualStop=false;updateVoiceUI()};
+ voiceRecognition.onresult=e=>{
+   let final='';
+   let interim='';
+   for(let i=e.resultIndex;i<e.results.length;i++){
+     const t=e.results[i][0]?.transcript||'';
+     if(e.results[i].isFinal) final+=t;
+     else interim+=t;
+   }
+   if(final.trim() && !voiceFinalText.trim()) voiceFinalText=final.trim();
+   const shown=(voiceFinalText+' '+interim).trim();
+   const input=document.getElementById('chatInput');
+   if(input) input.value=shown;
+   if(final.trim()){
+     voiceManualStop=true;
+     clearTimeout(voiceStopTimer);
+     try{voiceRecognition.stop()}catch(e){}
+   }
+ };
+ voiceRecognition.onerror=e=>{console.warn('Reconhecimento de voz:',e.error);if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceManualStop=true;voiceListening=false;updateVoiceUI();toast('Permissão para o microfone foi negada.');}};
+ voiceRecognition.onend=()=>{
+   clearTimeout(voiceRestartTimer);
+   const text=voiceFinalText.trim();
+   voiceListening=false;
+   updateVoiceUI();
+   if(text){
+     const input=document.getElementById('chatInput');
+     if(input) input.value=text;
+     const form=document.getElementById('chatForm');
+     if(form) form.requestSubmit();
+   }
+ };
+ return true;
+}
+function toggleVoiceRecognition(){
+ if(!voiceSupported()){toast('Use o Google Chrome para reconhecimento de voz.');return}
+ if(!voiceRecognition)initVoiceRecognition();
+ if(voiceListening){voiceManualStop=true;try{voiceRecognition.stop()}catch(e){}return}
+ clearTimeout(voiceRestartTimer);clearTimeout(voiceStopTimer);voiceFinalText='';voiceManualStop=false;
+ try{window.speechSynthesis?.resume();voiceRecognition.start()}catch(e){voiceListening=false;updateVoiceUI();toast('Não foi possível iniciar o microfone agora.')}
+}
+const VOICE_SETTINGS_KEY='primoris_voice_settings_v1';
+let primorisVoices=[];
+
+function loadVoiceSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem(VOICE_SETTINGS_KEY)||'{}');
+    return {
+      gender:['auto','male','female'].includes(s.gender)?s.gender:'auto',
+      voiceName:typeof s.voiceName==='string'?s.voiceName:'auto',
+      rate:Number.isFinite(Number(s.rate))?Number(s.rate):0.96,
+      pitch:Number.isFinite(Number(s.pitch))?Number(s.pitch):0.92,
+      volume:Number.isFinite(Number(s.volume))?Number(s.volume):1
+    };
+  }catch{
+    return {gender:'auto',voiceName:'auto',rate:0.96,pitch:0.92,volume:1};
+  }
+}
+function saveVoiceSettings(s){localStorage.setItem(VOICE_SETTINGS_KEY,JSON.stringify(s))}
+function getVoiceSettings(){return loadVoiceSettings()}
+function normalizeVoiceGender(v){return ['auto','male','female'].includes(v)?v:'auto'}
+
+function voiceLooksMale(v){
+  return /(^|\\b)(daniel|felipe|ricardo|rafael|andre|andré|carlos|joao|joão|gustavo|lucas|mateus|marcos|thiago|tiago|paulo|google português do brasil|microsoft.*male|male)/i.test(v.name||'');
+}
+function voiceLooksFemale(v){
+  return /(^|\\b)(maria|ana|fernanda|juliana|camila|carolina|beatriz|leticia|letícia|luciana|gabriela|mariana|sofia|sophia|google.*female|microsoft.*female|female)/i.test(v.name||'');
+}
+function isPortugueseVoice(v){return /^pt(-BR|-PT)?$/i.test(v.lang||'')||/^pt/i.test(v.lang||'')}
+
+function preferredVoiceFromList(settings){
+  const voices=primorisVoices||[];
+  const pt=voices.filter(isPortugueseVoice);
+  const pool=pt.length?pt:voices;
+  if(settings.voiceName&&settings.voiceName!=='auto'){
+    const exact=voices.find(v=>v.name===settings.voiceName);
+    if(exact)return exact;
+  }
+  if(settings.gender==='male'){
+    return pool.find(voiceLooksMale)||pool.find(v=>/pt-BR/i.test(v.lang))||pool[0]||null;
+  }
+  if(settings.gender==='female'){
+    return pool.find(voiceLooksFemale)||pool.find(v=>/pt-BR/i.test(v.lang))||pool[0]||null;
+  }
+  return pool.find(v=>/pt-BR/i.test(v.lang)&&/(Daniel|Felipe|Ricardo|Rafael|André|Andre|Google português do Brasil|Microsoft)/i.test(v.name))
+    ||pool.find(v=>/pt-BR/i.test(v.lang))
+    ||pool[0]
+    ||null;
+}
+
+function populateVoiceSelect(){
+  const select=document.getElementById('voiceSelect');
+  if(!select)return;
+  const settings=getVoiceSettings();
+  select.innerHTML='';
+  const auto=document.createElement('option');
+  auto.value='auto';
+  auto.textContent='🤖 Automática';
+  select.appendChild(auto);
+  const voices=primorisVoices||[];
+  const sorted=voices.slice().sort((a,b)=>{
+    const ap=isPortugueseVoice(a)?0:1,bp=isPortugueseVoice(b)?0:1;
+    return ap-bp || a.lang.localeCompare(b.lang)||a.name.localeCompare(b.name);
+  });
+  sorted.forEach(v=>{
+    const o=document.createElement('option');
+    o.value=v.name;
+    o.textContent=`${isPortugueseVoice(v)?'🇧🇷 ':''}${v.name} · ${v.lang}`;
+    select.appendChild(o);
+  });
+  select.value=(settings.voiceName==='auto'||voices.some(v=>v.name===settings.voiceName))?settings.voiceName:'auto';
+  if(select.value!==settings.voiceName){settings.voiceName='auto';saveVoiceSettings(settings)}
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent=voices.length?`${voices.length} voz(es) detectada(s).`:'Nenhuma voz detectada ainda. O aparelho pode carregar as vozes alguns segundos depois.';
+  updateVoiceControlLabels();
+}
+
+function refreshVoiceList(){
+  if(!speechSupported())return;
+  primorisVoices=window.speechSynthesis.getVoices()||[];
+  populateVoiceSelect();
+}
+function setVoiceGender(v){
+  const s=getVoiceSettings();s.gender=normalizeVoiceGender(v);saveVoiceSettings(s);
+  const selected=document.getElementById('voiceSelect');
+  if(selected&&s.gender!=='auto'&&selected.value==='auto'){
+    const v2=preferredVoiceFromList(s);
+    if(v2){s.voiceName=v2.name;saveVoiceSettings(s);selected.value=v2.name}
+  }
+  updateVoiceControlLabels();
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Preferência de voz salva.';
+}
+function setVoiceSelection(v){
+  const s=getVoiceSettings();s.voiceName=v||'auto';saveVoiceSettings(s);
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Voz escolhida salva.';
+}
+function updateVoiceControlLabels(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate){
+    rate.value=String(s.rate);
+    const out=document.getElementById('voiceRateValue');
+    if(out)out.textContent=Number(s.rate).toFixed(2)+'x';
+  }
+  if(pitch){
+    pitch.value=String(s.pitch);
+    const out=document.getElementById('voicePitchValue');
+    if(out)out.textContent=Number(s.pitch).toFixed(2);
+  }
+  if(volume){
+    volume.value=String(s.volume);
+    const out=document.getElementById('voiceVolumeValue');
+    if(out)out.textContent=Math.round(Number(s.volume)*100)+'%';
+  }
+
+  const gender=document.getElementById('voiceGender');
+  if(gender)gender.value=s.gender;
+  const select=document.getElementById('voiceSelect');
+  if(select && [...select.options].some(o=>o.value===s.voiceName))select.value=s.voiceName;
+}
+
+function voiceSliderChanged(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate)s.rate=Number(rate.value);
+  if(pitch)s.pitch=Number(pitch.value);
+  if(volume)s.volume=Number(volume.value);
+
+  saveVoiceSettings(s);
+  updateVoiceControlLabels();
+
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Configuração de voz salva.';
+}
+
+function applyVoiceControls(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate)s.rate=Number(rate.value);
+  if(pitch)s.pitch=Number(pitch.value);
+  if(volume)s.volume=Number(volume.value);
+
+  s.rate=Math.max(.6,Math.min(1.4,s.rate));
+  s.pitch=Math.max(.5,Math.min(1.5,s.pitch));
+  s.volume=Math.max(0,Math.min(1,s.volume));
+
+  saveVoiceSettings(s);
+  updateVoiceControlLabels();
+}
+
+function testSelectedVoice(){
+  applyVoiceControls();
+  const s=getVoiceSettings(),v=preferredVoiceFromList(s);
+  if(!speechSupported()){toast('A fala não é suportada neste navegador.');return}
+  if(!v){toast('Nenhuma voz foi encontrada no aparelho.');return}
+  stopSpeaking();
+  const u=new SpeechSynthesisUtterance('Olá. Eu sou o PRIMORIS. Esta é a voz que você selecionou.');
+  u.lang=v.lang||'pt-BR';u.voice=v;u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
+  window.speechSynthesis.resume();window.speechSynthesis.speak(u);
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Testando: '+v.name;
+}
+function stopSpeaking(){if(speechSupported())window.speechSynthesis.cancel()}
+function speakText(text){
+ if(!speechSupported()||!text)return;
+ try{
+   applyVoiceControls();
+   const s=getVoiceSettings(),v=preferredVoiceFromList(s);
+   stopSpeaking();
+   const u=new SpeechSynthesisUtterance(String(text));
+   u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
+   if(v)u.voice=v;
+   window.speechSynthesis.resume();
+   window.speechSynthesis.speak(u);
+ }catch(e){console.warn('Falha na fala:',e)}
+}
+function initVoiceSettings(){
+  if(!speechSupported())return;
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate'),pitch=document.getElementById('voicePitch'),volume=document.getElementById('voiceVolume');
+  if(rate)rate.value=s.rate;if(pitch)pitch.value=s.pitch;if(volume)volume.value=s.volume;
+  primorisVoices=window.speechSynthesis.getVoices()||[];
+  populateVoiceSelect();
+  if('speechSynthesis' in window){
+    window.speechSynthesis.addEventListener('voiceschanged',refreshVoiceList);
+  }
+}
+if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>{refreshVoiceList()};
+if(voiceSupported())initVoiceRecognition();
+if(speechSupported())initVoiceSettings();
+setInterval(checkSmartNotifications,30000);setTimeout(checkSmartNotifications,1200);
+</script>
+<script id="primoris-v6-js">
+/* PRIMORIS v6: voz, diagnóstico, OS e PWA. Mantém as IAs existentes intactas. */
+let primorisInstallPrompt=null;
+let primorisPwaDismissed=sessionStorage.getItem('primoris_pwa_dismissed')==='1';
+
+function updateOfflineUI(){
+  const el=document.getElementById('offlineIndicator');
+  if(el)el.classList.toggle('show',!navigator.onLine);
+}
+window.addEventListener('online',updateOfflineUI);
+window.addEventListener('offline',updateOfflineUI);
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  primorisInstallPrompt=e;
+  if(!primorisPwaDismissed)document.getElementById('pwaBanner')?.classList.add('show');
+});
+window.addEventListener('appinstalled',()=>{
+  primorisInstallPrompt=null;
+  document.getElementById('pwaBanner')?.classList.remove('show');
+  toast('PRIMORIS instalado na tela inicial.');
+});
+function installPrimoris(){
+  if(window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone){
+    toast('O PRIMORIS já está instalado como aplicativo.');
+    return;
+  }
+  if(!primorisInstallPrompt){
+    toast('O navegador ainda não liberou a instalação. No Chrome, use o menu ⋮ e “Adicionar à tela inicial”.');
+    return;
+  }
+  primorisInstallPrompt.prompt();
+  primorisInstallPrompt.userChoice.then(r=>{
+    if(r.outcome==='accepted')toast('Instalação do PRIMORIS iniciada.');
+    primorisInstallPrompt=null;
+  }).catch(()=>{});
+}
+function dismissPWAInstall(){
+  primorisPwaDismissed=true;
+  sessionStorage.setItem('primoris_pwa_dismissed','1');
+  document.getElementById('pwaBanner')?.classList.remove('show');
+}
+function isPrimorisInstalled(){
+  return window.matchMedia?.('(display-mode: standalone)').matches||!!window.navigator.standalone;
+}
+
+/* Voz mais natural: divide respostas longas em blocos curtos e mantém os controles já salvos. */
+window.speakText=function(text){
+  if(!speechSupported()||!text)return;
+  try{
+    applyVoiceControls();
+    const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+    if(!clean)return;
+    stopSpeaking();
+    const chunks=[];
+    const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean];
+    let current='';
+    for(const sentence of sentences){
+      if((current+' '+sentence).trim().length>260){
+        if(current.trim())chunks.push(current.trim());
+        current=sentence.trim();
+      }else current=(current+' '+sentence).trim();
+    }
+    if(current)chunks.push(current);
+    let i=0;
+    const status=document.getElementById('voiceSettingsStatus');
+    const voiceStatus=document.getElementById('voiceStatus');
+    const next=()=>{
+      if(i>=chunks.length){
+        if(status)status.textContent='Voz pronta.';
+        if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking');}
+        return;
+      }
+      const u=new SpeechSynthesisUtterance(chunks[i++]);
+      u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
+      u.onstart=()=>{if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
+      u.onend=next;
+      u.onerror=next;
+      window.speechSynthesis.resume();
+      window.speechSynthesis.speak(u);
+    };
+    next();
+  }catch(e){console.warn('Voz PRIMORIS:',e);toast('Não foi possível reproduzir a voz agora.');}
+};
+
+async function runFullDiagnostics(){
+  const box=document.getElementById('diagSystem');
+  const summary=document.getElementById('diagSummary');
+  if(!box)return;
+  box.innerHTML='<div class="muted">Executando diagnóstico completo...</div>';
+  const results=[];
+  const check=async(label,fn)=>{
+    const started=performance.now();
+    try{const r=await fn();results.push({label,ok:!!r.ok,warn:!!r.warn,detail:r.detail||'OK',ms:Math.round(performance.now()-started)});}
+    catch(e){results.push({label,ok:false,warn:false,detail:e.message||'Falha',ms:Math.round(performance.now()-started)});}
+  };
+  await check('Servidor',async()=>{const r=await fetch('/health?ts='+Date.now(),{cache:'no-store'});const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.status==='ok',detail:r.ok?'Online · '+(j.version||'PRIMORIS'):'HTTP '+r.status};});
+  await check('Frontend',async()=>({ok:!!document.getElementById('page-home')&&!!document.getElementById('chatForm'),detail:'DOM principal carregado'}));
+  await check('Armazenamento',async()=>{const k='primoris_diag_'+Date.now();localStorage.setItem(k,'ok');const ok=localStorage.getItem(k)==='ok';localStorage.removeItem(k);return {ok,detail:ok?'Leitura e gravação OK':'Falha no localStorage'}});
+  await check('Internet',async()=>({ok:navigator.onLine,detail:navigator.onLine?'Conexão disponível':'Dispositivo offline'}));
+  await check('PWA',async()=>({ok:'serviceWorker' in navigator,detail:isPrimorisInstalled()?'Instalado':'Service Worker disponível'}));
+  await check('Microfone',async()=>({ok:voiceSupported(),warn:!voiceSupported(),detail:voiceSupported()?'SpeechRecognition disponível':'Navegador sem reconhecimento de voz'}));
+  await check('Voz',async()=>({ok:speechSupported(),warn:!speechSupported(),detail:speechSupported()?'SpeechSynthesis disponível':'Navegador sem síntese de voz'}));
+  for(const [label,url] of [['Google Calendar','/api/calendar/events'],['Gmail','/api/gmail/messages?max=1']]){
+    await check(label,async()=>{const r=await fetch(url,{cache:'no-store'});const j=await r.json().catch(()=>({}));if(r.status===401)return {ok:false,warn:true,detail:'Google não conectado'};return {ok:r.ok,detail:r.ok?'Conectado e respondendo':(j.details||j.message||j.error||'HTTP '+r.status)}});
+  }
+  const counts={ok:results.filter(x=>x.ok).length,warn:results.filter(x=>x.warn).length,bad:results.filter(x=>!x.ok&&!x.warn).length};
+  if(summary)summary.innerHTML='<div class="diag-chip"><span class="muted">OK</span><strong class="diag-ok">'+counts.ok+'</strong></div><div class="diag-chip"><span class="muted">Avisos</span><strong class="diag-warn">'+counts.warn+'</strong></div><div class="diag-chip"><span class="muted">Falhas</span><strong class="diag-bad">'+counts.bad+'</strong></div><div class="diag-chip"><span class="muted">Tempo</span><strong>'+Math.round(results.reduce((a,x)=>a+x.ms,0))+'ms</strong></div>';
+  box.innerHTML=results.map(x=>'<div class="item">'+(x.ok?'✓':x.warn?'⚠️':'❌')+' <b>'+escapeHtml(x.label)+'</b><small> · '+escapeHtml(x.detail)+' · '+x.ms+'ms</small></div>').join('');
+  await runAllAITests();
+}
+
+window.addEventListener('load',()=>{
+  updateOfflineUI();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.update();
+      reg.addEventListener('updatefound',()=>{
+        const worker=reg.installing;
+        if(worker)worker.addEventListener('statechange',()=>{
+          if(worker.state==='installed'&&navigator.serviceWorker.controller){
+            toast('Nova versão do PRIMORIS disponível. Atualizando...');
+            worker.postMessage({type:'SKIP_WAITING'});
+          }
+        });
+      });
+    }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());
+  }
+});
+</script>
+
+
 </body>
 </html>
