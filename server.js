@@ -1198,3 +1198,123 @@ app.get("/api/news", async (req, res) => {
     for (const q of queries) {
       const url =
         "https://news.google.com/rss/search?q=" +
+        encodeURIComponent(q) +
+        "&hl=pt-BR&gl=BR&ceid=BR:pt-419";
+
+      const feed =
+        await parser.parseURL(url);
+
+      for (
+        const item of
+          (feed.items || []).slice(0, 5)
+      ) {
+        items.push({
+          title: item.title,
+          link: item.link,
+          source:
+            item.creator ||
+            "Google News",
+
+          category:
+            q.includes("tecnologia")
+              ? "Tecnologia"
+              : q.includes("mundo")
+              ? "Mundo"
+              : "Brasil"
+        });
+      }
+    }
+
+    res.json({
+      items
+    });
+
+  } catch (e) {
+    console.error(
+      "News:",
+      e
+    );
+
+    res.status(500).json({
+      error: e.message
+    });
+  }
+});
+
+// =====================================================
+// FALLBACK DO SITE
+// =====================================================
+
+app.use((req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "index.html"
+    )
+  );
+});
+
+// =====================================================
+// SERVIDOR
+// =====================================================
+
+app.listen(
+  PORT,
+  "0.0.0.0",
+  () => {
+    console.log(
+      "PRIMORIS rodando na porta " +
+        PORT
+    );
+  }
+);
+
+// =====================================================
+// CLIMA - OPEN-METEO (SEM CHAVE DE API)
+// =====================================================
+function weatherCode(code) {
+  const n=Number(code);
+  if(n===0) return {condition:"Céu limpo",icon:"☀️"};
+  if([1,2].includes(n)) return {condition:"Parcialmente nublado",icon:"🌤️"};
+  if(n===3) return {condition:"Nublado",icon:"☁️"};
+  if([45,48].includes(n)) return {condition:"Neblina",icon:"🌫️"};
+  if([51,53,55,56,57].includes(n)) return {condition:"Garoa",icon:"🌦️"};
+  if([61,63,65,66,67].includes(n)) return {condition:"Chuva",icon:"🌧️"};
+  if([71,73,75,77].includes(n)) return {condition:"Neve",icon:"🌨️"};
+  if([80,81,82].includes(n)) return {condition:"Pancadas de chuva",icon:"🌦️"};
+  if([85,86].includes(n)) return {condition:"Pancadas de neve",icon:"🌨️"};
+  if([95,96,99].includes(n)) return {condition:"Trovoadas",icon:"⛈️"};
+  return {condition:"Condição variável",icon:"☁️"};
+}
+async function fetchJson(url) {
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),12000);
+  try { const r=await fetch(url,{signal:controller.signal,headers:{"User-Agent":"PRIMORIS/1.0"}}); const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j?.reason||"Fonte de clima indisponível."); return j; }
+  finally { clearTimeout(timer); }
+}
+app.get("/api/weather", async (req,res)=>{
+  try {
+    const city=String(req.query.city||"").trim().slice(0,100);
+    if(!city) return res.status(400).json({error:"city_required",details:"Informe sua cidade."});
+    const geo=await fetchJson("https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(city)+"&count=1&language=pt&format=json");
+    const place=geo?.results?.[0];
+    if(!place) return res.status(404).json({error:"city_not_found",details:"Não encontrei essa cidade."});
+    const url="https://api.open-meteo.com/v1/forecast?latitude="+encodeURIComponent(place.latitude)+"&longitude="+encodeURIComponent(place.longitude)+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=7&timezone=auto";
+    const w=await fetchJson(url), c=w.current||{}, cw=weatherCode(c.weather_code);
+    const times=w.hourly?.time||[], temps=w.hourly?.temperature_2m||[], rains=w.hourly?.precipitation_probability||[], codes=w.hourly?.weather_code||[];
+    const nowIndex=Math.max(0,times.findIndex(t=>t>=c.time));
+    const hourly=Array.from({length:12},(_,i)=>{const k=nowIndex+i;return k<times.length?{time:new Date(times[k]).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),temperature:temps[k],rain:rains[k],...weatherCode(codes[k])}:null}).filter(Boolean);
+    const dailyTimes=w.daily?.time||[], max=w.daily?.temperature_2m_max||[], min=w.daily?.temperature_2m_min||[], dr=w.daily?.precipitation_probability_max||[], dc=w.daily?.weather_code||[];
+    const daily=dailyTimes.map((d,i)=>({day:new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"}),max:max[i],min:min[i],rain:dr[i],...weatherCode(dc[i])}));
+    res.json({ok:true,location:{name:place.name,country:place.country,admin1:place.admin1||""},current:{temperature:c.temperature_2m,apparentTemperature:c.apparent_temperature,humidity:c.relative_humidity_2m,precipitation:c.precipitation,precipitationProbability:hourly[0]?.rain||0,windSpeed:c.wind_speed_10m,condition:cw.condition,icon:cw.icon},weather:{hourly,daily}});
+  } catch(e) { console.error("Weather:",e); res.status(502).json({error:"weather_failed",details:e.message||"Falha ao atualizar o clima."}); }
+});
+app.get("/api/weather/reverse", async (req,res)=>{
+  try {
+    const lat=Number(req.query.lat),lon=Number(req.query.lon);
+    if(!Number.isFinite(lat)||!Number.isFinite(lon)) return res.status(400).json({error:"coordinates_required"});
+    const geo=await fetchJson("https://geocoding-api.open-meteo.com/v1/reverse?latitude="+encodeURIComponent(lat)+"&longitude="+encodeURIComponent(lon)+"&count=1&language=pt&format=json");
+    const p=geo?.results?.[0]; if(!p) return res.status(404).json({error:"location_not_found",details:"Não foi possível identificar sua cidade."});
+    res.json({ok:true,city:p.name+(p.admin1?', '+p.admin1:'')});
+  } catch(e) { console.error("Weather reverse:",e); res.status(502).json({error:"weather_reverse_failed",details:e.message||"Falha ao identificar cidade."}); }
+});
