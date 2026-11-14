@@ -357,6 +357,24 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 .whatsapp-contact .btn{padding:7px 10px;font-size:12px}
 @media(max-width:600px){.whatsapp-contacts{grid-template-columns:1fr}}
 </style>
+<style id="primoris-v6-enhancements">
+.pwa-banner{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:70;display:none;align-items:center;gap:12px;max-width:min(680px,calc(100% - 24px));padding:13px 15px;border:1px solid rgba(84,232,255,.35);border-radius:17px;background:rgba(9,12,25,.96);backdrop-filter:blur(20px);box-shadow:0 18px 55px rgba(0,0,0,.45),0 0 28px rgba(84,232,255,.08)}
+.pwa-banner.show{display:flex}
+.pwa-banner .pwa-icon{font-size:25px}.pwa-banner .pwa-copy{flex:1}.pwa-banner strong{display:block;font:700 13px Orbitron}.pwa-banner small{display:block;color:var(--muted);margin-top:3px}
+.offline-indicator{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;display:none;padding:8px 13px;border:1px solid rgba(255,100,124,.4);border-radius:999px;background:rgba(45,10,20,.94);color:#ffb0bb;font-size:12px;font-weight:700}
+.offline-indicator.show{display:block}
+.voice-speaking{display:inline-flex!important;align-items:center;gap:7px;color:var(--cyan)!important}
+.voice-speaking:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:primorisVoiceDot 1s infinite}
+@keyframes primorisVoiceDot{50%{opacity:.25;transform:scale(.7)}}
+.os-extra-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px;position:relative;z-index:1}
+.os-extra-grid .os-tile{min-height:105px}
+.diag-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.diag-chip{padding:13px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.025)}
+.diag-chip strong{display:block;font:700 20px Orbitron;margin-top:5px}
+.diag-ok{color:var(--green)}.diag-warn{color:#ffd27a}.diag-bad{color:var(--danger)}
+@media(max-width:900px){.os-extra-grid,.diag-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pwa-banner{bottom:82px}.os-extra-grid,.diag-summary{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -520,6 +538,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <section id="page-diagnostics" class="page">
     <h2>Diagnóstico do Sistema</h2><p class="muted">Testes reais de conectividade e chamadas aos provedores. Nenhuma chave é exibida.</p>
     <div class="actions" style="margin:14px 0"><button class="btn primary" type="button" onclick="runAllAITests()">TESTAR TODAS AS IAS</button><button class="btn" type="button" onclick="runFullDiagnostics()">TESTAR SISTEMA COMPLETO</button></div>
+    <div id="diagSummary" class="diag-summary"></div>
     <div class="card"><h3>Sistema</h3><div id="diagSystem" class="list"><div class="muted">Aguardando teste...</div></div></div>
     <div class="card" style="margin-top:14px"><h3>Inteligência Artificial</h3><div id="diagAI" class="list"><div class="muted">Toque em testar todas as IAs.</div></div></div>
     <div class="card" style="margin-top:14px"><h3>Resultado detalhado</h3><div id="diagDetails" class="list"><div class="muted">Nenhum teste executado.</div></div></div>
@@ -598,6 +617,13 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 <button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
 </nav>
 <div id="toast" class="toast"></div>
+<div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
+<div id="pwaBanner" class="pwa-banner" role="status">
+  <div class="pwa-icon">📲</div>
+  <div class="pwa-copy"><strong>INSTALAR PRIMORIS</strong><small>Use o PRIMORIS como aplicativo, com acesso rápido pela tela inicial.</small></div>
+  <button class="btn primary" type="button" onclick="installPrimoris()">Instalar</button>
+  <button class="btn" type="button" onclick="dismissPWAInstall()">×</button>
+</div>
 
 <script>
 const KEY='primoris_cesar_v2';
@@ -1766,6 +1792,137 @@ if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>{refre
 if(voiceSupported())initVoiceRecognition();
 if(speechSupported())initVoiceSettings();
 setInterval(checkSmartNotifications,30000);setTimeout(checkSmartNotifications,1200);
+</script>
+<script id="primoris-v6-js">
+/* PRIMORIS v6: voz, diagnóstico, OS e PWA. Mantém as IAs existentes intactas. */
+let primorisInstallPrompt=null;
+let primorisPwaDismissed=sessionStorage.getItem('primoris_pwa_dismissed')==='1';
+
+function updateOfflineUI(){
+  const el=document.getElementById('offlineIndicator');
+  if(el)el.classList.toggle('show',!navigator.onLine);
+}
+window.addEventListener('online',updateOfflineUI);
+window.addEventListener('offline',updateOfflineUI);
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  primorisInstallPrompt=e;
+  if(!primorisPwaDismissed)document.getElementById('pwaBanner')?.classList.add('show');
+});
+window.addEventListener('appinstalled',()=>{
+  primorisInstallPrompt=null;
+  document.getElementById('pwaBanner')?.classList.remove('show');
+  toast('PRIMORIS instalado na tela inicial.');
+});
+function installPrimoris(){
+  if(window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone){
+    toast('O PRIMORIS já está instalado como aplicativo.');
+    return;
+  }
+  if(!primorisInstallPrompt){
+    toast('O navegador ainda não liberou a instalação. No Chrome, use o menu ⋮ e “Adicionar à tela inicial”.');
+    return;
+  }
+  primorisInstallPrompt.prompt();
+  primorisInstallPrompt.userChoice.then(r=>{
+    if(r.outcome==='accepted')toast('Instalação do PRIMORIS iniciada.');
+    primorisInstallPrompt=null;
+  }).catch(()=>{});
+}
+function dismissPWAInstall(){
+  primorisPwaDismissed=true;
+  sessionStorage.setItem('primoris_pwa_dismissed','1');
+  document.getElementById('pwaBanner')?.classList.remove('show');
+}
+function isPrimorisInstalled(){
+  return window.matchMedia?.('(display-mode: standalone)').matches||!!window.navigator.standalone;
+}
+
+/* Voz mais natural: divide respostas longas em blocos curtos e mantém os controles já salvos. */
+window.speakText=function(text){
+  if(!speechSupported()||!text)return;
+  try{
+    applyVoiceControls();
+    const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+    if(!clean)return;
+    stopSpeaking();
+    const chunks=[];
+    const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean];
+    let current='';
+    for(const sentence of sentences){
+      if((current+' '+sentence).trim().length>260){
+        if(current.trim())chunks.push(current.trim());
+        current=sentence.trim();
+      }else current=(current+' '+sentence).trim();
+    }
+    if(current)chunks.push(current);
+    let i=0;
+    const status=document.getElementById('voiceSettingsStatus');
+    const voiceStatus=document.getElementById('voiceStatus');
+    const next=()=>{
+      if(i>=chunks.length){
+        if(status)status.textContent='Voz pronta.';
+        if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking');}
+        return;
+      }
+      const u=new SpeechSynthesisUtterance(chunks[i++]);
+      u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
+      u.onstart=()=>{if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
+      u.onend=next;
+      u.onerror=next;
+      window.speechSynthesis.resume();
+      window.speechSynthesis.speak(u);
+    };
+    next();
+  }catch(e){console.warn('Voz PRIMORIS:',e);toast('Não foi possível reproduzir a voz agora.');}
+};
+
+async function runFullDiagnostics(){
+  const box=document.getElementById('diagSystem');
+  const summary=document.getElementById('diagSummary');
+  if(!box)return;
+  box.innerHTML='<div class="muted">Executando diagnóstico completo...</div>';
+  const results=[];
+  const check=async(label,fn)=>{
+    const started=performance.now();
+    try{const r=await fn();results.push({label,ok:!!r.ok,warn:!!r.warn,detail:r.detail||'OK',ms:Math.round(performance.now()-started)});}
+    catch(e){results.push({label,ok:false,warn:false,detail:e.message||'Falha',ms:Math.round(performance.now()-started)});}
+  };
+  await check('Servidor',async()=>{const r=await fetch('/health?ts='+Date.now(),{cache:'no-store'});const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.status==='ok',detail:r.ok?'Online · '+(j.version||'PRIMORIS'):'HTTP '+r.status};});
+  await check('Frontend',async()=>({ok:!!document.getElementById('page-home')&&!!document.getElementById('chatForm'),detail:'DOM principal carregado'}));
+  await check('Armazenamento',async()=>{const k='primoris_diag_'+Date.now();localStorage.setItem(k,'ok');const ok=localStorage.getItem(k)==='ok';localStorage.removeItem(k);return {ok,detail:ok?'Leitura e gravação OK':'Falha no localStorage'}});
+  await check('Internet',async()=>({ok:navigator.onLine,detail:navigator.onLine?'Conexão disponível':'Dispositivo offline'}));
+  await check('PWA',async()=>({ok:'serviceWorker' in navigator,detail:isPrimorisInstalled()?'Instalado':'Service Worker disponível'}));
+  await check('Microfone',async()=>({ok:voiceSupported(),warn:!voiceSupported(),detail:voiceSupported()?'SpeechRecognition disponível':'Navegador sem reconhecimento de voz'}));
+  await check('Voz',async()=>({ok:speechSupported(),warn:!speechSupported(),detail:speechSupported()?'SpeechSynthesis disponível':'Navegador sem síntese de voz'}));
+  for(const [label,url] of [['Google Calendar','/api/calendar/events'],['Gmail','/api/gmail/messages?max=1']]){
+    await check(label,async()=>{const r=await fetch(url,{cache:'no-store'});const j=await r.json().catch(()=>({}));if(r.status===401)return {ok:false,warn:true,detail:'Google não conectado'};return {ok:r.ok,detail:r.ok?'Conectado e respondendo':(j.details||j.message||j.error||'HTTP '+r.status)}});
+  }
+  const counts={ok:results.filter(x=>x.ok).length,warn:results.filter(x=>x.warn).length,bad:results.filter(x=>!x.ok&&!x.warn).length};
+  if(summary)summary.innerHTML='<div class="diag-chip"><span class="muted">OK</span><strong class="diag-ok">'+counts.ok+'</strong></div><div class="diag-chip"><span class="muted">Avisos</span><strong class="diag-warn">'+counts.warn+'</strong></div><div class="diag-chip"><span class="muted">Falhas</span><strong class="diag-bad">'+counts.bad+'</strong></div><div class="diag-chip"><span class="muted">Tempo</span><strong>'+Math.round(results.reduce((a,x)=>a+x.ms,0))+'ms</strong></div>';
+  box.innerHTML=results.map(x=>'<div class="item">'+(x.ok?'✓':x.warn?'⚠️':'❌')+' <b>'+escapeHtml(x.label)+'</b><small> · '+escapeHtml(x.detail)+' · '+x.ms+'ms</small></div>').join('');
+  await runAllAITests();
+}
+
+window.addEventListener('load',()=>{
+  updateOfflineUI();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>{
+      reg.update();
+      reg.addEventListener('updatefound',()=>{
+        const worker=reg.installing;
+        if(worker)worker.addEventListener('statechange',()=>{
+          if(worker.state==='installed'&&navigator.serviceWorker.controller){
+            toast('Nova versão do PRIMORIS disponível. Atualizando...');
+            worker.postMessage({type:'SKIP_WAITING'});
+          }
+        });
+      });
+    }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());
+  }
+});
 </script>
 </body>
 </html>
