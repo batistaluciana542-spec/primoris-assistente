@@ -54,6 +54,39 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 @media(max-width:600px){.grid,.news{grid-template-columns:1fr}.top{align-items:flex-start}.clock{font-size:19px}.hero{padding:21px}.chat{height:54vh}.chatbar{position:sticky;bottom:0}.row{align-items:flex-start;flex-wrap:wrap}}
 </style>
 
+<style id="primoris-os-skills-dev-css">
+.skills-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:15px}
+.skill-card{position:relative;overflow:hidden;padding:17px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(16,20,39,.94),rgba(10,12,25,.94));transition:.2s}
+.skill-card:hover{transform:translateY(-2px);border-color:rgba(84,232,255,.38)}
+.skill-card .skill-icon{font-size:30px;margin-bottom:8px}
+.skill-card .skill-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--green);margin-top:10px}
+.skill-toggle{width:46px;height:25px;border:1px solid var(--line);border-radius:999px;background:#090b16;position:absolute;right:14px;top:14px;padding:2px}
+.skill-toggle span{display:block;width:19px;height:19px;border-radius:50%;background:#59617d;transition:.2s}
+.skill-toggle.on{border-color:rgba(93,255,174,.35);background:rgba(93,255,174,.08)}
+.skill-toggle.on span{transform:translateX(19px);background:var(--green);box-shadow:0 0 12px rgba(93,255,174,.45)}
+.os-shell{position:relative;overflow:hidden;border:1px solid rgba(84,232,255,.25);border-radius:28px;padding:22px;background:
+radial-gradient(circle at 15% 10%,rgba(154,108,255,.22),transparent 32%),
+radial-gradient(circle at 85% 20%,rgba(84,232,255,.18),transparent 30%),
+linear-gradient(145deg,rgba(13,16,35,.98),rgba(5,7,16,.98));box-shadow:0 20px 80px rgba(0,0,0,.38)}
+.os-shell:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+.os-head,.os-grid,.os-footer{position:relative;z-index:1}
+.os-head{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:18px}
+.os-name{font:800 clamp(22px,4vw,38px) Orbitron;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--violet));-webkit-background-clip:text;color:transparent}
+.os-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.os-tile{min-height:125px;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;background:rgba(255,255,255,.035);cursor:pointer;transition:.2s}
+.os-tile:hover{transform:translateY(-3px);border-color:rgba(84,232,255,.35);box-shadow:0 12px 35px rgba(84,232,255,.08)}
+.os-tile .big{font-size:30px}.os-tile strong{display:block;margin-top:8px;font:700 15px Orbitron}.os-tile small{display:block;color:var(--muted);margin-top:5px}
+.os-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.dev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+.dev-stat{padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.dev-stat strong{display:block;font:800 24px Orbitron;margin-top:7px}
+.dev-log{max-height:260px;overflow:auto;display:grid;gap:7px;margin-top:12px}
+.dev-log .item{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+.backup-status{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--muted);font-size:12px}
+@media(max-width:900px){.skills-grid{grid-template-columns:1fr 1fr}.os-grid{grid-template-columns:1fr 1fr}.dev-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.skills-grid,.os-grid,.dev-grid{grid-template-columns:1fr}.os-shell{padding:17px}.os-head{align-items:flex-start}.os-footer{align-items:flex-start;flex-direction:column}}
+</style>
+
 <style id="primoris-finance-css">
 .finance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
 .finance-card{position:relative;overflow:hidden;padding:20px;border:1px solid rgba(0,229,255,.18);border-radius:20px;background:linear-gradient(145deg,rgba(20,24,45,.92),rgba(10,12,25,.96));box-shadow:0 0 28px rgba(0,229,255,.07)}
@@ -330,7 +363,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 <aside class="sidebar">
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
-    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button>
+    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button data-page="skills">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
   <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
@@ -437,6 +470,43 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="card"><input id="globalSearch" placeholder="Digite para pesquisar..." oninput="renderGlobalSearch()"><div id="globalSearchResults" class="search-results"></div></div>
   </section>
 
+  <section id="page-skills" class="page">
+    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // SKILLS</div><h1>Habilidades</h1><p class="muted">Módulos que o PRIMORIS pode usar. Ative ou desative funções sem mexer nas IAs existentes.</p></div></div>
+    <div class="card"><div class="row"><div><h3>🧩 Skills disponíveis</h3><p class="muted">As preferências ficam salvas neste aparelho.</p></div><button class="btn" type="button" onclick="resetSkills()">Restaurar</button></div><div id="skillsGrid" class="skills-grid"></div></div>
+  </section>
+
+  <section id="page-os" class="page">
+    <div class="os-shell">
+      <div class="os-head"><div><div class="eyebrow">PRIMORIS // PERSONAL OPERATING SYSTEM</div><div class="os-name">PRIMORIS OS</div><div class="muted">Central pessoal de Anthony</div></div><span class="status"><span class="dot"></span> ONLINE</span></div>
+      <div class="os-grid">
+        <button class="os-tile" type="button" onclick="showPage('assistant')"><span class="big">🧠</span><strong>Assistente</strong><small>Converse com a IA</small></button>
+        <button class="os-tile" type="button" onclick="showPage('tasks')"><span class="big">📋</span><strong>Tarefas</strong><small id="osTasks">0 pendentes</small></button>
+        <button class="os-tile" type="button" onclick="showPage('agenda')"><span class="big">📅</span><strong>Agenda</strong><small id="osEvents">0 eventos</small></button>
+        <button class="os-tile" type="button" onclick="showPage('memory')"><span class="big">🧠</span><strong>Memória</strong><small id="osMemory">0 registros</small></button>
+        <button class="os-tile" type="button" onclick="showPage('studies')"><span class="big">📚</span><strong>Estudos</strong><small>Organize seu aprendizado</small></button>
+        <button class="os-tile" type="button" onclick="showPage('finance')"><span class="big">💰</span><strong>Finanças</strong><small>Controle financeiro</small></button>
+        <button class="os-tile" type="button" onclick="showPage('skills')"><span class="big">🧩</span><strong>Skills</strong><small>Gerencie habilidades</small></button>
+        <button class="os-tile" type="button" onclick="showPage('settings')"><span class="big">⚙️</span><strong>Configurações</strong><small>Personalize o sistema</small></button>
+      </div>
+      <div class="os-footer"><span class="muted">PRIMORIS v4.0 · Anthony</span><button class="btn primary" type="button" onclick="showPage('assistant');setTimeout(()=>document.getElementById('chatInput')?.focus(),150)">Iniciar comando</button></div>
+    </div>
+  </section>
+
+  <section id="page-devpanel" class="page">
+    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // DEVELOPER</div><h1>Dev Panel</h1><p class="muted">Painel técnico para verificar o estado do sistema. Nenhuma chave de API é exibida.</p></div></div>
+    <div class="card"><div class="row"><div><h3>🛠️ Controle do sistema</h3><p id="devPanelMode" class="muted">Modo desenvolvedor protegido.</p></div><button class="btn primary" type="button" onclick="runDevPanelScan()">Executar diagnóstico</button></div>
+      <div class="dev-grid">
+        <div class="dev-stat"><span class="muted">IA selecionada</span><strong id="devAI">--</strong></div>
+        <div class="dev-stat"><span class="muted">Armazenamento</span><strong id="devStorage">--</strong></div>
+        <div class="dev-stat"><span class="muted">PWA</span><strong id="devPWA">--</strong></div>
+        <div class="dev-stat"><span class="muted">Microfone</span><strong id="devMic">--</strong></div>
+        <div class="dev-stat"><span class="muted">Voz</span><strong id="devVoice">--</strong></div>
+        <div class="dev-stat"><span class="muted">Notificações</span><strong id="devNotify">--</strong></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><div class="row"><h3>📜 Log local</h3><button class="btn" type="button" onclick="clearDevLog()">Limpar</button></div><div id="devLog" class="dev-log"><div class="muted">Nenhum evento registrado.</div></div></div>
+  </section>
+
   <section id="page-diagnostics" class="page">
     <h2>Diagnóstico do Sistema</h2><p class="muted">Testes reais de conectividade e chamadas aos provedores. Nenhuma chave é exibida.</p>
     <div class="actions" style="margin:14px 0"><button class="btn primary" type="button" onclick="runAllAITests()">TESTAR TODAS AS IAS</button><button class="btn" type="button" onclick="runFullDiagnostics()">TESTAR SISTEMA COMPLETO</button></div>
@@ -515,7 +585,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 </div>
 
 <nav class="mobilebar" aria-label="Navegação principal; deslize para ver todas as páginas">
-<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
+<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
 </nav>
 <div id="toast" class="toast"></div>
 
@@ -636,6 +706,46 @@ function handleWhatsAppChatRequest(query){
 }
 
 
+const PRIMORIS_SKILLS_KEY='primoris_skills_v1';
+const PRIMORIS_DEVLOG_KEY='primoris_devlog_v1';
+const PRIMORIS_SKILLS=[
+ {id:'assistant',icon:'🧠',name:'Assistente IA',desc:'Conversas e comandos inteligentes.',enabled:true},
+ {id:'whatsapp',icon:'💬',name:'WhatsApp',desc:'Abrir conversas e preparar mensagens.',enabled:true},
+ {id:'memory',icon:'🧠',name:'Memória',desc:'Guardar preferências e informações úteis.',enabled:true},
+ {id:'study',icon:'📚',name:'Estudos',desc:'Registrar e organizar estudos.',enabled:true},
+ {id:'tasks',icon:'📋',name:'Tarefas',desc:'Criar e acompanhar tarefas.',enabled:true},
+ {id:'agenda',icon:'📅',name:'Agenda',desc:'Eventos locais e Google Calendar.',enabled:true},
+ {id:'voice',icon:'🎙️',name:'Voz',desc:'Reconhecimento e leitura de respostas.',enabled:true},
+ {id:'search',icon:'🔎',name:'Busca',desc:'Pesquisar seus dados locais.',enabled:true},
+ {id:'finance',icon:'💰',name:'Finanças',desc:'Controle financeiro pessoal.',enabled:true}
+];
+function loadSkills(){try{const x=JSON.parse(localStorage.getItem(PRIMORIS_SKILLS_KEY)||'{}');return PRIMORIS_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(PRIMORIS_SKILLS.map(s=>[s.id,s.enabled]))}}
+function saveSkills(x){localStorage.setItem(PRIMORIS_SKILLS_KEY,JSON.stringify(x))}
+function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" onclick="toggleSkill('${s.id}')"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('')}
+function toggleSkill(id){const x=loadSkills();x[id]=!x[id];saveSkills(x);renderSkills();devLog((x[id]?'Ativada':'Desativada')+' skill: '+id);toast((x[id]?'Skill ativada: ':'Skill desativada: ')+id)}
+function resetSkills(){if(!confirm('Restaurar todas as skills?'))return;localStorage.removeItem(PRIMORIS_SKILLS_KEY);renderSkills();toast('Skills restauradas')}
+function devLog(message){try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');list.unshift({time:new Date().toISOString(),message:String(message)});localStorage.setItem(PRIMORIS_DEVLOG_KEY,JSON.stringify(list.slice(0,80)))}catch{}renderDevLog()}
+function renderDevLog(){const box=$('devLog');if(!box)return;try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');box.innerHTML=list.length?list.map(x=>`<div class="item"><span class="muted">${new Date(x.time).toLocaleString('pt-BR')}</span><br>${escapeHtml(x.message)}</div>`).join(''):'<div class="muted">Nenhum evento registrado.</div>'}catch{box.innerHTML='<div class="muted">Log indisponível.</div>'}}
+function clearDevLog(){localStorage.removeItem(PRIMORIS_DEVLOG_KEY);renderDevLog();toast('Log limpo')}
+function runDevPanelScan(){
+ const provider=localStorage.getItem('primoris_ai_provider')||'auto';
+ const storage=(()=>{try{localStorage.setItem('__p','1');localStorage.removeItem('__p');return 'OK'}catch{return 'ERRO'}})();
+ const pwa=('serviceWorker' in navigator)?'OK':'N/D';
+ const mic=('SpeechRecognition' in window||'webkitSpeechRecognition' in window)?'OK':'N/D';
+ const voice=('speechSynthesis' in window)?'OK':'N/D';
+ const notify=('Notification' in window)?(Notification.permission==='granted'?'ATIVA':Notification.permission.toUpperCase()):'N/D';
+ if($('devAI'))$('devAI').textContent=provider.toUpperCase();
+ if($('devStorage'))$('devStorage').textContent=storage;
+ if($('devPWA'))$('devPWA').textContent=pwa;
+ if($('devMic'))$('devMic').textContent=mic;
+ if($('devVoice'))$('devVoice').textContent=voice;
+ if($('devNotify'))$('devNotify').textContent=notify;
+ if($('devPanelMode'))$('devPanelMode').textContent='Varredura concluída em '+new Date().toLocaleString('pt-BR');
+ devLog('Diagnóstico executado · IA='+provider+' · PWA='+pwa+' · microfone='+mic+' · voz='+voice);
+ toast('Diagnóstico do Dev Panel concluído');
+}
+function updateOSDashboard(){if($('osTasks'))$('osTasks').textContent=(data.tasks||[]).filter(x=>!x.done).length+' pendentes';if($('osEvents'))$('osEvents').textContent=(data.events||[]).length+' eventos';if($('osMemory'))$('osMemory').textContent=(data.memories||[]).length+' registros'}
+function updateBackupStatus(){const b=$('backupStatus');if(!b)return;const last=localStorage.getItem('primoris_last_backup');b.textContent=last?'Último backup exportado em '+new Date(last).toLocaleString('pt-BR')+'.':'Backup local disponível. Exporte seus dados para guardar uma cópia completa.'}
 function showPage(p){
   document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
   document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
@@ -647,6 +757,10 @@ function showPage(p){
   if(p==='agenda') renderAgenda();
   if(p==='memory') renderMemories();
   if(p==='finance' && typeof renderFinancas==='function') renderFinancas();
+  if(p==='skills')renderSkills();
+  if(p==='os')updateOSDashboard();
+  if(p==='devpanel'){renderDevLog();runDevPanelScan();}
+
 }
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 
@@ -1153,7 +1267,7 @@ function exportData(){
     a.href=url;a.download=`PRIMORIS-backup-${date}.json`;
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
-    toast('Backup completo exportado');
+    localStorage.setItem('primoris_last_backup',new Date().toISOString());updateBackupStatus();devLog('Backup completo exportado');toast('Backup completo exportado');
   }catch(err){console.error('Erro ao exportar backup:',err);toast('Não foi possível exportar os dados')}
 }
 $('importFile').onchange=e=>{
@@ -1191,7 +1305,7 @@ $('importFile').onchange=e=>{
   reader.onerror=()=>{toast('Não foi possível ler o arquivo');e.target.value=''};
   reader.readAsText(file);
 }
-function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();toast('Dados locais apagados')}}
+function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();localStorage.removeItem('primoris_last_backup');devLog('Dados locais apagados');toast('Dados locais apagados')}}
 
 
 function notificationKey(type,id){return `${type}:${id}`}
@@ -1358,6 +1472,9 @@ if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){
 return null}
 document.addEventListener('DOMContentLoaded',()=>{$('finDate').value=new Date().toISOString().slice(0,10);normalizeMemories();renderMemories();renderFinancas()});renderFinancas();
 if(typeof renderDashboard==='function')renderDashboard();
+if(typeof renderSkills==='function')renderSkills();
+if(typeof renderDevLog==='function')renderDevLog();
+if(typeof updateBackupStatus==='function')updateBackupStatus();
 </script>
 
 
