@@ -296,46 +296,27 @@ async function chamarCloudflare(payload) {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiKey = process.env.CLOUDFLARE_API_TOKEN;
   const model = process.env.CLOUDFLARE_MODEL || "@cf/openai/gpt-oss-120b";
-  if (!accountId || !apiKey) {
-    return {
-      ok:false,
-      status:503,
-      body:{error:{message:"CLOUDFLARE_ACCOUNT_ID ou CLOUDFLARE_API_TOKEN não está configurado no servidor."}},
-      model
-    };
-  }
+  if (!accountId || !apiKey) return {ok:false,status:503,body:{error:{message:"CLOUDFLARE_ACCOUNT_ID ou CLOUDFLARE_API_TOKEN não está configurado no servidor."}},model};
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
   try {
-    const response = await fetch(
-      "https://api.cloudflare.com/client/v4/accounts/" +
-      encodeURIComponent(accountId) +
-      "/ai/run/" + encodeURIComponent(model),
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Authorization":"Bearer "+apiKey
-        },
-        signal:controller.signal,
-        body:JSON.stringify(payload)
-      }
-    );
-    const body = await response.json().catch(()=>({}));
-    const normalized = body?.result?.response != null
-      ? { ...body, choices:[{message:{content:body.result.response}}] }
-      : body;
-    return {ok:response.ok,status:response.status,body:normalized,model};
+    const response = await fetch("https://api.cloudflare.com/client/v4/accounts/" + encodeURIComponent(accountId) + "/ai/v1/chat/completions", {
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
+      signal:controller.signal,
+      body:JSON.stringify({...payload, model})
+    });
+    const raw = await response.text();
+    let body={};
+    try { body=raw?JSON.parse(raw):{}; } catch { body={error:{message:raw||"Resposta inválida do Cloudflare."}}; }
+    if (!response.ok) {
+      const cfMessage=(body?.errors?.map?.(e=>e?.message||e?.code).filter(Boolean).join(" · "))||body?.error?.message||body?.message||("Cloudflare HTTP "+response.status);
+      body={...body,error:{...(body.error||{}),message:cfMessage}};
+    }
+    return {ok:response.ok,status:response.status,body,model};
   } catch(e) {
-    return {
-      ok:false,
-      status:e.name==="AbortError"?504:502,
-      body:{error:{message:e.name==="AbortError"?"Cloudflare AI excedeu 60 segundos.":e.message}},
-      model
-    };
-  } finally {
-    clearTimeout(timeout);
-  }
+    return {ok:false,status:e.name==="AbortError"?504:502,body:{error:{message:e.name==="AbortError"?"Cloudflare AI excedeu 60 segundos.":e.message}},model};
+  } finally { clearTimeout(timeout); }
 }
 
 // OpenAI oficial: usa as variáveis já existentes no Render.
