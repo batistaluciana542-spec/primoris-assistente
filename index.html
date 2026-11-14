@@ -408,7 +408,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="grid2"><div class="card"><h3>Pendentes</h3><div id="pendingTasks" class="list"></div></div><div class="card"><h3>Concluídas</h3><div id="completedTasks" class="list"></div></div></div>
   </section>
 
-  <section id="page-agenda" class="page"><div class="row"><div><h2>Agenda</h2><div class="muted">Google Calendar sincronizado com o painel.</div></div><button class="btn primary" onclick="syncCalendar()">Sincronizar</button></div><div class="card" style="margin-top:14px"><h3 id="agendaFormTitle">Novo compromisso</h3><form id="agendaForm" class="agenda-form"><input id="eventTitle" placeholder="Título do evento" required><input id="eventDate" type="datetime-local" required><input id="eventDescription" placeholder="Descrição (opcional)"><div class="actions"><button class="btn primary">Salvar evento</button><button type="button" class="btn" id="eventCancel" hidden onclick="cancelEventEdit()">Cancelar</button></div></form><p class="muted">Se o servidor não oferecer criação de eventos, eles serão guardados localmente.</p></div><div class="grid2"><div class="card"><h3>Hoje</h3><div id="agendaToday" class="list"></div></div><div class="card"><h3>Amanhã</h3><div id="agendaTomorrow" class="list"></div></div></div><h3 style="margin-top:18px">Próximos eventos</h3><div id="agendaList" class="list"></div></section>
+  <section id="page-agenda" class="page"><div class="row"><div><h2>Agenda</h2><div class="muted">Google Calendar sincronizado com o painel.</div></div><button class="btn primary" onclick="syncCalendar()">Sincronizar</button></div><div class="card" style="margin-top:14px"><h3 id="agendaFormTitle">Novo compromisso</h3><form id="agendaForm" class="agenda-form"><input id="eventTitle" placeholder="Título do evento" required><input id="eventDate" type="datetime-local" required><input id="eventDescription" placeholder="Descrição (opcional)"><input id="eventLocation" placeholder="Local (opcional)"><div class="actions"><button class="btn primary">Salvar evento</button><button type="button" class="btn" id="eventCancel" hidden onclick="cancelEventEdit()">Cancelar</button></div></form><p class="muted">Se o servidor não oferecer criação de eventos, eles serão guardados localmente.</p></div><div class="grid2"><div class="card"><h3>Hoje</h3><div id="agendaToday" class="list"></div></div><div class="card"><h3>Amanhã</h3><div id="agendaTomorrow" class="list"></div></div></div><h3 style="margin-top:18px">Próximos eventos</h3><div id="agendaList" class="list"></div></section>
 
   <section id="page-studies" class="page">
     <div class="row"><div><h2>Estudos</h2><div class="muted">Registre sessões e mantenha algum vestígio de organização.</div></div></div>
@@ -433,6 +433,16 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="row"><div><div class="eyebrow">PRIMORIS // GMAIL</div><h2>Meus E-mails</h2><div class="muted">Leia sua caixa de entrada sem sair do PRIMORIS.</div></div><button class="btn primary" type="button" onclick="loadEmails()">↻ Atualizar</button></div>
     <div class="card" style="margin-top:15px"><div class="actions"><input id="emailSearch" placeholder="Pesquisar e-mails..." onkeydown="if(event.key==='Enter')loadEmails()"><button class="btn" type="button" onclick="loadEmails()">Pesquisar</button></div><p id="emailState" class="muted" style="margin:12px 0">Verificando Gmail...</p></div>
     <div class="grid2"><div class="card"><h3>Caixa de entrada</h3><div id="emailList" class="list"><div class="muted">Carregando...</div></div></div><div class="card"><h3>Mensagem</h3><div id="emailViewer" class="email-viewer"><div class="muted">Selecione um e-mail para ler.</div></div></div></div>
+    <div class="card" style="margin-top:14px">
+      <div class="row"><div><h3>✍️ Novo rascunho</h3><div class="muted">O PRIMORIS prepara o e-mail no Gmail. O envio continua sob seu controle.</div></div><span class="badge">GMAIL</span></div>
+      <form id="gmailDraftForm" class="form" style="margin-top:12px">
+        <input id="gmailDraftTo" type="email" placeholder="Destinatário" required>
+        <input id="gmailDraftSubject" placeholder="Assunto" required>
+        <textarea id="gmailDraftBody" placeholder="Escreva a mensagem..." required></textarea>
+        <div class="actions"><button class="btn primary" type="submit">💾 Salvar como rascunho</button><button class="btn" type="button" onclick="clearGmailDraft()">Limpar</button></div>
+        <div id="gmailDraftStatus" class="muted"></div>
+      </form>
+    </div>
   </section>
 
   <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div></section>
@@ -541,7 +551,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
         </div>
         <div class="wide voice-preview">
           <button class="btn primary" type="button" onclick="testSelectedVoice()">🔊 Testar voz</button>
-          <button class="btn" type="button" onclick="refreshVoiceList()">↻ Atualizar vozes</button>
+          <button class="btn" type="button" onclick="refreshVoiceList()">↻ Atualizar vozes</button><button class="btn" type="button" onclick="stopSpeaking()">⏹️ Parar voz</button>
           <span id="voiceSettingsStatus" class="muted">Detectando vozes disponíveis...</span>
         </div>
         <div>
@@ -711,6 +721,8 @@ const PRIMORIS_DEVLOG_KEY='primoris_devlog_v1';
 const PRIMORIS_SKILLS=[
  {id:'assistant',icon:'🧠',name:'Assistente IA',desc:'Conversas e comandos inteligentes.',enabled:true},
  {id:'whatsapp',icon:'💬',name:'WhatsApp',desc:'Abrir conversas e preparar mensagens.',enabled:true},
+ {id:'gmail',icon:'📧',name:'Gmail',desc:'Pesquisar, ler e criar rascunhos de e-mail.',enabled:true},
+ {id:'taskAgent',icon:'⚡',name:'Agente de tarefas',desc:'Transformar comandos em tarefas, lembretes e ações.',enabled:true},
  {id:'memory',icon:'🧠',name:'Memória',desc:'Guardar preferências e informações úteis.',enabled:true},
  {id:'study',icon:'📚',name:'Estudos',desc:'Registrar e organizar estudos.',enabled:true},
  {id:'tasks',icon:'📋',name:'Tarefas',desc:'Criar e acompanhar tarefas.',enabled:true},
@@ -809,6 +821,7 @@ function renderOpps(){
 
 $('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({title:$('studyTitle').value,kind:$('studyKind').value,minutes:Number($('studyTime').value)||0,grade:$('studyGrade').value||null,notes:$('studyNotes').value,date:$('studyDate').value||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString()});save();e.target.reset();render();toast('Estudo registrado')};
 $('oppForm').onsubmit=e=>{e.preventDefault();data.opportunities.push({title:$('oppTitle').value,link:$('oppLink').value,notes:$('oppNotes').value,date:new Date().toISOString()});save();e.target.reset();render();toast('Oportunidade salva')};
+$('gmailDraftForm')?.addEventListener('submit',createGmailDraft);
 
 function isPotentialActionRequest(q){
   return /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|preciso|quero|gostaria|poderia|pode)\b/i.test(q)
@@ -901,7 +914,8 @@ async function applyAIAction(a){
   if(a.type==='task'||a.type==='reminder'){
     const title=(a.title||a.description||'').trim();if(!title)return 'Qual tarefa devo adicionar?';
     const due=actionDateTime(a.date,a.time);if(a.date&&!due)return 'Não consegui interpretar a data e o horário. Pode informar novamente?';
-    const task={id:id(),title,date:due?due.toISOString():new Date().toISOString(),dueDate:a.date||null,dueTime:a.time||null,done:false,priority:'media',source:'assistant'};
+    const priority=['alta','media','baixa'].includes(String(a.priority||'').toLowerCase())?String(a.priority).toLowerCase():'media';
+    const task={id:id(),title,date:due?due.toISOString():new Date().toISOString(),dueDate:a.date||null,dueTime:a.time||null,done:false,priority,source:'assistant'};
     data.tasks.push(task);save();render();
     if(a.type==='reminder'&&due){
       const end=new Date(due);end.setHours(end.getHours()+1);let synced=false;
@@ -925,7 +939,7 @@ async function applyAIAction(a){
     const title=(a.title||a.description||'Compromisso').trim();if(!a.date||!a.time)return 'Qual data e horário devo usar para esse compromisso?';
     const start=actionDateTime(a.date,a.time);if(!start)return 'Não consegui interpretar a data e o horário do compromisso.';
     const end=new Date(start);end.setHours(end.getHours()+1);let ev={id:id(),title,date:start.toISOString(),description:a.description||'',source:'local'};
-    try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:title,description:ev.description,start:start.toISOString(),end:end.toISOString()})});
+    try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:title,description:ev.description,location:$('eventLocation')?.value?.trim()||'',start:start.toISOString(),end:end.toISOString()})});
       if(r.ok){const j=await r.json();ev.id=j.event?.id||ev.id;ev.source='google';}
       else if(r.status!==401){const j=await r.json().catch(()=>({}));throw new Error(j.message||'O Google Calendar não confirmou a criação.');}
     }catch(err){if(!navigator.onLine)return 'Sem conexão: não consegui confirmar o compromisso.';if(String(err.message).includes('não confirmou'))return err.message;}
@@ -1076,6 +1090,30 @@ function renderIntelligence(){
   $('intelNews').innerHTML=newsItems.length?newsItems.map(a=>`<a class="item intel-news-link" href="${a.href}" target="_blank" rel="noopener"><b>${a.querySelector('h3')?.textContent||'Notícia'}</b><div class="event-meta">${a.querySelector('.muted')?.textContent||'Informações'}</div></a>`).join(''):'<div class="muted">Abra Informações para carregar as notícias.</div>';
 }
 
+async function createGmailDraft(event){
+  event?.preventDefault();
+  const to=String($('gmailDraftTo')?.value||'').trim();
+  const subject=String($('gmailDraftSubject')?.value||'').trim();
+  const body=String($('gmailDraftBody')?.value||'').trim();
+  const status=$('gmailDraftStatus');
+  if(!to||!subject||!body){if(status)status.textContent='Preencha destinatário, assunto e mensagem.';return;}
+  if(status)status.textContent='Salvando rascunho no Gmail...';
+  try{
+    const r=await fetch('/api/gmail/draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject,body})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.details||j.error||'Não foi possível criar o rascunho.');
+    if(status)status.textContent='✓ Rascunho salvo no Gmail.';
+    toast('Rascunho salvo no Gmail');
+    event?.target?.reset?.();
+  }catch(e){
+    if(status)status.textContent=e.message||'Falha ao salvar o rascunho.';
+    toast('Não foi possível salvar o rascunho');
+  }
+}
+function clearGmailDraft(){
+  const f=$('gmailDraftForm');if(f)f.reset();
+  const s=$('gmailDraftStatus');if(s)s.textContent='';
+}
 async function loadEmails(){
   const box=$('emailList'),state=$('emailState');if(!box||!state)return;
   state.textContent='Consultando sua caixa de entrada...';box.innerHTML='<div class="muted">Carregando e-mails...</div>';
