@@ -1140,21 +1140,38 @@ function speechSupported(){return 'speechSynthesis' in window}
 function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o PRIMORIS')}}
 function initVoiceRecognition(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
- voiceRecognition=new SR();voiceRecognition.lang='pt-BR';voiceRecognition.continuous=true;voiceRecognition.interimResults=true;voiceRecognition.maxAlternatives=3;
+ voiceRecognition=new SR();voiceRecognition.lang='pt-BR';voiceRecognition.continuous=false;voiceRecognition.interimResults=true;voiceRecognition.maxAlternatives=1;
  voiceRecognition.onstart=()=>{voiceListening=true;voiceManualStop=false;updateVoiceUI()};
  voiceRecognition.onresult=e=>{
-   let final='';let interim='';
-   for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0]?.transcript||'';if(e.results[i].isFinal)final+=t;else interim+=t;}
-   if(final.trim())voiceFinalText=(voiceFinalText+' '+final).trim();
-   const shown=(voiceFinalText+' '+interim).trim();const input=document.getElementById('chatInput');if(input&&shown)input.value=shown;
-   if(final.trim()){clearTimeout(voiceStopTimer);voiceStopTimer=setTimeout(()=>{if(voiceRecognition&&voiceListening){voiceManualStop=true;try{voiceRecognition.stop()}catch(e){}}},350);}
+   let final='';
+   let interim='';
+   for(let i=e.resultIndex;i<e.results.length;i++){
+     const t=e.results[i][0]?.transcript||'';
+     if(e.results[i].isFinal) final+=t;
+     else interim+=t;
+   }
+   if(final.trim() && !voiceFinalText.trim()) voiceFinalText=final.trim();
+   const shown=(voiceFinalText+' '+interim).trim();
+   const input=document.getElementById('chatInput');
+   if(input) input.value=shown;
+   if(final.trim()){
+     voiceManualStop=true;
+     clearTimeout(voiceStopTimer);
+     try{voiceRecognition.stop()}catch(e){}
+   }
  };
  voiceRecognition.onerror=e=>{console.warn('Reconhecimento de voz:',e.error);if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceManualStop=true;voiceListening=false;updateVoiceUI();toast('Permissão para o microfone foi negada.');}};
  voiceRecognition.onend=()=>{
-   clearTimeout(voiceRestartTimer);const text=voiceFinalText.trim();
-   if(!voiceManualStop&&voiceListening&&!text){voiceRestartTimer=setTimeout(()=>{try{voiceRecognition.start()}catch(e){}},250);return;}
-   voiceListening=false;updateVoiceUI();
-   if(text){const input=document.getElementById('chatInput');if(input)input.value=text;const form=document.getElementById('chatForm');if(form)form.requestSubmit();}
+   clearTimeout(voiceRestartTimer);
+   const text=voiceFinalText.trim();
+   voiceListening=false;
+   updateVoiceUI();
+   if(text){
+     const input=document.getElementById('chatInput');
+     if(input) input.value=text;
+     const form=document.getElementById('chatForm');
+     if(form) form.requestSubmit();
+   }
  };
  return true;
 }
