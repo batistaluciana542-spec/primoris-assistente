@@ -1,0 +1,1222 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070812">
+<meta name="description" content="PRIMORIS — Assistente Pessoal Futurista">
+<title>PRIMORIS — Assistente Pessoal</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070812;--panel:#0d1020;--panel2:#11152a;--line:rgba(126,147,255,.18);
+  --text:#f3f5ff;--muted:#8f98b8;--cyan:#54e8ff;--pink:#ff4fd8;--violet:#9a6cff;
+  --green:#5dffae;--danger:#ff647c;--shadow:0 18px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+radial-gradient(circle at 15% 5%,rgba(154,108,255,.15),transparent 30%),
+radial-gradient(circle at 85% 10%,rgba(84,232,255,.12),transparent 28%),
+linear-gradient(180deg,#070812,#090b16 55%,#06070e);
+color:var(--text);font-family:Rajdhani,system-ui,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,black,transparent 85%);z-index:-1}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:245px;position:fixed;inset:0 auto 0 0;padding:22px 14px;background:rgba(7,8,18,.84);backdrop-filter:blur(22px);border-right:1px solid var(--line);z-index:20}
+.logo{padding:8px 12px 22px}.logo strong{font:800 22px Orbitron;letter-spacing:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}.logo small{display:block;color:var(--muted);letter-spacing:2px;margin-top:6px}
+.nav{display:grid;gap:7px}.nav button{border:1px solid transparent;background:transparent;color:#aeb6d2;padding:12px 13px;border-radius:13px;text-align:left;transition:.2s}.nav button:hover,.nav button.active{color:white;background:linear-gradient(90deg,rgba(84,232,255,.1),rgba(255,79,216,.08));border-color:var(--line);box-shadow:inset 3px 0 var(--cyan)}
+.main{margin-left:245px;width:calc(100% - 245px);padding:24px;max-width:1500px}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.eyebrow{color:var(--cyan);font:600 12px Orbitron;letter-spacing:2px}.clock{font:700 28px Orbitron}.date{color:var(--muted)}
+.page{display:none;animation:fade .25s ease}.page.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.hero{padding:28px;border:1px solid var(--line);border-radius:25px;background:linear-gradient(135deg,rgba(17,21,42,.94),rgba(10,12,25,.88));box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-90px;top:-110px;background:rgba(84,232,255,.13);filter:blur(5px)}
+h1,h2,h3{margin:0 0 8px}h1{font:800 clamp(27px,4vw,46px) Orbitron}h2{font:700 25px Orbitron}h3{font-size:19px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:15px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+.card{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:19px;padding:18px;background:linear-gradient(145deg,rgba(16,20,39,.92),rgba(10,12,25,.92));box-shadow:0 10px 35px rgba(0,0,0,.22);transition:.2s}.card:hover{transform:translateY(-2px);border-color:rgba(84,232,255,.35);box-shadow:0 14px 40px rgba(84,232,255,.08)}
+.stat{font:800 30px Orbitron;margin-top:8px}.badge{display:inline-block;padding:5px 9px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--cyan);margin-bottom:8px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+/* Backup controls are static HTML and must remain visible in desktop and mobile layouts. */
+.backup-actions{display:flex!important;visibility:visible!important;opacity:1!important;flex-wrap:wrap;gap:8px}
+.backup-actions button{display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center;justify-content:center}
+.backup-actions #importFile[hidden]{display:none!important}
+.btn{border:1px solid rgba(84,232,255,.3);border-radius:12px;padding:10px 14px;background:linear-gradient(135deg,rgba(84,232,255,.12),rgba(154,108,255,.12));color:white;font-weight:700;transition:.2s}.btn:hover{transform:translateY(-1px);border-color:var(--cyan)}.btn.primary{background:linear-gradient(135deg,#256c83,#6b3c9c)}.btn.danger{border-color:rgba(255,100,124,.35);color:#ff9aaa}
+input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15;color:white;border-radius:12px;padding:11px 12px;outline:none}input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(84,232,255,.08)}textarea{min-height:110px;resize:vertical}.form{display:grid;gap:10px}.list{display:grid;gap:9px;margin-top:12px}.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}.item small{color:var(--muted)}
+.chat{height:min(57vh,610px);overflow:auto;display:flex;flex-direction:column;gap:10px;padding:8px 2px 15px}.bubble{max-width:85%;padding:12px 14px;border-radius:15px;white-space:pre-wrap;line-height:1.4}.bubble.ai{align-self:flex-start;background:#11162b;border:1px solid var(--line)}.bubble.user{align-self:flex-end;background:linear-gradient(135deg,#214e61,#613d72);border:1px solid rgba(84,232,255,.2)}.chatbar{display:flex;gap:8px;margin-top:8px}.chatbar input{flex:1}
+.news{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.news .card h3{line-height:1.25}.status{display:inline-flex;align-items:center;gap:7px;color:var(--green);font-size:13px}.dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green)}
+.mobilebar{display:none}
+.toast{position:fixed;right:18px;bottom:18px;background:#11162b;border:1px solid var(--line);padding:12px 15px;border-radius:13px;box-shadow:var(--shadow);z-index:50;display:none}.toast.show{display:block;animation:fade .2s}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;width:100%;padding:16px 14px 90px}.grid,.news{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.mobilebar{display:flex;position:fixed;z-index:30;bottom:10px;left:10px;right:10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;background:rgba(10,12,25,.94);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:7px;gap:5px;box-shadow:var(--shadow)}.mobilebar button{flex:0 0 auto;min-width:58px;scroll-snap-align:start;border:0;background:transparent;color:#9ba4c2;padding:8px 5px;border-radius:11px;font-size:11px;white-space:nowrap}.mobilebar button.active{color:white;background:rgba(84,232,255,.1)}}
+@media(max-width:600px){.grid,.news{grid-template-columns:1fr}.top{align-items:flex-start}.clock{font-size:19px}.hero{padding:21px}.chat{height:54vh}.chatbar{position:sticky;bottom:0}.row{align-items:flex-start;flex-wrap:wrap}}
+</style>
+
+<style id="primoris-finance-css">
+.finance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.finance-card{position:relative;overflow:hidden;padding:20px;border:1px solid rgba(0,229,255,.18);border-radius:20px;background:linear-gradient(145deg,rgba(20,24,45,.92),rgba(10,12,25,.96));box-shadow:0 0 28px rgba(0,229,255,.07)}
+.finance-card:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.035),transparent);pointer-events:none}
+.finance-card span{display:block;font-size:12px;opacity:.72;margin-bottom:10px;letter-spacing:.5px}
+.finance-card strong{font-family:Orbitron,sans-serif;font-size:clamp(20px,5vw,30px);letter-spacing:.3px}
+.finance-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.finance-actions button{border:1px solid rgba(0,229,255,.28);border-radius:14px;padding:11px 15px;background:rgba(0,229,255,.08);color:inherit;cursor:pointer}
+.finance-entry{margin-top:18px;padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:18px;background:rgba(255,255,255,.025)}
+.finance-entry h3{margin:0 0 8px;font-size:14px}
+.finance-entry p{margin:0;opacity:.7;font-size:12px;line-height:1.5}
+@media(max-width:600px){.finance-grid{grid-template-columns:1fr}}
+
+/* PRIMORIS v5 */
+.memory-form,.agenda-form,.finance-form{display:grid;gap:10px}
+.memory-tools{display:grid;grid-template-columns:1fr 190px;gap:10px;margin-top:14px}
+.memory-item,.movement-item{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap}.item-actions .btn{padding:6px 9px;font-size:12px}
+.finance-form{grid-template-columns:repeat(2,minmax(0,1fr))}.finance-form .wide{grid-column:1/-1}
+.finance-chart{display:flex;gap:8px;align-items:end;height:150px;padding:12px 0}
+.finance-bar{flex:1;min-width:0;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--cyan),var(--violet));position:relative}
+.finance-bar small{position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;color:var(--muted);font-size:11px}
+.event-meta{color:var(--muted);font-size:13px}
+body.appearance-contrast{--cyan:#8dffdc;--pink:#ffb4ec;--violet:#c0a6ff;--muted:#c1c9e3}
+@media(max-width:600px){.memory-tools,.finance-form{grid-template-columns:1fr}.finance-form .wide{grid-column:auto}.memory-item,.movement-item{display:block}.item-actions{margin-top:9px}}
+
+.task-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.task-form .wide{grid-column:1/-1}
+.priority-high{color:#ff8a9b}.priority-medium{color:#ffd27a}.priority-low{color:var(--green)}
+.search-results{display:grid;gap:9px;margin-top:14px}
+.dashboard-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+@media(max-width:600px){.task-form,.dashboard-columns{grid-template-columns:1fr}.task-form .wide{grid-column:auto}}
+</style>
+
+
+<style id="primoris-voice-css">
+.dev-card{border-color:rgba(154,108,255,.28)}.dev-card .badge{color:var(--muted)}.dev-card .badge.dev-on{color:var(--green);border-color:rgba(93,255,174,.35)}
+.voice-btn{width:58px;height:58px;min-width:58px;padding:0;position:relative;border:1px solid rgba(150,125,255,.8);border-radius:18px;background:linear-gradient(135deg,#087bff,#5546e8 55%,#8b35cf);color:#fff;font-size:0;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px rgba(49,119,255,.28),inset 0 1px 0 rgba(255,255,255,.22);transition:.2s;touch-action:manipulation}.voice-btn:before{content:"";width:17px;height:24px;border:2.5px solid #fff;border-radius:11px;display:block}.voice-btn:after{content:"";position:absolute;width:27px;height:14px;border:2px solid #fff;border-top:0;border-radius:0 0 16px 16px;transform:translateY(7px)}.voice-btn:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(70,117,255,.42)}.voice-btn.listening{animation:voicePulse 1s infinite;background:linear-gradient(135deg,#5b3dff,#bd35dc)}@keyframes voicePulse{0%,100%{box-shadow:0 0 14px rgba(80,110,255,.4)}50%{box-shadow:0 0 28px rgba(169,76,255,.8)}}.voice-status{display:none}.voice-auto-note{font-size:12px;color:var(--muted);margin-top:8px}@media(max-width:600px){.voice-btn{width:56px;height:56px;min-width:56px}}
+</style>
+<style id="primoris-notifications-css">#notificationList .item{display:flex;align-items:center;justify-content:space-between;gap:10px}.notification-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#1687ff}</style>
+
+<style id="primoris-voice-settings-css">
+.voice-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.voice-settings-grid .wide{grid-column:1/-1}
+.voice-preview{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.voice-preview .btn{min-width:130px}
+.voice-range{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.voice-range output{min-width:55px;text-align:right;color:var(--cyan);font-weight:700}
+.voice-help{font-size:12px;color:var(--muted);line-height:1.45}
+@media(max-width:600px){.voice-settings-grid{grid-template-columns:1fr}.voice-settings-grid .wide{grid-column:auto}}
+</style>
+
+
+<style id="primoris-voice-controls-fix">
+.voice-settings-grid input[type="range"]{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  height:34px!important;
+  padding:0!important;
+  margin:4px 0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  accent-color:var(--cyan);
+  cursor:pointer!important;
+  touch-action:pan-x;
+  opacity:1!important;
+}
+.voice-settings-grid input[type="range"]::-webkit-slider-runnable-track{
+  height:7px;border-radius:99px;background:rgba(84,232,255,.22);
+}
+.voice-settings-grid input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:22px;height:22px;border-radius:50%;
+  margin-top:-7.5px;background:var(--cyan);
+  border:2px solid white;box-shadow:0 0 14px rgba(84,232,255,.45);
+}
+.voice-settings-grid input[type="range"]::-moz-range-track{
+  height:7px;border-radius:99px;background:rgba(84,232,255,.22);
+}
+.voice-settings-grid input[type="range"]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--cyan);border:2px solid white;
+}
+.voice-range{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 62px!important;
+  gap:10px!important;
+  align-items:center!important;
+}
+.voice-range output{
+  display:block!important;
+  width:62px!important;
+  min-width:62px!important;
+  padding:5px 7px!important;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#080a15;
+  color:var(--cyan)!important;
+  text-align:center!important;
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
+  <nav class="nav">
+    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="markets">◒ Mercados</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button>
+  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <div><div class="eyebrow">SYSTEM // ONLINE</div><div class="status"><span class="dot"></span> PRIMORIS operacional</div></div>
+    <div style="text-align:right"><div id="clock" class="clock">--:--:--</div><div id="date" class="date"></div></div>
+  </header>
+
+  <section id="page-home" class="page">
+    <div class="hero"><div class="eyebrow">PERSONAL COMMAND CENTER</div><h1>Seu dia, sem bagunça.</h1><p class="muted">Agenda, tarefas, estudos, notícias e memória em um único painel. A humanidade finalmente inventou um lugar para guardar as coisas que esquece.</p><div class="actions"><button class="btn primary" onclick="showPage('assistant')">Falar com PRIMORIS</button><button class="btn" onclick="syncCalendar()">Sincronizar agenda</button></div></div>
+    <div class="grid">
+      <div class="card"><span class="badge">TAREFAS</span><div class="stat" id="statTasks">0</div><div class="muted">pendentes</div></div>
+      <div class="card"><span class="badge">EVENTOS</span><div class="stat" id="statEvents">0</div><div class="muted">sincronizados</div></div>
+      <div class="card"><span class="badge">ESTUDOS</span><div class="stat" id="statStudies">0</div><div class="muted">registros</div></div>
+    </div>
+    <div class="card" style="margin-top:15px"><div class="row"><h3>Tarefas</h3><span class="muted">Criadas aqui ou pelo assistente</span></div><div id="taskList" class="list"></div></div>
+    <div class="card" style="margin-top:15px"><div class="row"><h3>🔔 Notificações inteligentes</h3><button class="btn" type="button" onclick="enableNotifications()">Ativar</button></div><div id="notificationList" class="list"><div class="muted">Nenhuma notificação pendente.</div></div></div>
+    <div class="dashboard-columns">
+      <div class="card"><h3>Próximos compromissos</h3><div id="dashEvents" class="list"></div></div>
+      <div class="card"><h3>Próximos lembretes</h3><div id="dashReminders" class="list"></div></div>
+      <div class="card"><h3>Resumo financeiro</h3><p id="dashFinance" class="muted">Sem movimentações registradas.</p></div>
+      <div class="card"><h3>Estudos</h3><div id="dashStudies" class="list"></div></div>
+    </div>
+    <div class="grid2"><div class="card"><h3>Resumo rápido</h3><p id="brief" class="muted">Carregando seu painel...</p></div><div class="card"><h3>Estado do sistema</h3><p class="muted">IA conectada ao servidor · PWA ativo · Google Calendar disponível · Notícias online</p></div></div>
+  </section>
+
+  <section id="page-assistant" class="page">
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
+    <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
+  </section>
+
+  <section id="page-tasks" class="page">
+    <div class="row"><div><h2>Gerenciador de tarefas</h2><div class="muted">Crie, edite, priorize e acompanhe suas tarefas.</div></div></div>
+    <div class="card" style="margin-top:14px"><h3 id="taskFormTitle">Nova tarefa</h3>
+      <form id="taskForm" class="task-form"><input id="taskTitle" class="wide" placeholder="O que precisa ser feito?" required>
+        <input id="taskDueDate" type="date"><input id="taskDueTime" type="time">
+        <select id="taskPriority"><option value="baixa">Prioridade baixa</option><option value="media" selected>Prioridade média</option><option value="alta">Prioridade alta</option></select>
+        <div class="wide actions"><button class="btn primary">Salvar tarefa</button><button type="button" class="btn" id="taskCancel" hidden onclick="cancelTaskEdit()">Cancelar</button></div>
+      </form>
+    </div>
+    <div class="grid2"><div class="card"><h3>Pendentes</h3><div id="pendingTasks" class="list"></div></div><div class="card"><h3>Concluídas</h3><div id="completedTasks" class="list"></div></div></div>
+  </section>
+
+  <section id="page-agenda" class="page"><div class="row"><div><h2>Agenda</h2><div class="muted">Google Calendar sincronizado com o painel.</div></div><button class="btn primary" onclick="syncCalendar()">Sincronizar</button></div><div class="card" style="margin-top:14px"><h3 id="agendaFormTitle">Novo compromisso</h3><form id="agendaForm" class="agenda-form"><input id="eventTitle" placeholder="Título do evento" required><input id="eventDate" type="datetime-local" required><input id="eventDescription" placeholder="Descrição (opcional)"><div class="actions"><button class="btn primary">Salvar evento</button><button type="button" class="btn" id="eventCancel" hidden onclick="cancelEventEdit()">Cancelar</button></div></form><p class="muted">Se o servidor não oferecer criação de eventos, eles serão guardados localmente.</p></div><div class="grid2"><div class="card"><h3>Hoje</h3><div id="agendaToday" class="list"></div></div><div class="card"><h3>Amanhã</h3><div id="agendaTomorrow" class="list"></div></div></div><h3 style="margin-top:18px">Próximos eventos</h3><div id="agendaList" class="list"></div></section>
+
+  <section id="page-studies" class="page">
+    <div class="row"><div><h2>Estudos</h2><div class="muted">Registre sessões e mantenha algum vestígio de organização.</div></div></div>
+    <div class="grid2"><div class="card"><form id="studyForm" class="form"><input id="studyTitle" placeholder="Matéria, tarefa, prova ou evento" required>
+      <select id="studyKind"><option value="matéria">Matéria / sessão</option><option value="tarefa escolar">Tarefa escolar</option><option value="prova">Prova</option><option value="nota">Nota</option><option value="data importante">Data importante</option></select>
+      <input id="studyTime" type="number" min="1" placeholder="Minutos estudados (opcional)">
+      <input id="studyDate" type="date"><input id="studyGrade" type="number" min="0" max="10" step="0.1" placeholder="Nota (0 a 10, opcional)">
+      <textarea id="studyNotes" placeholder="Observações / conteúdo / detalhes"></textarea><button class="btn primary">Registrar estudo</button></form></div><div class="card"><h3>Histórico</h3><div id="studyList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-opportunities" class="page">
+    <h2>Oportunidades</h2><div class="muted">Guarde ideias, cursos, projetos e oportunidades.</div>
+    <div class="grid2"><div class="card"><form id="oppForm" class="form"><input id="oppTitle" placeholder="Nome" required><input id="oppLink" placeholder="Link"><textarea id="oppNotes" placeholder="Notas"></textarea><button class="btn primary">Salvar oportunidade</button></form></div><div class="card"><div id="oppList" class="list"></div></div></div>
+  </section>
+
+  <section id="page-news" class="page">
+    <div class="row"><div><h2>Informações</h2><div class="muted">Notícias reais carregadas pelo servidor.</div></div><button class="btn primary" onclick="loadNews()">↻ Atualizar</button></div>
+    <div id="newsState" class="muted" style="margin:12px 0"></div><div id="newsList" class="news"></div>
+  </section>
+
+  <section id="page-markets" class="page">
+    <h2>Mercados</h2><div class="muted">Painel informativo para acompanhar indicadores.</div>
+    <div class="grid"><div class="card"><span class="badge">IBOVESPA</span><div class="stat">B3</div><p class="muted">Acompanhe pelo seu provedor de mercado.</p></div><div class="card"><span class="badge">DÓLAR</span><div class="stat">USD/BRL</div><p class="muted">Cotação depende de fonte externa.</p></div><div class="card"><span class="badge">STATUS</span><div class="stat">ONLINE</div><p class="muted">Painel pronto para integrações futuras.</p></div></div>
+  </section>
+
+  <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div></section>
+
+  <section id="page-integrations" class="page">
+    <h2>Integrações</h2><div class="muted">Conexões do sistema.</div>
+    <div class="grid2"><div class="card"><h3>Google Calendar</h3><p id="calendarStatus" class="muted">Verificando conexão...</p><div class="actions"><button class="btn primary" onclick="connectCalendar()">Conectar</button><button class="btn" onclick="syncCalendar()">Sincronizar</button></div></div>
+    <div class="card"><h3>Google News</h3><p class="muted">RSS de notícias por categoria.</p><button class="btn" onclick="showPage('news')">Abrir notícias</button></div></div>
+  </section>
+
+  <section id="page-search" class="page"><h2>Busca no PRIMORIS</h2><p class="muted">Pesquise tarefas, memórias, anotações, compromissos e movimentações financeiras.</p>
+    <div class="card"><input id="globalSearch" placeholder="Digite para pesquisar..." oninput="renderGlobalSearch()"><div id="globalSearchResults" class="search-results"></div></div>
+  </section>
+
+  <section id="page-diagnostics" class="page">
+    <h2>Diagnóstico do Sistema</h2><p class="muted">Testes reais de conectividade e chamadas aos provedores. Nenhuma chave é exibida.</p>
+    <div class="actions" style="margin:14px 0"><button class="btn primary" type="button" onclick="runAllAITests()">TESTAR TODAS AS IAS</button><button class="btn" type="button" onclick="runFullDiagnostics()">TESTAR SISTEMA COMPLETO</button></div>
+    <div class="card"><h3>Sistema</h3><div id="diagSystem" class="list"><div class="muted">Aguardando teste...</div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Inteligência Artificial</h3><div id="diagAI" class="list"><div class="muted">Toque em testar todas as IAs.</div></div></div>
+    <div class="card" style="margin-top:14px"><h3>Resultado detalhado</h3><div id="diagDetails" class="list"><div class="muted">Nenhum teste executado.</div></div></div>
+  </section>
+
+  <!-- PRIMORIS DEPLOY BUILD: backup controls are authored directly in this HTML. -->
+  <section id="page-settings" class="page">
+    <h2>Configurações</h2><div class="muted">Ajustes e atalhos das áreas do PRIMORIS.</div>
+    <div class="settings-links"><button class="btn" onclick="showPage('memory')">Memória</button><button class="btn" onclick="showPage('assistant')">IA</button><button class="btn" onclick="showPage('agenda')">Google Calendar</button><button class="btn" onclick="showPage('news')">Notícias</button><button class="btn" onclick="showPage('finance')">Finanças</button><button class="btn" onclick="showPage('integrations')">Integrações</button></div>
+    <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do PRIMORIS</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted">Verificando disponibilidade...</span></div></div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>🔊 Voz do PRIMORIS</h3>
+      <p class="muted">Escolha como o PRIMORIS fala. A configuração fica salva neste aparelho.</p>
+      <div class="voice-settings-grid">
+        <div>
+          <label for="voiceGender" class="muted">Preferência</label>
+          <select id="voiceGender" onchange="setVoiceGender(this.value)">
+            <option value="auto">🤖 Automática</option>
+            <option value="male">👨 Voz masculina</option>
+            <option value="female">👩 Voz feminina</option>
+          </select>
+        </div>
+        <div>
+          <label for="voiceSelect" class="muted">Voz disponível no aparelho</label>
+          <select id="voiceSelect" onchange="setVoiceSelection(this.value)">
+            <option value="auto">Carregando vozes...</option>
+          </select>
+        </div>
+        <div class="wide voice-preview">
+          <button class="btn primary" type="button" onclick="testSelectedVoice()">🔊 Testar voz</button>
+          <button class="btn" type="button" onclick="refreshVoiceList()">↻ Atualizar vozes</button>
+          <span id="voiceSettingsStatus" class="muted">Detectando vozes disponíveis...</span>
+        </div>
+        <div>
+          <label for="voiceRate" class="muted">⚡ Velocidade</label>
+          <div class="voice-range"><input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.96" oninput="voiceSliderChanged()"><output id="voiceRateValue">0.96x</output></div>
+        </div>
+        <div>
+          <label for="voicePitch" class="muted">🎵 Tom</label>
+          <div class="voice-range"><input id="voicePitch" type="range" min="0.5" max="1.5" step="0.05" value="0.92" oninput="voiceSliderChanged()"><output id="voicePitchValue">0.92</output></div>
+        </div>
+        <div>
+          <label for="voiceVolume" class="muted">🔉 Volume</label>
+          <div class="voice-range"><input id="voiceVolume" type="range" min="0" max="1" step="0.05" value="1" oninput="voiceSliderChanged()"><output id="voiceVolumeValue">100%</output></div>
+        </div>
+        <div>
+          <label class="muted">💾 Preferência</label>
+          <div class="voice-help">As alterações são salvas automaticamente. “Automática” escolhe uma voz em português compatível com a preferência selecionada.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>Aparência</h3><label for="appearanceMode" class="muted">Tema visual</label><select id="appearanceMode" onchange="setAppearance(this.value)"><option value="default">Futurista original</option><option value="contrast">Alto contraste</option></select></div>
+    <div class="grid2"><div class="card"><h3>Dados</h3><div class="actions backup-actions"><button id="exportDataButton" class="btn" type="button" onclick="exportData()">📦 Exportar dados</button><button id="importDataButton" class="btn" type="button" onclick="document.getElementById('importFile').click()">📥 Importar dados</button><input id="importFile" type="file" accept=".json,application/json" hidden><button class="btn danger" type="button" onclick="resetData()">Apagar dados locais</button></div></div><div class="card"><h3>Sistema</h3><p id="systemStatus" class="muted">Verificando servidor...</p><button class="btn" type="button" onclick="testAI()">Testar IA</button></div></div>
+    <div class="card dev-card" style="margin-top:14px"><div class="row"><div><h3>Modo desenvolvedor da IA</h3><p id="devStatus" class="muted">Verificando autorização...</p></div><span id="devBadge" class="badge">BLOQUEADO</span></div><div class="actions" style="margin-top:10px"><input id="devKeyInput" type="password" autocomplete="off" placeholder="Chave do modo desenvolvedor"><button class="btn primary" type="button" onclick="unlockDeveloperMode()">Ativar</button><button class="btn danger" type="button" onclick="lockDeveloperMode()">Bloquear</button></div><p class="muted" style="margin-top:8px">A chave fica somente nesta sessão do navegador e não é enviada ao Gemini. Depois de ativar, a IA poderá aplicar alterações no site pelos seus comandos.</p></div>
+  </section>
+
+<section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
+
+</main>
+</div>
+
+<nav class="mobilebar" aria-label="Navegação principal; deslize para ver todas as páginas">
+<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="markets" aria-label="Mercados">◒<br>Mercados</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
+</nav>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='primoris_cesar_v2';
+let data=(()=>{
+  const raw=localStorage.getItem(KEY);
+  if(!raw)return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};
+  try{const parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?{tasks:[],events:[],studies:[],opportunities:[],...parsed,memories:Array.isArray(parsed.memories)?parsed.memories:[],reminders:Array.isArray(parsed.reminders)?parsed.reminders:[],notifications:Array.isArray(parsed.notifications)?parsed.notifications:[]}:{tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[]};}
+  catch(err){console.error('Dados locais do PRIMORIS inválidos; mantendo o conteúdo salvo sem sobrescrever:',err);return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};}
+})();
+const $=id=>document.getElementById(id);
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const escapeHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2800)}
+function setAppearance(mode){document.body.classList.toggle('appearance-contrast',mode==='contrast');localStorage.setItem('primoris_appearance',mode);if($('appearanceMode'))$('appearanceMode').value=mode}
+
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
+  document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));
+  window.scrollTo(0,0);
+  if(p==='news') loadNews();
+  if(p==='agenda') renderAgenda();
+  if(p==='memory') renderMemories();
+  if(p==='finance' && typeof renderFinancas==='function') renderFinancas();
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+
+function render(){
+  $('statTasks').textContent=(data.tasks||[]).filter(x=>!x.done).length;
+  renderTasks();
+  $('statEvents').textContent=(data.events||[]).length;
+  $('statStudies').textContent=(data.studies||[]).length;
+  $('brief').textContent=`Você tem ${(data.tasks||[]).filter(x=>!x.done).length} tarefa(s) pendente(s), ${(data.events||[]).length} evento(s) sincronizado(s) e ${(data.studies||[]).length} registro(s) de estudo.`;
+  renderAgenda();renderStudies();renderOpps();renderDashboard();renderTasksManager();
+}
+
+
+let taskEditId=null;
+function renderTaskMarkup(t){
+  const priority=t.priority||'media',due=t.dueDate?`Prazo: ${escapeHtml(t.dueDate)}${t.dueTime?' às '+escapeHtml(t.dueTime):''}`:'Sem prazo definido';
+  return `<div class="item"><div><b style="${t.done?'text-decoration:line-through;opacity:.6':''}">${escapeHtml(t.title||'Tarefa')}</b><div class="event-meta">${due} · <span class="priority-${priority==='alta'?'high':priority==='baixa'?'low':'medium'}">Prioridade ${escapeHtml(priority)}</span></div></div><div class="item-actions"><button class="btn" onclick="toggleTaskById('${escapeHtml(t.id)}')">${t.done?'Reabrir':'Concluir'}</button><button class="btn" onclick="editTask('${escapeHtml(t.id)}')">Editar</button><button class="btn danger" onclick="deleteTaskById('${escapeHtml(t.id)}')">Excluir</button></div></div>`;
+}
+function renderTasks(){
+  const box=$('taskList');if(!box)return;const tasks=(data.tasks||[]).filter(x=>!x.done).slice(0,8);
+  box.innerHTML=tasks.length?tasks.map(renderTaskMarkup).join(''):'<div class="muted">Nenhuma tarefa pendente.</div>';
+}
+function renderTasksManager(){
+  const pending=$('pendingTasks'),completed=$('completedTasks');if(!pending||!completed)return;
+  pending.innerHTML=(data.tasks||[]).filter(x=>!x.done).map(renderTaskMarkup).join('')||'<div class="muted">Nenhuma tarefa pendente.</div>';
+  completed.innerHTML=(data.tasks||[]).filter(x=>x.done).map(renderTaskMarkup).join('')||'<div class="muted">Nenhuma tarefa concluída.</div>';
+}
+function toggleTask(index){const t=(data.tasks||[])[index];if(!t)return;t.done=!t.done;save();render();}
+function toggleTaskById(id){const t=(data.tasks||[]).find(x=>String(x.id)===String(id));if(!t)return;t.done=!t.done;save();render();}
+function deleteTask(index){const t=(data.tasks||[])[index];if(t)deleteTaskById(t.id)}
+function deleteTaskById(id){if(!confirm('Excluir esta tarefa permanentemente?'))return;data.tasks=(data.tasks||[]).filter(x=>String(x.id)!==String(id));save();render();}
+function editTask(id){const t=(data.tasks||[]).find(x=>String(x.id)===String(id));if(!t)return;taskEditId=id;$('taskTitle').value=t.title||'';$('taskDueDate').value=t.dueDate||'';$('taskDueTime').value=t.dueTime||'';$('taskPriority').value=t.priority||'media';$('taskFormTitle').textContent='Editar tarefa';$('taskCancel').hidden=false;showPage('tasks')}
+function cancelTaskEdit(){taskEditId=null;$('taskForm').reset();$('taskFormTitle').textContent='Nova tarefa';$('taskCancel').hidden=true}
+$('taskForm').onsubmit=e=>{e.preventDefault();const title=$('taskTitle').value.trim();if(!title)return;const old=(data.tasks||[]).find(x=>String(x.id)===String(taskEditId));const t={...(old||{}),id:taskEditId||crypto.randomUUID(),title,dueDate:$('taskDueDate').value||null,dueTime:$('taskDueTime').value||null,priority:$('taskPriority').value,done:old?.done||false,source:old?.source||'interface'};if(taskEditId)data.tasks=data.tasks.map(x=>String(x.id)===String(taskEditId)?t:x);else data.tasks.push(t);save();cancelTaskEdit();render();toast('Tarefa salva')};
+function renderAgenda(){const ev=(data.events||[]).slice().sort((a,b)=>new Date(a.date||0)-new Date(b.date||0)),d=new Date(),today=new Date(d.getFullYear(),d.getMonth(),d.getDate()),tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);const end=new Date(tomorrow);end.setDate(end.getDate()+1);const put=(id,a)=>{const el=$(id);if(el)el.innerHTML=a.length?a.map(eventMarkup).join(''):'<div class="muted">Nenhum evento.</div>'};put('agendaToday',ev.filter(x=>new Date(x.date)>=today&&new Date(x.date)<tomorrow));put('agendaTomorrow',ev.filter(x=>new Date(x.date)>=tomorrow&&new Date(x.date)<end));put('agendaList',ev)}
+function eventMarkup(e){const d=new Date(e.date),when=!isNaN(d)?d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'Data não informada';return `<div class="item"><div><b>${escapeHtml(e.title||'Evento')}</b><div class="event-meta">${escapeHtml(when)} · ${e.source==='local'?'Local':'Google Calendar'}</div></div><div class="item-actions"><button class="btn" onclick="editEvent('${escapeHtml(e.id||'')}')">Editar</button><button class="btn danger" onclick="deleteEvent('${escapeHtml(e.id||'')}')">Excluir</button></div></div>`}
+
+function renderStudies(){
+  const box=$('studyList');const arr=data.studies||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><br><small>${escapeHtml(x.kind||'Sessão')} · ${x.minutes?escapeHtml(x.minutes)+' min · ':''}${x.date?escapeHtml(String(x.date).slice(0,10))+' · ':''}${x.grade!==null&&x.grade!==undefined&&x.grade!==''?'Nota: '+escapeHtml(x.grade)+' · ':''}${escapeHtml(x.notes||'Sem observações')}</small></div>`).join(''):'<div class="muted">Nenhum estudo registrado.</div>';
+}
+function renderOpps(){
+  const box=$('oppList');const arr=data.opportunities||[];
+  box.innerHTML=arr.length?arr.slice().reverse().map((x,i)=>`<div class="item"><b>${escapeHtml(x.title)}</b>${x.link?`<br><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:var(--cyan)">Abrir link</a>`:''}<br><small>${escapeHtml(x.notes||'')}</small></div>`).join(''):'<div class="muted">Nenhuma oportunidade salva.</div>';
+}
+
+$('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({title:$('studyTitle').value,kind:$('studyKind').value,minutes:Number($('studyTime').value)||0,grade:$('studyGrade').value||null,notes:$('studyNotes').value,date:$('studyDate').value||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString()});save();e.target.reset();render();toast('Estudo registrado')};
+$('oppForm').onsubmit=e=>{e.preventDefault();data.opportunities.push({title:$('oppTitle').value,link:$('oppLink').value,notes:$('oppNotes').value,date:new Date().toISOString()});save();e.target.reset();render();toast('Oportunidade salva')};
+
+function isPotentialActionRequest(q){
+  return /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|preciso|quero|gostaria|poderia|pode)\b/i.test(q)
+    && /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|despesa|gasto|tarefa|compromisso|evento|reuni[aã]o|consulta|estudar|estudo|estudos|oportunidade|oportunidades|plano de estudos|sess[aã]o)\b/i.test(q);
+}
+function parseLocalAppointment(q){
+  const intent=/(?:\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b.*\b(?:compromisso|evento|reuni[aã]o|consulta)\b|\b(?:compromisso|evento|reuni[aã]o|consulta)\b.*\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b)/i;
+  if(!intent.test(q))return null;
+  const now=new Date();let date=null;
+  if(/\bdepois de amanh[ãa]\b/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+2);
+  else if(/\bhoje\b/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  else if(/amanh[ãa]/i.test(q))date=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  else {
+    const iso=q.match(/\b(20\d{2})-(\d{2})-(\d{2})\b/);
+    const br=q.match(/\b(?:dia\s*)?(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/i);
+    const dayOnly=q.match(/\bdia\s+(\d{1,2})\b/i);
+    if(iso){const y=Number(iso[1]),m=Number(iso[2]),d=Number(iso[3]);date=new Date(y,m-1,d);if(date.getFullYear()!==y||date.getMonth()!==m-1||date.getDate()!==d)return {clarification:'Essa data não é válida. Pode informar novamente?'};}
+    else if(br){let year=br[3]?Number(br[3]):now.getFullYear();if(year<100)year+=2000;const month=Number(br[2]),day=Number(br[1]);date=new Date(year,month-1,day);if(date.getFullYear()!==year||date.getMonth()!==month-1||date.getDate()!==day)return {clarification:'Essa data não é válida. Pode informar novamente?'};}
+    else if(dayOnly){const day=Number(dayOnly[1]);date=new Date(now.getFullYear(),now.getMonth(),day);if(date.getDate()!==day)return {clarification:'Esse dia não é válido. Pode informar novamente?'};if(date<new Date(now.getFullYear(),now.getMonth(),now.getDate()))date.setMonth(date.getMonth()+1);}
+  }
+  const tm=q.match(/(?:^|\s)(?:às|as|a)\s*(\d{1,2})(?::(\d{2})|h(\d{2})?)?\s*(?:h|horas)?(?=\s|$|[,;.])/i)||q.match(/(?:^|\s)(\d{1,2})(?::(\d{2})|h(\d{2})|h|horas)(?=\s|$|[,;.])/i);
+  const hour=tm?Number(tm[1]):null,minute=tm?Number(tm[2]||tm[3]||0):0;
+  let cleaned=q
+    .replace(/^\s*(?:por favor[, ]*)?(?:(?:eu|voce|você)\s+)?(?:quero|gostaria de|preciso|pode|poderia|me ajuda a|vamos|vou)?\s*(?:ir\s+a\s+)?(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\s*/i,'')
+    .replace(/depois de amanh[ãa]|amanh[ãa]|hoje/gi,' ')
+    .replace(/20\d{2}-\d{2}-\d{2}|\d{1,2}\/\d{1,2}(?:\/\d{2,4})?/g,' ')
+    .replace(/dia\s+\d{1,2}/gi,' ')
+    .replace(/(?:às|as|a)\s*\d{1,2}(?::\d{2}|h\d{0,2})?\s*(?:h|horas)?/gi,' ')
+    .replace(/\b\d{1,2}(?::\d{2}|h\d{0,2})\s*(?:h|horas)?\b/gi,' ')
+    .replace(/por favor|pra mim|para mim|para|pra|no dia|dia|no|na|um|uma/gi,' ')
+    .replace(/\s+/g,' ').replace(/^[,;: -]+|[,;: -]+$/g,'').trim();
+  const kind=cleaned.match(/compromisso|evento|reuni[aã]o|consulta/i);
+  let title=cleaned;
+  if(kind){const tail=cleaned.slice(kind.index+kind[0].length).trim();title=kind[0]+(tail?' '+tail:'');}
+  if(!title)title='Compromisso';
+  title=title.charAt(0).toLocaleUpperCase('pt-BR')+title.slice(1);
+  if(!date)return {clarification:'Para qual dia devo marcar esse compromisso? (Ex.: amanhã ou 20/11)'};
+  if(hour===null||hour>23||minute>59)return {clarification:'Que horário devo colocar? (Ex.: às 14h ou 14:30)'};
+  date.setHours(hour,minute,0,0);
+  if(date.getTime()<=Date.now())return {clarification:'Esse horário já passou. Qual data e horário futuros devo usar?'};
+  return {title,date};
+}
+async function createLocalAppointment(parsed){
+  const start=parsed.date,end=new Date(start);end.setHours(end.getHours()+1);
+  const id=window.crypto?.randomUUID?crypto.randomUUID():`ev-${Date.now()}`;
+  const event={id,title:parsed.title,date:start.toISOString(),description:'Criado pelo assistente PRIMORIS',source:'local'};
+  try{
+    const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:event.title,description:event.description,start:start.toISOString(),end:end.toISOString()})});
+    if(r.ok){const j=await r.json();event.id=j.event?.id||j.id||event.id;event.source='google';}
+    else if(r.status!==401){const j=await r.json().catch(()=>({}));return {error:j.message||'O servidor não confirmou a criação do compromisso.'};}
+  }catch(err){if(!navigator.onLine)return {error:'Sem conexão: não consegui confirmar o compromisso.'};}
+  data.events.push(event);save();renderAgenda();render();
+  return {message:event.source==='google'?`Compromisso “${event.title}” criado no Google Calendar para ${start.toLocaleString('pt-BR')}.`:`Compromisso “${event.title}” salvo na agenda local para ${start.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronizar.`};
+}
+function actionDateTime(date,time){
+  if(!date)return null;
+  const hhmm=time||'09:00';
+  const d=new Date(`${date}T${hhmm}:00`);
+  return Number.isNaN(d.getTime())?null:d;
+}
+async function requestAIAction(q){
+  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
+  if(j.clarification&&!j.action)return {clarification:j.clarification};
+  return j.action||null;
+}
+async function applyAIAction(a){
+  if(!a||!a.type)return null;
+  const id=()=>window.crypto?.randomUUID?crypto.randomUUID():`p-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  if(a.type==='study'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual assunto devo adicionar aos estudos?';
+    const study={id:id(),title,kind:a.kind||'matéria',minutes:Number(a.minutes)||0,grade:null,notes:a.notes||'',date:a.date||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString(),source:'assistant'};
+    data.studies.push(study);save();render();showPage('studies');return `Pronto! O estudo “${title}” foi salvo na área Estudos${study.minutes?` como sessão de ${study.minutes} minutos`:''}.`;
+  }
+  if(a.type==='opportunity'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual oportunidade devo salvar?';
+    data.opportunities.push({id:id(),title,link:a.link||'',notes:a.notes||'',date:new Date().toISOString(),source:'assistant'});save();render();showPage('opportunities');return `Oportunidade “${title}” salva na área Oportunidades.`;
+  }
+  if(a.type==='delete_task'){
+    const q=(a.target||a.title||'').toLocaleLowerCase('pt-BR').trim();const matches=(data.tasks||[]).filter(x=>q&&(String(x.title||'').toLocaleLowerCase('pt-BR').includes(q)||q.includes(String(x.title||'').toLocaleLowerCase('pt-BR'))));
+    if(matches.length!==1)return matches.length?'Encontrei mais de uma tarefa parecida. Qual delas você quer excluir?':'Não consegui identificar a tarefa com segurança. Qual é o título?';
+    if(!confirm(`Excluir a tarefa “${matches[0].title}”?`))return 'Tudo bem, não excluí a tarefa.';
+    data.tasks=data.tasks.filter(x=>x.id!==matches[0].id);save();render();return `A tarefa “${matches[0].title}” foi excluída.`;
+  }
+  if(a.type==='note'){
+    normalizeMemories();const note=(a.description||a.title||'').trim();if(!note)return 'O que você gostaria que eu anotasse?';
+    data.memories.push({id:id(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na sua Memória: “${note}”.`;
+  }
+  if(a.type==='task'||a.type==='reminder'){
+    const title=(a.title||a.description||'').trim();if(!title)return 'Qual tarefa devo adicionar?';
+    const due=actionDateTime(a.date,a.time);if(a.date&&!due)return 'Não consegui interpretar a data e o horário. Pode informar novamente?';
+    const task={id:id(),title,date:due?due.toISOString():new Date().toISOString(),dueDate:a.date||null,dueTime:a.time||null,done:false,priority:'media',source:'assistant'};
+    data.tasks.push(task);save();render();
+    if(a.type==='reminder'&&due){
+      const end=new Date(due);end.setHours(end.getHours()+1);let synced=false;
+      try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:'Lembrete: '+title,description:'Criado pelo assistente PRIMORIS',start:due.toISOString(),end:end.toISOString()})});
+        if(r.ok){const j=await r.json();if(j.event){data.events.push({id:j.event.id,title:j.event.summary||('Lembrete: '+title),description:j.event.description||'',date:j.event.start?.dateTime||due.toISOString(),source:'google'});synced=true;}}
+      }catch(err){console.warn('Calendar reminder:',err)}
+      if(!synced)data.events.push({id:id(),title:'Lembrete: '+title,description:'Lembrete criado pelo PRIMORIS',date:due.toISOString(),source:'local'});
+      save();renderAgenda();render();
+      return synced?`Lembrete e tarefa registrados; também adicionei ao Google Calendar para ${due.toLocaleString('pt-BR')}.`:`Lembrete e tarefa registrados no PRIMORIS para ${due.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronização externa.`;
+    }
+    return a.type==='reminder'?`Lembrete registrado como tarefa para ${due?due.toLocaleString('pt-BR'):'a data informada'}.`:`Tarefa “${title}” adicionada ao PRIMORIS.`;
+  }
+  if(a.type==='expense'){
+    const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da despesa?';
+    const description=(a.title||a.description||'Despesa registrada pela IA').trim();
+    const category=(a.category||'Outros').trim();const f=loadFinanceData();
+    f.transactions.push({id:id(),description,type:'gasto',amount,category,date:a.date||new Date().toISOString().slice(0,10)});
+    saveFinanceData(f);renderFinancas();return `Despesa de ${moneyBR(amount)} registrada em ${category}: ${description}.`;
+  }
+  if(a.type==='event'){
+    const title=(a.title||a.description||'Compromisso').trim();if(!a.date||!a.time)return 'Qual data e horário devo usar para esse compromisso?';
+    const start=actionDateTime(a.date,a.time);if(!start)return 'Não consegui interpretar a data e o horário do compromisso.';
+    const end=new Date(start);end.setHours(end.getHours()+1);let ev={id:id(),title,date:start.toISOString(),description:a.description||'',source:'local'};
+    try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:title,description:ev.description,start:start.toISOString(),end:end.toISOString()})});
+      if(r.ok){const j=await r.json();ev.id=j.event?.id||ev.id;ev.source='google';}
+      else if(r.status!==401){const j=await r.json().catch(()=>({}));throw new Error(j.message||'O Google Calendar não confirmou a criação.');}
+    }catch(err){if(!navigator.onLine)return 'Sem conexão: não consegui confirmar o compromisso.';if(String(err.message).includes('não confirmou'))return err.message;}
+    data.events.push(ev);save();renderAgenda();render();return ev.source==='google'?`Compromisso “${title}” criado no Google Calendar para ${start.toLocaleString('pt-BR')}.`:`Compromisso “${title}” salvo localmente para ${start.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronizá-lo.`;
+  }
+  return null;
+}
+
+$('chatForm').onsubmit=async e=>{
+  e.preventDefault();const q=$('chatInput').value.trim();if(!q)return;
+  addChat(q,'user');$('chatInput').value='';
+  addChat('Processando...','ai');const placeholder=$('chat').lastElementChild;
+  try{
+    const pending=data.pendingAppointment;
+    const actionQuery=pending?`${pending.original} ${q}`:q;
+    if(pending){delete data.pendingAppointment;save();}
+    if(pending||isPotentialActionRequest(q)){
+      // Compromissos explícitos são interpretados localmente primeiro:
+      // não dependem de uma resposta do Gemini para reconhecer data e horário.
+      const parsed=parseLocalAppointment(actionQuery);
+      if(parsed?.clarification){
+        if(/marcar|agendar|compromisso|evento|reuni[aã]o|consulta/i.test(actionQuery)){data.pendingAppointment={original:actionQuery};save();}
+        placeholder.textContent=parsed.clarification;placeholder.className='bubble ai';speakText(parsed.clarification);return;
+      }
+      if(parsed){
+        const created=await createLocalAppointment(parsed);
+        if(created.error)throw new Error(created.error);
+        placeholder.textContent=created.message;placeholder.className='bubble ai';speakText(created.message);return;
+      }
+
+      // Para outras ações, usa a interpretação da IA. Se o endpoint/Gemini falhar,
+      // a falha não deve impedir os comandos de compromisso que têm parser local.
+      const interpreted=await requestAIAction(actionQuery);
+      if(interpreted?.clarification){
+        placeholder.textContent=interpreted.clarification;placeholder.className='bubble ai';speakText(interpreted.clarification);return;
+      }
+      if(interpreted){const result=await applyAIAction(interpreted);if(result){placeholder.textContent=result;placeholder.className='bubble ai';speakText(result);return;}}
+    }
+    const devResult=await handleDeveloperRequest(q);if(devResult){placeholder.textContent=devResult;placeholder.className='bubble ai';speakText(devResult);return;}
+    const action=await handleNaturalAction(q);if(action){placeholder.textContent=action;placeholder.className='bubble ai';speakText(action);return;}
+    const context={...data,calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),currentDate:new Date().toISOString()};
+    const selectedProvider=getAIProvider();
+    const controller=new AbortController();
+    const aiTimeout=setTimeout(()=>controller.abort(),35000);
+    let r;
+    try{
+      r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',signal:controller.signal,body:JSON.stringify({message:q,context,provider:selectedProvider})});
+    }finally{clearTimeout(aiTimeout);}
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      const detail=j.details||j.error||('HTTP '+r.status);
+      const providerName=aiProviderLabel(j.provider||selectedProvider);
+      throw new Error(providerName+' · '+detail+(j.model?' · modelo: '+j.model:''));
+    }
+    if(!j.text)throw new Error(aiProviderLabel(j.provider||selectedProvider)+' não retornou texto. Verifique o teste de IA nas Configurações.');
+    placeholder.textContent=j.text;placeholder.className='bubble ai';speakText(j.text);
+  }catch(err){
+    const message=err?.name==='AbortError'?'A IA demorou mais de 35 segundos para responder.':(err?.message||'Falha desconhecida ao chamar a IA.');
+    const visible=isPotentialActionRequest(q)?'Não consegui concluir esse comando. Nenhuma alteração foi feita. Detalhe: '+message:'Não consegui obter resposta da IA. Detalhe: '+message;
+    placeholder.textContent=visible;placeholder.className='bubble ai';speakText(visible);console.error('PRIMORIS AI:',err);
+  }
+};
+function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai">PRIMORIS online. Pode falar.</div>'}
+function localAI(q){
+  const t=q.toLowerCase();
+  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá. PRIMORIS online e pronto para ajudar.';
+  if(/hora/.test(t))return 'Agora são '+new Date().toLocaleTimeString('pt-BR')+'.';
+  if(/agenda|calendário|calendario|compromisso|evento|marcado|programado|o que tenho|o que vou fazer/.test(t))return data.events?.length?'Você tem '+data.events.length+' evento(s) sincronizado(s). Abra a Agenda para ver os detalhes.':'Não há eventos sincronizados no momento.';
+  if(/tarefa/.test(t))return 'Você tem '+(data.tasks||[]).filter(x=>!x.done).length+' tarefa(s) pendente(s).';
+  if(/lembrete/.test(t)){const r=(data.tasks||[]).filter(x=>!x.done&&x.dueDate);return r.length?'Você tem '+r.length+' lembrete(s)/tarefa(s) com data definida.':'Não há lembretes com data definidos.';}
+  if(/estud|estudo/.test(t)){const st=data.studies||[];return st.length?'Você tem '+st.length+' registro(s) de estudo. O último foi '+(st[st.length-1].title||'um estudo')+'.':'Ainda não há registros de estudo.';}
+  if(/mem[oó]ria|lembrar de mim|o que voc[eê] sabe/.test(t)){const ms=data.memories||[];return ms.length?'Tenho '+ms.length+' memória(s) salva(s). Você pode abrir a área Memória para ver e editar.':'Ainda não há memórias salvas.';}
+  if(/notifica/.test(t))return (data.notifications||[]).filter(n=>!n.read).length?'Você tem '+(data.notifications||[]).filter(n=>!n.read).length+' notificação(ões) pendente(s).':'Não há notificações pendentes.';
+  if(/quanto.*(gastar|tenho|devo)|saldo|financeir/.test(t)){const f=loadFinanceData();return `Saldo: ${moneyBR(financeBalance(f))}. Gastos: ${moneyBR(monthlySpent(f))}. Dívidas: ${moneyBR(financeDebt(f))}. Disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}`;}
+  if(/como.*(responder|respostas)|minha prefer[eê]ncia/.test(t)){const prefs=(data.memories||[]).filter(m=>m.category==='Preferências');if(prefs.length)return 'Vou considerar estas preferências salvas: '+prefs.map(m=>m.text).join('; ');}
+  return window.primorisAIConnected?'Estou conectado ao '+aiProviderLabel(getAIProvider())+' e pronto para ajudar.':'O servidor da IA não está disponível neste momento. Verifique a conexão do PRIMORIS.';
+}
+
+async function syncCalendar(){
+  try{
+    const r=await fetch('/api/calendar/events?ts='+Date.now(),{cache:'no-store'});
+      if(!r.ok){const err=await r.json().catch(()=>({}));throw new Error(err.error||err.details||('HTTP '+r.status));}
+      const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Não conectado');
+    data.events=(j.events||[]).map(e=>({id:e.id,title:e.summary||'Evento',description:e.description||'',date:e.start?.dateTime||e.start?.date,source:'google'}));
+    save();render();$('calendarStatus').textContent='Google Calendar conectado e sincronizado.';toast('Agenda sincronizada');
+  }catch(e){$('calendarStatus').textContent='Não foi possível sincronizar. Use Conectar para autorizar o Google Calendar.';toast('Agenda não sincronizada')}
+}
+function connectCalendar(){location.href='/auth/google'}
+
+async function loadNews(){
+  const box=$('newsList'),state=$('newsState');
+  box.innerHTML='<div class="card">Atualizando notícias...</div>';state.textContent='Consultando Google News em tempo real...';
+  try{
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
+    const r=await fetch('/api/news?t='+Date.now(),{method:'GET',cache:'no-store',signal:controller.signal});clearTimeout(timer);
+    const j=await r.json();
+    if(!r.ok)throw new Error(j.error||'Servidor retornou erro');
+    const items=j.items||[];
+    if(!items.length){box.innerHTML='<div class="card">Nenhuma notícia disponível neste momento.</div>';state.textContent='Sem resultados agora.';return}
+    box.innerHTML=items.map(n=>`<a class="card" href="${escapeHtml(n.link)}" target="_blank" rel="noopener"><span class="badge">${escapeHtml(n.category||'Notícia')}</span><h3>${escapeHtml(n.title)}</h3><p class="muted">${escapeHtml(n.source||'Google News')}</p></a>`).join('');
+    state.textContent=`Atualizado agora · ${items.length} notícias`;
+  }catch(e){
+    box.innerHTML=`<div class="card"><h3>Não foi possível atualizar</h3><p class="muted">${escapeHtml(e.message||'Erro desconhecido')}</p><button class="btn" onclick="loadNews()">Tentar novamente</button></div>`;
+    state.textContent='Falha ao consultar notícias.';
+  }
+}
+
+let primorisAIConnected=false;
+let primorisDevEnabled=false;
+let primorisDevAuthenticated=false;
+const DEV_KEY_STORAGE='primoris_dev_key_session';
+
+function isDeveloperRequest(q){
+  return /\b(mude|mudar|altere|alterar|modifique|modificar|troque|trocar|adicione|adicionar|remova|remover|apague|apagar|crie|criar|coloque|retire|faça|faca|deixe|transforme|edite|editar|corrija|corrigir)\b/i.test(String(q||'')) && /\b(site|página|pagina|visual|cor|tema|bot[aã]o|botões|botoes|texto|t[ií]tulo|fun[cç][aã]o|menu|tela|layout|design|html|pr[ií]moris)\b/i.test(String(q||''));
+}
+
+function updateDevUI(){
+  const status=$('devStatus'),badge=$('devBadge');
+  if(!status||!badge)return;
+  if(primorisDevAuthenticated){status.textContent='Modo desenvolvedor autorizado. A IA pode aplicar alterações no site.';badge.textContent='ATIVO';badge.classList.add('dev-on');}
+  else if(primorisDevEnabled){status.textContent='Disponível. Informe a chave criada no Render para ativar.';badge.textContent='BLOQUEADO';badge.classList.remove('dev-on');}
+  else{status.textContent='Modo desenvolvedor não configurado no servidor.';badge.textContent='DESATIVADO';badge.classList.remove('dev-on');}
+}
+
+async function refreshDeveloperStatus(){
+  try{
+    const saved=sessionStorage.getItem(DEV_KEY_STORAGE)||'';
+    const r=await fetch('/api/dev/status?ts='+Date.now(),{cache:'no-store',headers:saved?{'x-dev-key':saved}:{}});
+    const j=await r.json();
+    primorisDevEnabled=!!j.enabled;
+    primorisDevAuthenticated=!!j.authenticated;
+    if(primorisDevAuthenticated && saved){$('devKeyInput').value=saved;}
+  }catch(e){primorisDevEnabled=false;primorisDevAuthenticated=false;}
+  updateDevUI();
+}
+
+async function unlockDeveloperMode(){
+  const input=$('devKeyInput');const key=(input?.value||'').trim();
+  if(!key){toast('Digite a chave do modo desenvolvedor.');return;}
+  try{
+    const r=await fetch('/api/dev/status?ts='+Date.now(),{cache:'no-store',headers:{'x-dev-key':key}});
+    const j=await r.json();
+    primorisDevEnabled=!!j.enabled;
+    if(!r.ok||!j.authenticated){sessionStorage.removeItem(DEV_KEY_STORAGE);primorisDevAuthenticated=false;updateDevUI();toast('Chave do modo desenvolvedor incorreta.');return;}
+    sessionStorage.setItem(DEV_KEY_STORAGE,key);primorisDevAuthenticated=true;updateDevUI();toast('Modo desenvolvedor ativado.');
+  }catch(e){toast('Não foi possível verificar o modo desenvolvedor.');}
+}
+
+function lockDeveloperMode(){sessionStorage.removeItem(DEV_KEY_STORAGE);primorisDevAuthenticated=false;const input=$('devKeyInput');if(input)input.value='';updateDevUI();toast('Modo desenvolvedor bloqueado.');}
+
+async function requestDeveloperEdit(request){
+  const key=sessionStorage.getItem(DEV_KEY_STORAGE)||'';
+  if(!key)throw new Error('Ative o modo desenvolvedor nas Configurações antes de pedir alterações no site.');
+  const r=await fetch('/api/dev/edit',{method:'POST',headers:{'Content-Type':'application/json','x-dev-key':key},body:JSON.stringify({request})});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){lockDeveloperMode();throw new Error('A autorização do modo desenvolvedor expirou. Ative novamente nas Configurações.');}
+  if(!r.ok)throw new Error(j.details||j.error||'Não foi possível aplicar a alteração.');
+  return j;
+}
+
+async function handleDeveloperRequest(q){
+  if(!isDeveloperRequest(q))return null;
+  if(!primorisDevAuthenticated)return 'Esse é um comando de alteração do site. Ative o Modo desenvolvedor em Configurações e depois repita o comando.';
+  const result=await requestDeveloperEdit(q);
+  return (result.summary||'Alteração aplicada.')+' Arquivo(s) alterado(s): '+((result.changed||[]).join(', ')||'nenhum')+'.';
+}
+
+const AI_PROVIDER_STORAGE='primoris_ai_provider';
+function getAIProvider(){const p=localStorage.getItem(AI_PROVIDER_STORAGE)||'openrouter';return ['openrouter','gemini','groq','auto'].includes(p)?p:'openrouter';}
+function aiProviderLabel(p){return ({openai:'OpenAI',gemini:'Google Gemini',groq:'Groq',auto:'Automático',openrouter:'OpenRouter'})[p]||'OpenRouter';}
+async function setAIProvider(provider){
+  provider=['openrouter','gemini','groq','auto'].includes(provider)?provider:'openrouter';
+  try{
+    const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});
+    const j=await r.json();
+    const available=provider==='auto'?Object.values(j?.providers||{}).some(x=>x.available):!!j?.providers?.[provider]?.available;
+    if(!available){
+      toast(aiProviderLabel(provider)+' não está configurado no servidor.');
+      updateAIProviderUI(j);
+      return;
+    }
+  }catch(e){toast('Não foi possível verificar a IA.');return;}
+  localStorage.setItem(AI_PROVIDER_STORAGE,provider);
+  updateAIProviderUI();
+  toast('IA selecionada: '+aiProviderLabel(provider));
+}
+function updateAIProviderUI(status){
+  const select=$('aiProviderSelect');const label=$('aiProviderStatus');if(!select)return;
+  const p=getAIProvider();select.value=p;
+  const providers=status?.providers;
+  if(providers){
+    const available=p==='auto'?Object.values(providers).some(x=>x.available):!!providers[p]?.available;
+    label.textContent=available?'● '+aiProviderLabel(p)+' disponível':'● '+aiProviderLabel(p)+' não configurado';
+  }else label.textContent='IA escolhida: '+aiProviderLabel(p);
+}
+async function loadAIProvider(){
+  updateAIProviderUI();
+  try{const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();updateAIProviderUI(j);}catch{}
+}
+
+async function testAI(){
+ try{const r=await fetch('/api/ai/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:getAIProvider()})});const j=await r.json().catch(()=>({}));const ok=!!j.ok;primorisAIConnected=ok;const first=(j.results||[]).find(x=>x.ok);$('systemStatus').textContent=ok?`${aiProviderLabel(first.provider)} respondeu em ${first.elapsedMs} ms.`:(j.results||[]).map(x=>x.error).join('; ')||'Nenhum provedor respondeu.';toast(ok?'Teste real da IA concluído.':'Falha no teste da IA.');}
+ catch(e){primorisAIConnected=false;$('systemStatus').textContent='Falha no teste: '+e.message;toast('Falha na IA')}
+}
+
+async function runAllAITests(){
+ const box=$('diagAI'),details=$('diagDetails');
+ box.innerHTML='<div class="muted">Testando todos os provedores em paralelo...</div>';
+ details.innerHTML='';
+ try{
+   const r=await fetch('/api/ai/test',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({provider:'auto'})});
+   const j=await r.json().catch(()=>({}));
+   const labels={openai:'OpenAI',openrouter:'OpenRouter',gemini:'Google Gemini',groq:'Groq'};
+   const statusLabel=x=>x.ok?'✓ Funcionando':
+     x.errorCode==='provider_not_configured'?'🔑 Chave não configurada':
+     x.status===429?'⏳ Limite ou cota atingida':
+     x.status===401||x.status===403?'❌ Falha de autenticação':
+     x.status===504?'⌛ Tempo limite excedido':
+     x.status===503?'⏳ Provedor temporariamente indisponível':
+     x.status>=500?'❌ Erro no provedor/servidor':'❌ Falha no teste';
+   const results=Array.isArray(j.results)?j.results:[];
+   box.innerHTML=results.map(x=>`<div class="item"><b>${labels[x.provider]||escapeHtml(x.provider||'Provedor')}</b><div>${statusLabel(x)} ${x.elapsedMs?`· ${x.elapsedMs} ms`:''} · HTTP ${Number(x.status)||'—'}</div><small>${escapeHtml(x.model||'Modelo não informado')}${x.error?' · '+escapeHtml(x.error):''}</small></div>`).join('')||
+     `<div class="item">❌ ${escapeHtml(j.details||j.error||('Nenhum resultado retornado. HTTP '+r.status))}</div>`;
+   details.innerHTML=results.map(x=>`<div class="item"><b>${labels[x.provider]||escapeHtml(x.provider||'Provedor')}</b><div>${x.ok?'Resposta: '+escapeHtml(x.text||'OK'):'Erro: '+escapeHtml(x.error||'O servidor não informou detalhes.')}</div><small>HTTP ${Number(x.status)||'—'}${x.errorCode?' · Código: '+escapeHtml(x.errorCode):''}${x.model?' · Modelo: '+escapeHtml(x.model):''}${x.responseInfo?' · choices: '+x.responseInfo.choices+' · content: '+escapeHtml(x.responseInfo.contentType):''}${x.responseInfo?.finishReason?' · finish: '+escapeHtml(x.responseInfo.finishReason):''}</small></div>`).join('')||
+     '<div class="muted">O servidor não retornou detalhes dos testes.</div>';
+   primorisAIConnected=!!j.ok;
+   return j;
+ }catch(e){
+   box.innerHTML='<div class="item">❌ Não foi possível executar os testes: '+escapeHtml(e.message)+'</div>';
+   details.innerHTML='<div class="muted">Verifique a conexão com o servidor e tente novamente.</div>';
+   primorisAIConnected=false;
+   return null;
+ }
+}
+async function runFullDiagnostics(){
+ const box=$('diagSystem');box.innerHTML='<div class="muted">Verificando servidor, frontend e armazenamento...</div>';const results=[];
+ try{const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();results.push(['Servidor',r.ok&&j.ok,'HTTP '+r.status]);results.push(['Configurações',r.ok,'Endpoint de status acessível']);}catch(e){results.push(['Servidor',false,e.message]);}
+ try{const probe='primoris_diag_'+Date.now();localStorage.setItem(probe,'ok');const ok=localStorage.getItem(probe)==='ok';localStorage.removeItem(probe);results.push(['Armazenamento local',ok,'Teste de gravação/leitura']);}catch(e){results.push(['Armazenamento local',false,e.message]);}
+ results.push(['Frontend',!!document.getElementById('page-home')&&!!document.getElementById('chatForm'),'DOM principal carregado']);
+ for(const [label,url] of [['Google Calendar','/api/calendar/events'],['Gmail','/api/gmail/messages?max=1']]){
+   try{const r=await fetch(url,{cache:'no-store'});const j=await r.json().catch(()=>({}));results.push([label,r.ok,r.ok?'Conexão autenticada e endpoint respondeu':r.status===401?'Não conectado — requer autorização Google':(j.details||j.message||j.error||'HTTP '+r.status)]);}
+   catch(e){results.push([label,false,e.message]);}
+ }
+ box.innerHTML=results.map(x=>`<div class="item">${x[1]?'✓':/Não conectado/.test(x[2])?'⚠️':'❌'} <b>${escapeHtml(x[0])}</b><small> · ${escapeHtml(x[2])}</small></div>`).join('');await runAllAITests();
+}
+async function checkStatus(){
+  try{
+    const r=await fetch('/api/status?ts='+Date.now(),{cache:'no-store'});const j=await r.json();
+    primorisAIConnected=!!j.ai;
+    $('systemStatus').textContent=j.ai?(aiProviderLabel(getAIProvider())+' conectado.'):'IA externa não configurada.';
+    updateAIProviderUI(j);
+  }catch{primorisAIConnected=false;$('systemStatus').textContent='Servidor não respondeu.'}
+  refreshDeveloperStatus();
+}
+
+function exportData(){
+  try{
+    const financeRaw=localStorage.getItem('primoris_financas_v1');
+    const finances=financeRaw?JSON.parse(financeRaw):{tenho:0,gastei:0,posso:0,devo:0};
+    const backup={version:2,exportedAt:new Date().toISOString(),primoris:data,finances:loadFinanceData()};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const today=new Date();
+    const date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+    a.href=url;a.download=`PRIMORIS-backup-${date}.json`;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast('Backup completo exportado');
+  }catch(err){console.error('Erro ao exportar backup:',err);toast('Não foi possível exportar os dados')}
+}
+$('importFile').onchange=e=>{
+  const file=e.target.files&&e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const backup=JSON.parse(reader.result);
+      const validObject=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
+      if(!validObject(backup)||![1,2].includes(backup.version)||!validObject(backup.primoris)||!validObject(backup.finances))throw new Error('Formato de backup não reconhecido');
+      const requiredArrays=['tasks','events','studies','opportunities'];
+      if(!requiredArrays.every(key=>Array.isArray(backup.primoris[key])))throw new Error('Dados principais incompletos');
+      if(backup.version===1&&!['tenho','gastei','posso','devo'].every(key=>Number.isFinite(Number(backup.finances[key]))))throw new Error('Dados financeiros inválidos');
+      if(backup.version===2&&(!Number.isFinite(Number(backup.finances.opening))||!Array.isArray(backup.finances.transactions)))throw new Error('Dados financeiros inválidos');
+      if(!confirm('Importar este backup substituirá os dados atuais do PRIMORIS e as finanças. Deseja continuar?'))return;
+      const previousMain=localStorage.getItem(KEY);
+      const previousFinances=localStorage.getItem('primoris_financas_v1');
+      try{
+        localStorage.setItem(KEY,JSON.stringify(backup.primoris));
+        localStorage.setItem('primoris_financas_v1',JSON.stringify(backup.version===1?{opening:Number(backup.finances.tenho)||0,transactions:[],legacy:{gastei:Number(backup.finances.gastei)||0,devo:Number(backup.finances.devo)||0}}:backup.finances));
+      }catch(storageError){
+        if(previousMain===null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,previousMain);
+        if(previousFinances===null)localStorage.removeItem('primoris_financas_v1');else localStorage.setItem('primoris_financas_v1',previousFinances);
+        throw storageError;
+      }
+      data=backup.primoris;
+      render();
+      if(typeof renderMemories==='function')renderMemories();
+      if(typeof renderFinancas==='function')renderFinancas();
+      toast('Restauração do PRIMORIS concluída');
+    }catch(err){console.error('Erro ao importar backup:',err);toast(err.message==='Formato de backup não reconhecido'||err.message==='Dados principais incompletos'||err.message==='Dados financeiros inválidos'?err.message:'Não foi possível restaurar o backup')}
+    finally{e.target.value=''}
+  };
+  reader.onerror=()=>{toast('Não foi possível ler o arquivo');e.target.value=''};
+  reader.readAsText(file);
+}
+function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();toast('Dados locais apagados')}}
+
+
+function notificationKey(type,id){return `${type}:${id}`}
+function addSmartNotification(type,title,message,sourceId){
+  data.notifications=Array.isArray(data.notifications)?data.notifications:[];
+  const key=notificationKey(type,sourceId||title);
+  if(data.notifications.some(n=>n.key===key&&!n.read))return;
+  data.notifications.unshift({id:id(),key,type,title,message,read:false,createdAt:new Date().toISOString()});
+  data.notifications=data.notifications.slice(0,50);save();
+}
+function markNotificationRead(nid){data.notifications=(data.notifications||[]).map(n=>n.id===nid?{...n,read:true}:n);save();renderDashboard()}
+function clearNotifications(){data.notifications=[];save();renderDashboard();toast('Notificações limpas')}
+async function enableNotifications(){
+  if(!('Notification' in window)){toast('Este navegador não oferece notificações.');return}
+  try{const p=await Notification.requestPermission();toast(p==='granted'?'Notificações ativadas.':'Permissão de notificações não concedida.');checkSmartNotifications()}catch(e){toast('Não foi possível ativar as notificações.')}
+}
+function showBrowserNotification(title,message){if(!('Notification' in window)||Notification.permission!=='granted')return;try{new Notification(title,{body:message,tag:'primoris-'+title})}catch(e){}}
+function checkSmartNotifications(){
+  const now=new Date();
+  (data.tasks||[]).filter(t=>!t.done).forEach(t=>{
+    if(!t.dueDate)return;
+    const due=new Date(`${t.dueDate}T${t.dueTime||'09:00'}:00`);if(Number.isNaN(due.getTime()))return;
+    const diff=due-now;
+    if(diff>=0&&diff<=60*60*1000){
+      const msg=`Tarefa: ${t.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
+      const before=(data.notifications||[]).find(n=>n.key===notificationKey('task',t.id));
+      if(!before||before.read){addSmartNotification('task','Tarefa próxima',msg,t.id);showBrowserNotification('PRIMORIS · Tarefa próxima',msg)}
+    }
+  });
+  (data.events||[]).filter(e=>e.date).forEach(e=>{
+    const due=new Date(e.date);if(Number.isNaN(due.getTime()))return;const diff=due-now;
+    if(diff>=0&&diff<=60*60*1000){
+      const msg=`${e.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
+      const before=(data.notifications||[]).find(n=>n.key===notificationKey('event',e.id));
+      if(!before||before.read){addSmartNotification('event','Compromisso próximo',msg,e.id);showBrowserNotification('PRIMORIS · Compromisso próximo',msg)}
+    }
+  });
+  renderDashboardNotifications();
+}
+function renderDashboardNotifications(){
+  const box=$('notificationList');if(!box)return;
+  const arr=(data.notifications||[]).filter(n=>!n.read).slice(0,8);
+  box.innerHTML=arr.length?arr.map(n=>`<div class="item"><div><b>${escapeHtml(n.title)}</b><div class="event-meta">${escapeHtml(n.message)}</div></div><button class="btn" type="button" onclick="markNotificationRead('${escapeHtml(n.id)}')">OK</button></div>`).join(''):'<div class="muted">Nenhuma notificação pendente.</div>';
+}
+function smartDashboardBrief(){
+  const pending=(data.tasks||[]).filter(t=>!t.done).length;
+  const today=new Date();const start=new Date(today.getFullYear(),today.getMonth(),today.getDate()),end=new Date(start);end.setDate(end.getDate()+1);
+  const todayEvents=(data.events||[]).filter(e=>{const d=new Date(e.date);return d>=start&&d<end}).length;
+  const studies=(data.studies||[]).filter(x=>String(x.date||'').slice(0,10)===today.toISOString().slice(0,10)).length;
+  const parts=[];if(todayEvents)parts.push(`${todayEvents} compromisso(s) hoje`);if(pending)parts.push(`${pending} tarefa(s) pendente(s)`);if(studies)parts.push(`${studies} estudo(s) registrado(s) hoje`);
+  return parts.length?parts.join(' · ')+'.':'Seu dia está livre de registros urgentes. Você venceu a agenda, por enquanto.';
+}
+
+function renderDashboard(){
+ const ev=(data.events||[]).filter(x=>new Date(x.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+ $('dashEvents').innerHTML=ev.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum compromisso futuro registrado.</div>';
+ const rem=(data.reminders||[]).filter(x=>!x.done&&x.date).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+ $('dashReminders').innerHTML=rem.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum lembrete futuro registrado.</div>';
+ if(typeof loadFinanceData==='function') { const f=loadFinanceData();$('dashFinance').textContent=`Saldo ${moneyBR(financeBalance(f))} · Gastos no mês ${moneyBR(monthlySpent(f))} · Dívidas ${moneyBR(financeDebt(f))}`; }
+ $('dashStudies').innerHTML=(data.studies||[]).slice(-4).reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${escapeHtml(x.kind||'Estudo')}${x.grade!==null&&x.grade!==undefined?' · Nota '+escapeHtml(x.grade):''}</div></div>`).join('')||'<div class="muted">Nenhum registro de estudo.</div>';
+ renderDashboardNotifications();if($('brief'))$('brief').textContent=smartDashboardBrief();
+}
+function renderGlobalSearch(){
+ const q=($('globalSearch')?.value||'').trim().toLocaleLowerCase('pt-BR'),box=$('globalSearchResults');if(!box)return;if(!q){box.innerHTML='<div class="muted">Digite um termo para pesquisar nos seus dados locais.</div>';return}
+ const out=[],add=(type,title,detail,page)=>{if((title+' '+detail).toLocaleLowerCase('pt-BR').includes(q))out.push({type,title,detail,page})};
+ (data.tasks||[]).forEach(x=>add('Tarefa',x.title,`${x.dueDate||''} ${x.priority||''}`,'tasks'));
+ (data.memories||[]).forEach(x=>add('Memória',x.text,x.category||'','memory'));
+ (data.events||[]).forEach(x=>add('Compromisso',x.title,`${x.date||''} ${x.description||''}`,'agenda'));
+ (data.studies||[]).forEach(x=>add('Estudos',x.title,`${x.kind||''} ${x.notes||''} ${x.date||''}`,'studies'));
+ loadFinanceData().transactions.forEach(x=>add('Movimentação',x.description,`${x.category} ${x.type} ${x.amount} ${x.date}`,'finance'));
+ box.innerHTML=out.length?out.slice(0,80).map(x=>`<div class="item"><span class="badge">${escapeHtml(x.type)}</span><b>${escapeHtml(x.title)}</b><div class="event-meta">${escapeHtml(x.detail)}</div><button class="btn" onclick="showPage('${x.page}')">Abrir</button></div>`).join(''):'<div class="muted">Nenhum resultado encontrado.</div>';
+}
+function clock(){
+  const d=new Date();$('clock').textContent=d.toLocaleTimeString('pt-BR');
+  $('date').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+}
+setInterval(clock,1000);clock();render();clearChat();checkStatus();
+loadAIProvider();loadNews();setAppearance(localStorage.getItem('primoris_appearance')||'default');
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
+showPage('home');
+</script>
+
+<script id="primoris-gemini-test">
+async function testarGemini(){
+  const el=document.getElementById("aiStatus")||document.getElementById("statusAI")||document.getElementById("aiProviderStatus");
+  try{
+    const r=await fetch("/api/ai/test",{method:"POST",headers:{"Content-Type":"application/json"},cache:"no-store",body:JSON.stringify({provider:"gemini"})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok){
+      const detalhe=j.error||j.details||("HTTP "+r.status);
+      if(el)el.textContent="Gemini: erro "+r.status+" · "+detalhe;
+      toast("Gemini não respondeu: "+detalhe);
+      return j;
+    }
+    if(el)el.textContent="● Google Gemini funcionando · "+j.model;
+    toast("Google Gemini funcionando");
+    return j;
+  }catch(e){
+    if(el)el.textContent="Gemini: servidor indisponível";
+    toast("Não foi possível testar o Gemini");
+    return {ok:false,error:e.message||"erro"};
+  }
+}
+</script>
+
+
+<script id="primoris-finance-js">
+const FIN_KEY='primoris_financas_v1';let financeEditId=null,eventEditId=null,memoryEditId=null;
+function loadFinanceData(){try{let x=JSON.parse(localStorage.getItem(FIN_KEY)||'{}');return{opening:Number(x.opening??x.tenho??0),transactions:Array.isArray(x.transactions)?x.transactions:[],legacy:{gastei:Number(x.gastei||0),devo:Number(x.devo||0)}}}catch{return{opening:0,transactions:[],legacy:{gastei:0,devo:0}}}}
+function saveFinanceData(f){localStorage.setItem(FIN_KEY,JSON.stringify(f))}
+function moneyBR(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function financeBalance(f){return f.opening+f.transactions.reduce((n,x)=>n+(x.type==='entrada'?x.amount:x.type==='gasto'||x.type==='pagamento'?-x.amount:0),0)}
+function monthlySpent(f){let m=new Date().toISOString().slice(0,7);return f.transactions.filter(x=>x.type==='gasto'&&String(x.date).startsWith(m)).reduce((n,x)=>n+x.amount,0)+(f.transactions.length?0:f.legacy.gastei)}
+function financeDebt(f){return Math.max(0,f.transactions.reduce((n,x)=>n+(x.type==='divida'?x.amount:x.type==='pagamento'?-x.amount:0),0)+(f.transactions.length?0:f.legacy.devo))}
+function renderFinancas(){let f=loadFinanceData(),bal=financeBalance(f),spent=monthlySpent(f),debt=financeDebt(f),avail=Math.max(0,bal-debt-(f.transactions.length?0:f.legacy.gastei));[['finTenho',bal],['finGastei',spent],['finPosso',avail],['finDevo',debt]].forEach(([id,v])=>{if($(id))$(id).textContent=moneyBR(v)});if($('finResumo'))$('finResumo').textContent=`Saldo ${moneyBR(bal)} · Gastos ${moneyBR(spent)} · Dívidas ${moneyBR(debt)} · Disponível ${moneyBR(avail)}`;if($('financeHistory'))$('financeHistory').innerHTML=f.transactions.length?f.transactions.slice().reverse().map(x=>`<div class=\"item movement-item\"><div><b>${escapeHtml(x.description)}</b><div class=\"event-meta\">${escapeHtml(x.category)} · ${escapeHtml(x.date)} · ${escapeHtml(x.type)}</div><strong>${moneyBR(x.amount)}</strong></div><div class=\"item-actions\"><button class=\"btn\" onclick=\"editFinance('${x.id}')\">Editar</button><button class=\"btn danger\" onclick=\"deleteFinance('${x.id}')\">Excluir</button></div></div>`).join(''):'<div class=\"muted\">Nenhuma movimentação.</div>';if($('financeChart')){let ts=['entrada','gasto','divida','pagamento'],ls=['Entradas','Gastos','Dívidas','Pagamentos'],mo=new Date().toISOString().slice(0,7),vs=ts.map(t=>f.transactions.filter(x=>x.type===t&&String(x.date).startsWith(mo)).reduce((n,x)=>n+x.amount,0)),mx=Math.max(1,...vs);$('financeChart').innerHTML=vs.map((v,i)=>`<div class=\"finance-bar\" style=\"height:${Math.max(4,v/mx*110)}px\" title=\"${ls[i]} ${moneyBR(v)}\"><small>${ls[i]}</small></div>`).join('')}}
+$('financeForm').onsubmit=e=>{e.preventDefault();let f=loadFinanceData(),x={id:financeEditId||crypto.randomUUID(),description:$('finDescription').value.trim(),type:$('finType').value,amount:Number($('finAmount').value),category:$('finCategory').value.trim(),date:$('finDate').value};if(!x.description||!x.category||x.amount<=0)return toast('Preencha os campos corretamente');if(financeEditId)f.transactions=f.transactions.map(v=>v.id===financeEditId?x:v);else f.transactions.push(x);saveFinanceData(f);e.target.reset();$('finDate').value=new Date().toISOString().slice(0,10);financeEditId=null;$('finCancel').hidden=true;renderFinancas();toast('Movimentação salva')};
+function editFinance(id){let x=loadFinanceData().transactions.find(v=>v.id===id);if(!x)return;financeEditId=id;$('finDescription').value=x.description;$('finType').value=x.type;$('finAmount').value=x.amount;$('finCategory').value=x.category;$('finDate').value=x.date;$('finCancel').hidden=false}
+function cancelFinanceEdit(){financeEditId=null;$('financeForm').reset();$('finDate').value=new Date().toISOString().slice(0,10);$('finCancel').hidden=true}
+function deleteFinance(id){if(!confirm('Excluir movimentação?'))return;let f=loadFinanceData();f.transactions=f.transactions.filter(x=>x.id!==id);saveFinanceData(f);renderFinancas()}
+function editarFinancas(){let f=loadFinanceData(),v=prompt('Saldo inicial (R$):',String(f.opening).replace('.',','));if(v===null)return;let n=Number(String(v).replace(/\\./g,'').replace(',','.'));if(!Number.isFinite(n)||n<0)return toast('Valor inválido');f.opening=n;saveFinanceData(f);renderFinancas()}
+function limparFinancas(){if(!confirm('Apagar movimentações e saldo inicial?'))return;saveFinanceData({opening:0,transactions:[],legacy:{gastei:0,devo:0}});renderFinancas()}
+function normalizeMemories(){if(!Array.isArray(data.memories))data.memories=[];if(data.memory&&!data.memories.length){data.memories.push({id:crypto.randomUUID(),text:data.memory,category:'Observações',createdAt:new Date().toISOString()});data.memory='';save()}}
+function renderMemories(){normalizeMemories();let box=$('memoryList');if(!box)return;let q=($('memorySearch')?.value||'').toLowerCase(),cat=$('memoryFilter')?.value||'',arr=data.memories.filter(m=>(!cat||m.category===cat)&&(!q||(m.text+' '+m.category).toLowerCase().includes(q)));box.innerHTML=arr.length?arr.slice().reverse().map(m=>`<div class=\"item memory-item\"><div><span class=\"badge\">${escapeHtml(m.category)}</span><div>${escapeHtml(m.text)}</div></div><div class=\"item-actions\"><button class=\"btn\" onclick=\"editMemory('${m.id}')\">Editar</button><button class=\"btn danger\" onclick=\"deleteMemory('${m.id}')\">Excluir</button></div></div>`).join(''):'<div class=\"muted\">Nenhuma memória encontrada.</div>'}
+$('memoryForm').onsubmit=e=>{e.preventDefault();normalizeMemories();let x={id:memoryEditId||crypto.randomUUID(),text:$('memoryText').value.trim(),category:$('memoryCategory').value,createdAt:new Date().toISOString()};if(!x.text)return;if(memoryEditId)data.memories=data.memories.map(v=>v.id===memoryEditId?x:v);else data.memories.push(x);save();e.target.reset();memoryEditId=null;$('memorySubmit').textContent='Adicionar memória';$('memoryCancel').hidden=true;renderMemories();toast('Memória salva para o contexto da IA')};
+function editMemory(id){let m=data.memories.find(x=>x.id===id);if(!m)return;memoryEditId=id;$('memoryText').value=m.text;$('memoryCategory').value=m.category;$('memorySubmit').textContent='Salvar alterações';$('memoryCancel').hidden=false}
+function cancelMemoryEdit(){memoryEditId=null;$('memoryForm').reset();$('memorySubmit').textContent='Adicionar memória';$('memoryCancel').hidden=true}
+function deleteMemory(id){if(!confirm('Excluir memória?'))return;data.memories=data.memories.filter(x=>x.id!==id);save();renderMemories()}
+async function editEvent(id){let x=data.events.find(v=>String(v.id||'')===id);if(!x)return;eventEditId=id;$('eventTitle').value=x.title;$('eventDate').value=new Date(x.date).toISOString().slice(0,16);$('eventDescription').value=x.description||'';$('agendaFormTitle').textContent='Editar compromisso';$('eventCancel').hidden=false}
+function cancelEventEdit(){eventEditId=null;$('agendaForm').reset();$('agendaFormTitle').textContent='Novo compromisso';$('eventCancel').hidden=true}
+async function deleteEvent(id){let x=data.events.find(v=>String(v.id||'')===id);if(!x||!confirm('Excluir evento?'))return;if(x.source==='google'){try{let r=await fetch('/api/calendar/delete/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)throw new Error('Não foi possível excluir no Google Calendar')}catch(e){toast(e.message);return}}data.events=data.events.filter(v=>String(v.id||'')!==id);save();renderAgenda();render();toast('Evento excluído')}
+$('agendaForm').onsubmit=async e=>{e.preventDefault();let x={id:eventEditId||crypto.randomUUID(),title:$('eventTitle').value.trim(),date:new Date($('eventDate').value).toISOString(),description:$('eventDescription').value.trim(),source:'local'};if(!x.title)return;let previous=eventEditId?data.events.find(v=>String(v.id||'')===eventEditId):null;try{if(previous?.source==='google'){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/edit/'+encodeURIComponent(eventEditId),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(!r.ok)throw new Error('Google Calendar não confirmou a edição');x.source='google'}else if(!eventEditId){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||j.id||x.id;x.source='google'}else if(r.status!==401){let j=await r.json().catch(()=>({}));throw new Error(j.message||'Falha ao criar evento no Google Calendar')}}}catch(err){if(previous?.source==='google'){toast(err.message);return}if(!navigator.onLine){toast('Sem conexão: evento salvo localmente')}else if(!String(err.message).includes('Google Calendar')){toast(err.message);return}}
+if(eventEditId)data.events=data.events.map(v=>String(v.id||'')===eventEditId?x:v);else data.events.push(x);save();e.target.reset();cancelEventEdit();renderAgenda();render();toast(x.source==='google'?'Evento salvo no Google Calendar':'Evento salvo neste aparelho')};
+async function handleNaturalAction(q){let t=q.toLowerCase(),m;
+ if(/\b(crie|cria|adicione|adiciona|registre|registra|monte|monta|faça|faz)\b/i.test(q)&&/\b(estudo|estudos|plano de estudos|sess[aã]o de estudo|estudar)\b/i.test(q)){
+   let title=(q.match(/(?:sobre|de|para|em)\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||(q.match(/estudar\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Novo estudo';
+   const minutes=Number((q.match(/(\d{1,3})\s*minutos?/i)||[])[1]||0);
+   const study={id:crypto.randomUUID(),title:title.trim(),kind:/plano de estudos/i.test(q)?'Plano de estudos':/sess[aã]o/i.test(q)?'Sessão':'matéria',minutes,grade:null,notes:q,date:new Date().toISOString().slice(0,10),createdAt:new Date().toISOString(),source:'assistant'};
+   data.studies.push(study);save();render();showPage('studies');return `Pronto! O estudo “${study.title}” foi salvo na área Estudos.`;
+ }
+ if(/\b(crie|cria|adicione|adiciona|registre|registra|salve|salva)\b/i.test(q)&&/\boportunidade\b/i.test(q)){
+   let title=(q.match(/(?:chamada?|nomeada?)\s+(.+?)$/i)||q.match(/oportunidade\s+(?:para|de|sobre)?\s*(.+?)$/i)||q.match(/(?:aprender|pesquisar|fazer|estudar)\s+(.+?)$/i)||[])[1]||q.replace(/.*oportunidade(?:\s+(?:para|de|sobre))?\s*/i,'');
+   title=title.trim()||'Nova oportunidade';data.opportunities.push({id:crypto.randomUUID(),title,link:'',notes:q,date:new Date().toISOString(),source:'assistant'});save();render();showPage('opportunities');return `Oportunidade “${title}” salva na área Oportunidades.`;
+ }
+if((m=t.match(/(?:lembra|anota|registre|registra|salva|guarda)(?:\s+que)?\s+(.+)/i))&&/(prefiro|gosto|não gosto|nao gosto|sou|tenho|estudo|rotina|importante)/i.test(m[1])&&!/estudei\s+.+\s+por\s+\d+\s+minutos?/.test(m[1])){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:m[1].replace(/[.!?]+$/,''),category:/estud/i.test(m[1])?'Estudos':/rotina|amanh|todo dia/i.test(m[1])?'Rotina':/prefiro|gosto/i.test(m[1])?'Preferências':'Observações',createdAt:new Date().toISOString()});save();renderMemories();return'Memória registrada e será enviada no contexto das próximas conversas.'}
+if((m=t.match(/(?:registra|anota|registre)\s+que\s+estudei\s+(.+?)\s+por\s+(\d+)\s+minutos?/i))){data.studies.push({title:m[1],minutes:Number(m[2]),notes:'Registrado pelo assistente',date:new Date().toISOString()});save();render();return`Estudo de ${m[1]} registrado por ${m[2]} minutos.`}
+if(/quanto.*(posso gastar|tenho|devo)|saldo/.test(t)){let f=loadFinanceData();return`Saldo: ${moneyBR(financeBalance(f))}; gastos: ${moneyBR(monthlySpent(f))}; dívidas: ${moneyBR(financeDebt(f))}; disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}.`}
+if(/o que eu tenho hoje|compromissos de hoje|agenda de hoje/.test(t)){let d=new Date().toDateString(),xs=data.events.filter(x=>new Date(x.date).toDateString()===d);return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Você não tem eventos registrados para hoje.'}
+if(/amanh[ãa]/.test(t)&&/(agenda|compromisso|evento|o que tenho|mostra)/.test(t)){let d=new Date();d.setDate(d.getDate()+1);let xs=data.events.filter(x=>new Date(x.date).toDateString()===d.toDateString());return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Não há eventos registrados para amanhã.'}
+if(/(?:cria|crie|marca|marque|agenda|agende).*(?:evento|compromisso|reuni[aã]o)/i.test(q)&&/(hoje|amanh[ãa]|\d{1,2}\/\d{1,2})/i.test(q)){let title=(q.match(/(?:evento|compromisso|reuni[aã]o)\s+(?:chamado\s+)?(.+?)(?=\s+(?:hoje|amanh[ãa]|\d{1,2}\/\d{1,2})|\s+às?\s+\d|$)/i)||[])[1]||'Compromisso';let d=new Date();if(/amanh[ãa]/i.test(q))d.setDate(d.getDate()+1);let dm=q.match(/(\d{1,2})\/(\d{1,2})/);if(dm)d.setMonth(Number(dm[2])-1,Number(dm[1]));let tm=q.match(/(?:às?|as)\s*(\d{1,2})(?::(\d{2}))?/i);if(!tm)return'Qual horário devo usar para esse evento?';d.setHours(Number(tm[1]),Number(tm[2]||0),0,0);let end=new Date(d);end.setHours(end.getHours()+1);let x={id:crypto.randomUUID(),title:title.trim(),date:d.toISOString(),source:'local'};try{let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,start:d.toISOString(),end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||x.id;x.source='google'}else if(r.status!==401)throw new Error('O servidor não confirmou a criação do evento.')}catch(err){if(!navigator.onLine)return'Estou sem conexão e não consegui confirmar a criação do evento.';if(err.message.includes('não confirmou'))return err.message}data.events.push(x);save();renderAgenda();render();return x.source==='google'?'Evento criado no Google Calendar.':'Google Calendar não conectado: evento salvo apenas neste aparelho.'}
+if(/(?:anota|lembra|cria|marca).*(?:estudar|estudo|tarefa).*(?:amanh[ãa]|hoje)/.test(t)||/(?:anota|lembra).*(?:amanh[ãa]|hoje).*(?:estudar|estudo)/.test(t)){let title=(q.match(/estudar\s+(.+?)(?:\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Estudar matemática';let due=new Date();if(/amanh[ãa]/i.test(q))due.setDate(due.getDate()+1);data.tasks.push({id:crypto.randomUUID(),title:'Estudar '+title.trim(),date:due.toISOString(),dueDate:due.toISOString().slice(0,10),done:false});save();render();return`Tarefa “Estudar ${title.trim()}” anotada para ${due.toLocaleDateString('pt-BR')}.`}
+// Fallback de ações locais para comandos explícitos quando o Gemini não estiver disponível.
+if(/(?:registre|registra|anote|anota|lance|lança).*(?:despesa|gasto)/i.test(q)){
+  const vm=q.match(/r\$\s*([\d.,]+)|(?:de|por)\s*([\d.,]+)\s*(?:reais)?/i);const raw=vm?(vm[1]||vm[2]):'';const amount=raw?Number(raw.replace(/\./g,'').replace(',','.')):0;
+  if(amount>0){const cm=q.match(/(?:com|em)\s+(.+?)(?:[.!?]|$)/i);const category=(cm?.[1]||'Outros').trim();const f=loadFinanceData();f.transactions.push({id:crypto.randomUUID(),description:'Despesa com '+category,type:'gasto',amount,category,date:new Date().toISOString().slice(0,10)});saveFinanceData(f);renderFinancas();return `Despesa de ${moneyBR(amount)} registrada em ${category}.`;}
+}
+if(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\b/i.test(q)){
+  const title=q.replace(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\s*(?:para|de)?\s*/i,'').trim();
+  if(title){data.tasks.push({id:crypto.randomUUID(),title,date:new Date().toISOString(),dueDate:null,dueTime:null,done:false,source:'assistant'});save();render();return `Tarefa “${title}” adicionada ao PRIMORIS.`;}
+}
+if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){
+  const note=q.replace(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i,'').trim();
+  if(note){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na Memória: “${note}”.`;}
+}
+return null}
+document.addEventListener('DOMContentLoaded',()=>{$('finDate').value=new Date().toISOString().slice(0,10);normalizeMemories();renderMemories();renderFinancas()});renderFinancas();
+if(typeof renderDashboard==='function')renderDashboard();
+</script>
+
+
+<script id="primoris-voice-js">
+let voiceRecognition=null,voiceListening=false,voiceFinalText='',voiceManualStop=false,voiceRestartTimer=null,voiceStopTimer=null,lastAIResponse='';
+function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
+function speechSupported(){return 'speechSynthesis' in window}
+function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o PRIMORIS')}}
+function initVoiceRecognition(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
+ voiceRecognition=new SR();voiceRecognition.lang='pt-BR';voiceRecognition.continuous=true;voiceRecognition.interimResults=true;voiceRecognition.maxAlternatives=3;
+ voiceRecognition.onstart=()=>{voiceListening=true;voiceManualStop=false;updateVoiceUI()};
+ voiceRecognition.onresult=e=>{
+   let final='';let interim='';
+   for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0]?.transcript||'';if(e.results[i].isFinal)final+=t;else interim+=t;}
+   if(final.trim())voiceFinalText=(voiceFinalText+' '+final).trim();
+   const shown=(voiceFinalText+' '+interim).trim();const input=document.getElementById('chatInput');if(input&&shown)input.value=shown;
+   if(final.trim()){clearTimeout(voiceStopTimer);voiceStopTimer=setTimeout(()=>{if(voiceRecognition&&voiceListening){voiceManualStop=true;try{voiceRecognition.stop()}catch(e){}}},350);}
+ };
+ voiceRecognition.onerror=e=>{console.warn('Reconhecimento de voz:',e.error);if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceManualStop=true;voiceListening=false;updateVoiceUI();toast('Permissão para o microfone foi negada.');}};
+ voiceRecognition.onend=()=>{
+   clearTimeout(voiceRestartTimer);const text=voiceFinalText.trim();
+   if(!voiceManualStop&&voiceListening&&!text){voiceRestartTimer=setTimeout(()=>{try{voiceRecognition.start()}catch(e){}},250);return;}
+   voiceListening=false;updateVoiceUI();
+   if(text){const input=document.getElementById('chatInput');if(input)input.value=text;const form=document.getElementById('chatForm');if(form)form.requestSubmit();}
+ };
+ return true;
+}
+function toggleVoiceRecognition(){
+ if(!voiceSupported()){toast('Use o Google Chrome para reconhecimento de voz.');return}
+ if(!voiceRecognition)initVoiceRecognition();
+ if(voiceListening){voiceManualStop=true;try{voiceRecognition.stop()}catch(e){}return}
+ clearTimeout(voiceRestartTimer);clearTimeout(voiceStopTimer);voiceFinalText='';voiceManualStop=false;
+ try{window.speechSynthesis?.resume();voiceRecognition.start()}catch(e){voiceListening=false;updateVoiceUI();toast('Não foi possível iniciar o microfone agora.')}
+}
+const VOICE_SETTINGS_KEY='primoris_voice_settings_v1';
+let primorisVoices=[];
+
+function loadVoiceSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem(VOICE_SETTINGS_KEY)||'{}');
+    return {
+      gender:['auto','male','female'].includes(s.gender)?s.gender:'auto',
+      voiceName:typeof s.voiceName==='string'?s.voiceName:'auto',
+      rate:Number.isFinite(Number(s.rate))?Number(s.rate):0.96,
+      pitch:Number.isFinite(Number(s.pitch))?Number(s.pitch):0.92,
+      volume:Number.isFinite(Number(s.volume))?Number(s.volume):1
+    };
+  }catch{
+    return {gender:'auto',voiceName:'auto',rate:0.96,pitch:0.92,volume:1};
+  }
+}
+function saveVoiceSettings(s){localStorage.setItem(VOICE_SETTINGS_KEY,JSON.stringify(s))}
+function getVoiceSettings(){return loadVoiceSettings()}
+function normalizeVoiceGender(v){return ['auto','male','female'].includes(v)?v:'auto'}
+
+function voiceLooksMale(v){
+  return /(^|\\b)(daniel|felipe|ricardo|rafael|andre|andré|carlos|joao|joão|gustavo|lucas|mateus|marcos|thiago|tiago|paulo|google português do brasil|microsoft.*male|male)/i.test(v.name||'');
+}
+function voiceLooksFemale(v){
+  return /(^|\\b)(maria|ana|fernanda|juliana|camila|carolina|beatriz|leticia|letícia|luciana|gabriela|mariana|sofia|sophia|google.*female|microsoft.*female|female)/i.test(v.name||'');
+}
+function isPortugueseVoice(v){return /^pt(-BR|-PT)?$/i.test(v.lang||'')||/^pt/i.test(v.lang||'')}
+
+function preferredVoiceFromList(settings){
+  const voices=primorisVoices||[];
+  const pt=voices.filter(isPortugueseVoice);
+  const pool=pt.length?pt:voices;
+  if(settings.voiceName&&settings.voiceName!=='auto'){
+    const exact=voices.find(v=>v.name===settings.voiceName);
+    if(exact)return exact;
+  }
+  if(settings.gender==='male'){
+    return pool.find(voiceLooksMale)||pool.find(v=>/pt-BR/i.test(v.lang))||pool[0]||null;
+  }
+  if(settings.gender==='female'){
+    return pool.find(voiceLooksFemale)||pool.find(v=>/pt-BR/i.test(v.lang))||pool[0]||null;
+  }
+  return pool.find(v=>/pt-BR/i.test(v.lang)&&/(Daniel|Felipe|Ricardo|Rafael|André|Andre|Google português do Brasil|Microsoft)/i.test(v.name))
+    ||pool.find(v=>/pt-BR/i.test(v.lang))
+    ||pool[0]
+    ||null;
+}
+
+function populateVoiceSelect(){
+  const select=document.getElementById('voiceSelect');
+  if(!select)return;
+  const settings=getVoiceSettings();
+  select.innerHTML='';
+  const auto=document.createElement('option');
+  auto.value='auto';
+  auto.textContent='🤖 Automática';
+  select.appendChild(auto);
+  const voices=primorisVoices||[];
+  const sorted=voices.slice().sort((a,b)=>{
+    const ap=isPortugueseVoice(a)?0:1,bp=isPortugueseVoice(b)?0:1;
+    return ap-bp || a.lang.localeCompare(b.lang)||a.name.localeCompare(b.name);
+  });
+  sorted.forEach(v=>{
+    const o=document.createElement('option');
+    o.value=v.name;
+    o.textContent=`${isPortugueseVoice(v)?'🇧🇷 ':''}${v.name} · ${v.lang}`;
+    select.appendChild(o);
+  });
+  select.value=(settings.voiceName==='auto'||voices.some(v=>v.name===settings.voiceName))?settings.voiceName:'auto';
+  if(select.value!==settings.voiceName){settings.voiceName='auto';saveVoiceSettings(settings)}
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent=voices.length?`${voices.length} voz(es) detectada(s).`:'Nenhuma voz detectada ainda. O aparelho pode carregar as vozes alguns segundos depois.';
+  updateVoiceControlLabels();
+}
+
+function refreshVoiceList(){
+  if(!speechSupported())return;
+  primorisVoices=window.speechSynthesis.getVoices()||[];
+  populateVoiceSelect();
+}
+function setVoiceGender(v){
+  const s=getVoiceSettings();s.gender=normalizeVoiceGender(v);saveVoiceSettings(s);
+  const selected=document.getElementById('voiceSelect');
+  if(selected&&s.gender!=='auto'&&selected.value==='auto'){
+    const v2=preferredVoiceFromList(s);
+    if(v2){s.voiceName=v2.name;saveVoiceSettings(s);selected.value=v2.name}
+  }
+  updateVoiceControlLabels();
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Preferência de voz salva.';
+}
+function setVoiceSelection(v){
+  const s=getVoiceSettings();s.voiceName=v||'auto';saveVoiceSettings(s);
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Voz escolhida salva.';
+}
+function updateVoiceControlLabels(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate){
+    rate.value=String(s.rate);
+    const out=document.getElementById('voiceRateValue');
+    if(out)out.textContent=Number(s.rate).toFixed(2)+'x';
+  }
+  if(pitch){
+    pitch.value=String(s.pitch);
+    const out=document.getElementById('voicePitchValue');
+    if(out)out.textContent=Number(s.pitch).toFixed(2);
+  }
+  if(volume){
+    volume.value=String(s.volume);
+    const out=document.getElementById('voiceVolumeValue');
+    if(out)out.textContent=Math.round(Number(s.volume)*100)+'%';
+  }
+
+  const gender=document.getElementById('voiceGender');
+  if(gender)gender.value=s.gender;
+  const select=document.getElementById('voiceSelect');
+  if(select && [...select.options].some(o=>o.value===s.voiceName))select.value=s.voiceName;
+}
+
+function voiceSliderChanged(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate)s.rate=Number(rate.value);
+  if(pitch)s.pitch=Number(pitch.value);
+  if(volume)s.volume=Number(volume.value);
+
+  saveVoiceSettings(s);
+  updateVoiceControlLabels();
+
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Configuração de voz salva.';
+}
+
+function applyVoiceControls(){
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate');
+  const pitch=document.getElementById('voicePitch');
+  const volume=document.getElementById('voiceVolume');
+
+  if(rate)s.rate=Number(rate.value);
+  if(pitch)s.pitch=Number(pitch.value);
+  if(volume)s.volume=Number(volume.value);
+
+  s.rate=Math.max(.6,Math.min(1.4,s.rate));
+  s.pitch=Math.max(.5,Math.min(1.5,s.pitch));
+  s.volume=Math.max(0,Math.min(1,s.volume));
+
+  saveVoiceSettings(s);
+  updateVoiceControlLabels();
+}
+
+function testSelectedVoice(){
+  applyVoiceControls();
+  const s=getVoiceSettings(),v=preferredVoiceFromList(s);
+  if(!speechSupported()){toast('A fala não é suportada neste navegador.');return}
+  if(!v){toast('Nenhuma voz foi encontrada no aparelho.');return}
+  stopSpeaking();
+  const u=new SpeechSynthesisUtterance('Olá. Eu sou o PRIMORIS. Esta é a voz que você selecionou.');
+  u.lang=v.lang||'pt-BR';u.voice=v;u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
+  window.speechSynthesis.resume();window.speechSynthesis.speak(u);
+  const status=document.getElementById('voiceSettingsStatus');
+  if(status)status.textContent='Testando: '+v.name;
+}
+function stopSpeaking(){if(speechSupported())window.speechSynthesis.cancel()}
+function speakText(text){
+ if(!speechSupported()||!text)return;
+ try{
+   applyVoiceControls();
+   const s=getVoiceSettings(),v=preferredVoiceFromList(s);
+   stopSpeaking();
+   const u=new SpeechSynthesisUtterance(String(text));
+   u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
+   if(v)u.voice=v;
+   window.speechSynthesis.resume();
+   window.speechSynthesis.speak(u);
+ }catch(e){console.warn('Falha na fala:',e)}
+}
+function initVoiceSettings(){
+  if(!speechSupported())return;
+  const s=getVoiceSettings();
+  const rate=document.getElementById('voiceRate'),pitch=document.getElementById('voicePitch'),volume=document.getElementById('voiceVolume');
+  if(rate)rate.value=s.rate;if(pitch)pitch.value=s.pitch;if(volume)volume.value=s.volume;
+  primorisVoices=window.speechSynthesis.getVoices()||[];
+  populateVoiceSelect();
+  if('speechSynthesis' in window){
+    window.speechSynthesis.addEventListener('voiceschanged',refreshVoiceList);
+  }
+}
+if('speechSynthesis' in window)window.speechSynthesis.onvoiceschanged=()=>{refreshVoiceList()};
+if(voiceSupported())initVoiceRecognition();
+if(speechSupported())initVoiceSettings();
+setInterval(checkSmartNotifications,30000);setTimeout(checkSmartNotifications,1200);
+</script>
+</body>
+</html>
