@@ -429,7 +429,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 <aside class="sidebar">
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
-    <button data-page="home">⌂ Hoje</button><button type="button" data-page="my-day" onclick="showPage('my-day');return false;">☀️ Meu Dia</button><button type="button" data-page="agent" onclick="showPage('agent');return false;">⚡ Agente</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
+    <button data-page="home">⌂ Hoje</button><button data-page="my-day">☀️ Meu Dia</button><button data-page="agent">⚡ Agente</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
   <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button type="button" onclick="showPage('image-lab')" data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
@@ -761,7 +761,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="card"><span class="badge">PRIORIDADES</span><div id="myDaySummary" class="stat">0</div><div class="muted">itens para prestar atenção hoje</div></div>
     <div class="card"><span class="badge">PRÓXIMO</span><div id="myDayNext" style="font-weight:800;margin-top:8px">Nada agendado.</div><div id="myDayNextMeta" class="muted"></div></div>
   </div>
-  <div class="card" style="margin-top:15px"><div class="row"><h3>📋 Linha do dia</h3><span id="myDayDate" class="muted"></span></div><div id="myDayTimeline" class="day-timeline"></div><div class="actions" style="margin-top:14px"><button class="btn" type="button" onclick="showPage('tasks')">📋 Ver tarefas</button><button class="btn" type="button" onclick="showPage('agenda')">📅 Ver agenda</button><button class="btn" type="button" onclick="showPage('studies')">📚 Ver estudos</button></div></div>
+  <div class="card" style="margin-top:15px"><div class="row"><h3>📋 Linha do dia</h3><span id="myDayDate" class="muted"></span></div><div id="myDayTimeline" class="day-timeline"></div></div>
 </section>
 
 <section id="page-agent" class="page">
@@ -770,13 +770,13 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <textarea id="agentCommand" placeholder="Ex.: criar tarefa estudar matemática amanhã; salvar uma memória que prefiro estudar à noite; adicionar um compromisso amanhã às 15h"></textarea>
     <div class="actions" style="margin-top:10px"><button class="btn primary" type="button" onclick="runPrimorisAgent()">⚡ Executar agente</button><button class="btn" type="button" onclick="clearAgentLog()">Limpar atividade</button></div>
     <div id="agentStatus" class="muted" style="margin-top:10px">Agente pronto.</div>
-    <div id="agentLog" class="smart-agent-log"><div class="item"><b>Como usar</b><br>Escreva uma ação ou várias separadas por ponto e vírgula.<br><small>Ex.: criar tarefa estudar matemática amanhã; lembrar que prefiro estudar à noite</small></div></div>
+    <div id="agentLog" class="smart-agent-log"></div>
   </div>
 </section></main>
 </div>
 
 <nav class="mobilebar" aria-label="Navegação principal; deslize para ver todas as páginas">
-<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="my-day" onclick="showPage('my-day');return false;" aria-label="Meu Dia">☀️<br>Dia</button><button type="button" data-page="agent" onclick="showPage('agent');return false;" aria-label="Agente">⚡<br>Agente</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
+<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="my-day" aria-label="Meu Dia">☀️<br>Dia</button><button type="button" data-page="agent" aria-label="Agente">⚡<br>Agente</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
 </nav>
 <div id="toast" class="toast"></div>
 <div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
@@ -961,7 +961,7 @@ function showPage(p){
   if(p==='memory') renderMemories();
   if(p==='finance' && typeof renderFinancas==='function') renderFinancas();
   if(p==='skills')renderSkills();
-  if(p==='os')updateOSDashboard();\n  if(p==='my-day')renderMyDay();\n  if(p==='agent'){const x=$('agentCommand');if(x&&!x.value)x.focus()}
+  if(p==='os')updateOSDashboard();
   if(p==='devpanel'){renderDevLog();runDevPanelScan();}
 
 }
