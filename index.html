@@ -1413,6 +1413,17 @@ const PRIMORIS_SKILLS=[
  {id:'finance',icon:'💰',name:'Finanças',desc:'Controle financeiro pessoal.',enabled:true}
 ];
 function loadSkills(){try{const x=JSON.parse(localStorage.getItem(PRIMORIS_SKILLS_KEY)||'{}');return PRIMORIS_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(PRIMORIS_SKILLS.map(s=>[s.id,s.enabled]))}}
+function isSkillEnabled(id){return loadSkills()[id]!==false}
+function skillBlockedMessage(id){
+  const skill=PRIMORIS_SKILLS.find(s=>s.id===id);
+  return 'A skill “'+(skill?.name||id)+'” está desativada. Ative-a em Skills para eu poder usar essa função.';
+}
+function requireSkill(id){
+  if(isSkillEnabled(id))return null;
+  const message=skillBlockedMessage(id);
+  try{toast(message)}catch{}
+  return message;
+}
 function saveSkills(x){localStorage.setItem(PRIMORIS_SKILLS_KEY,JSON.stringify(x))}
 function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" data-skill-toggle="${s.id}"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('');box.querySelectorAll('[data-skill-toggle]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleSkill(btn.getAttribute('data-skill-toggle'));});});}
 function toggleSkill(id){const x=loadSkills();x[id]=!x[id];saveSkills(x);renderSkills();devLog((x[id]?'Ativada':'Desativada')+' skill: '+id);toast((x[id]?'Skill ativada: ':'Skill desativada: ')+id)}
@@ -1561,6 +1572,8 @@ function parseLocalAppointment(q){
   return {title,date};
 }
 async function createLocalAppointment(parsed){
+  const blocked=requireSkill('agenda');
+  if(blocked)return {error:blocked};
   const start=parsed.date,end=new Date(start);end.setHours(end.getHours()+1);
   const id=window.crypto?.randomUUID?crypto.randomUUID():`ev-${Date.now()}`;
   const event={id,title:parsed.title,date:start.toISOString(),description:'Criado pelo assistente PRIMORIS',source:'local'};
@@ -1625,6 +1638,15 @@ async function requestAIAction(q){
 }
 async function applyAIAction(a){
   if(!a||!a.type)return null;
+  const actionSkill={
+    study:'study',opportunity:'search',delete_opportunity:'search',delete_task:'tasks',
+    note:'memory',task:'tasks',reminder:'taskAgent',finance_local:'finance',expense:'finance',
+    event:'agenda'
+  }[a.type];
+  if(actionSkill){
+    const blocked=requireSkill(actionSkill);
+    if(blocked)return blocked;
+  }
   if(a.type==='local_message')return a.message||'Comando processado.';
 
   const id=()=>window.crypto?.randomUUID?crypto.randomUUID():`p-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -1707,6 +1729,11 @@ $('chatForm').onsubmit=async e=>{
   addChat(q,'user');$('chatInput').value='';
   addChat('Processando...','ai');const placeholder=$('chat').lastElementChild;
   try{
+    const whatsappIntent=/\bwhats\s?app\b|\bzap\b|\b(?:mande|manda|envie|envia|enviar|avise|avisa|dispare|escreva|escreve)\s+(?:uma\s+)?(?:mensagem|msg|texto)\s+(?:para|pra|pro|no|pelo)\b/i.test(q);
+    if(whatsappIntent){
+      const blocked=requireSkill('whatsapp');
+      if(blocked){placeholder.textContent=blocked;placeholder.className='bubble ai';speakText(blocked);return;}
+    }
     const whatsappResult=handleWhatsAppChatRequest(q);
     if(whatsappResult){placeholder.textContent=whatsappResult;placeholder.className='bubble ai';speakText(whatsappResult);return;}
 
@@ -1715,6 +1742,8 @@ $('chatForm').onsubmit=async e=>{
     // do provedor de IA nem de isPotentialActionRequest().
     const directFinance=parseLocalFinanceAction(q);
     if(directFinance){
+      const blocked=requireSkill('finance');
+      if(blocked){placeholder.textContent=blocked;placeholder.className='bubble ai';speakText(blocked);return;}
       if(directFinance.clarification){
         placeholder.textContent=directFinance.clarification;
         placeholder.className='bubble ai';
@@ -2306,7 +2335,17 @@ function cancelEventEdit(){eventEditId=null;$('agendaForm').reset();$('agendaFor
 async function deleteEvent(id){let x=data.events.find(v=>String(v.id||'')===id);if(!x||!confirm('Excluir evento?'))return;if(x.source==='google'){try{let r=await fetch('/api/calendar/delete/'+encodeURIComponent(id),{method:'DELETE'});if(!r.ok)throw new Error('Não foi possível excluir no Google Calendar')}catch(e){toast(e.message);return}}data.events=data.events.filter(v=>String(v.id||'')!==id);save();renderAgenda();render();toast('Evento excluído')}
 $('agendaForm').onsubmit=async e=>{e.preventDefault();let x={id:eventEditId||crypto.randomUUID(),title:$('eventTitle').value.trim(),date:new Date($('eventDate').value).toISOString(),description:$('eventDescription').value.trim(),source:'local'};if(!x.title)return;let previous=eventEditId?data.events.find(v=>String(v.id||'')===eventEditId):null;try{if(previous?.source==='google'){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/edit/'+encodeURIComponent(eventEditId),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(!r.ok)throw new Error('Google Calendar não confirmou a edição');x.source='google'}else if(!eventEditId){let end=new Date(x.date);end.setHours(end.getHours()+1);let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,description:x.description,start:x.date,end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||j.id||x.id;x.source='google'}else if(r.status!==401){let j=await r.json().catch(()=>({}));throw new Error(j.message||'Falha ao criar evento no Google Calendar')}}}catch(err){if(previous?.source==='google'){toast(err.message);return}if(!navigator.onLine){toast('Sem conexão: evento salvo localmente')}else if(!String(err.message).includes('Google Calendar')){toast(err.message);return}}
 if(eventEditId)data.events=data.events.map(v=>String(v.id||'')===eventEditId?x:v);else data.events.push(x);save();e.target.reset();cancelEventEdit();renderAgenda();render();toast(x.source==='google'?'Evento salvo no Google Calendar':'Evento salvo neste aparelho')};
-async function handleNaturalAction(q){let t=q.toLowerCase(),m;
+async function handleNaturalAction(q){
+ let t=q.toLowerCase(),m;
+ if(/\b(estudo|estudos|estudar|plano de estudos|sess[aã]o de estudo)\b/i.test(q)&&/\b(crie|cria|adicione|adiciona|registre|registra|monte|monta|faça|faz)\b/i.test(q)){
+   const blocked=requireSkill('study');if(blocked)return blocked;
+ }
+ if(/\boportunidade\b/i.test(q)&&/\b(crie|cria|adicione|adiciona|registre|registra|salve|salva)\b/i.test(q)){
+   const blocked=requireSkill('search');if(blocked)return blocked;
+ }
+ if(/\b(lembra|anota|registre|registra|salva|guarda)\b/i.test(q)){
+   const blocked=requireSkill('memory');if(blocked)return blocked;
+ }
  if(/\b(crie|cria|adicione|adiciona|registre|registra|monte|monta|faça|faz)\b/i.test(q)&&/\b(estudo|estudos|plano de estudos|sess[aã]o de estudo|estudar)\b/i.test(q)){
    let title=(q.match(/(?:sobre|de|para|em)\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||(q.match(/estudar\s+(.+?)(?=\s+(?:por|durante)\s+\d+\s*minutos?|\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Novo estudo';
    const minutes=Number((q.match(/(\d{1,3})\s*minutos?/i)||[])[1]||0);
