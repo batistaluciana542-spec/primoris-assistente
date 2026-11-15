@@ -1969,6 +1969,26 @@ window.speakText=function(text){
     const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
     if(!clean)return;
     stopSpeaking();
+    const overlay=document.getElementById('primorisSpeakingOverlay');
+    const orb=document.getElementById('primorisSpeakingOrb');
+    const showOrb=()=>{
+      if(!overlay)return;
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
+    };
+    const pulseOrb=()=>{
+      if(!orb)return;
+      orb.style.transform='scale(1.14)';
+      clearTimeout(window.__primorisOrbTimer);
+      window.__primorisOrbTimer=setTimeout(()=>{if(orb)orb.style.transform='scale(1)'},140);
+    };
+    const hideOrb=()=>{
+      if(overlay){
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden','true');
+      }
+      if(orb)orb.style.transform='scale(1)';
+    };
     const chunks=[];
     const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean];
     let current='';
@@ -1982,25 +2002,24 @@ window.speakText=function(text){
     let i=0;
     const status=document.getElementById('voiceSettingsStatus');
     const voiceStatus=document.getElementById('voiceStatus');
-    const orb=document.getElementById('assistantVoiceOrb');
-    const setSpeaking=active=>{if(orb)orb.classList.toggle('speaking',!!active);};
     const next=()=>{
       if(i>=chunks.length){
+        hideOrb();
         if(status)status.textContent='Voz pronta.';
         if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking');}
-        setSpeaking(false);
         return;
       }
       const u=new SpeechSynthesisUtterance(chunks[i++]);
       u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
-      u.onstart=()=>{setSpeaking(true);if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
+      u.onstart=()=>{showOrb();if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
+      u.onboundary=()=>{showOrb();pulseOrb();};
       u.onend=next;
-      u.onerror=()=>{setSpeaking(false);next();};
+      u.onerror=()=>{hideOrb();next();};
       window.speechSynthesis.resume();
       window.speechSynthesis.speak(u);
     };
     next();
-  }catch(e){console.warn('Voz PRIMORIS:',e);toast('Não foi possível reproduzir a voz agora.');}
+  }catch(e){hideOrb?.();console.warn('Voz PRIMORIS:',e);toast('Não foi possível reproduzir a voz agora.');}
 };
 
 async function runFullDiagnostics(){
