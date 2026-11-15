@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
-<title id="title">PRIMORIS</title>
+<title id="title">ORION</title>
 <defs>
   <linearGradient id="bg" x1="70" y1="40" x2="440" y2="470" gradientUnits="userSpaceOnUse">
     <stop stop-color="#050713"/><stop offset=".5" stop-color="#16072f"/><stop offset="1" stop-color="#030711"/>
@@ -31,7 +31,7 @@
 <!-- energia difusa -->
 <circle cx="256" cy="256" r="112" fill="#8b4dff" opacity=".22" filter="url(#soft)"/>
 
-<!-- núcleo PRIMORIS -->
+<!-- núcleo ORION -->
 <circle cx="256" cy="256" r="91" fill="url(#orb)" stroke="#54e8ff" stroke-width="4" filter="url(#glow)"/>
 <circle cx="256" cy="256" r="63" fill="none" stroke="#ffffff" stroke-width="2" opacity=".3"/>
 <circle cx="256" cy="256" r="27" fill="#02030a" opacity=".92"/>
