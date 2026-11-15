@@ -2129,5 +2129,49 @@ function clearImageLab(){
 }
 </script>
 
+<script id="primoris-connection-hub-js">
+function openExternal(url){
+  try{ window.open(url,'_blank','noopener,noreferrer'); }
+  catch(e){ window.location.href=url; }
+}
+function searchExternalYoutube(){
+  const el=document.getElementById('hubYoutubeQuery');
+  const q=String(el?.value||'').trim();
+  if(!q){ if(typeof toast==='function') toast('Digite o que deseja pesquisar no YouTube.'); return; }
+  openExternal('https://www.youtube.com/results?search_query='+encodeURIComponent(q));
+}
+function searchExternalMaps(){
+  const el=document.getElementById('hubMapsQuery');
+  const q=String(el?.value||'').trim();
+  if(!q){ if(typeof toast==='function') toast('Digite um lugar ou endereço.'); return; }
+  openExternal('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q));
+}
+async function refreshConnectionHub(){
+  const status=document.getElementById('connectionHubStatus');
+  const gmail=document.getElementById('hubGmail');
+  const calendar=document.getElementById('hubCalendar');
+  if(status) status.textContent='VERIFICANDO';
+  const check=async(url)=>{
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      const j=await r.json().catch(()=>({}));
+      return {ok:r.ok,auth:r.status!==401,data:j};
+    }catch(e){return {ok:false,auth:false};}
+  };
+  const [g,c]=await Promise.all([
+    check('/api/gmail/messages?max=1'),
+    check('/api/calendar/events')
+  ]);
+  if(gmail) gmail.textContent=g.ok?'Conectado e respondendo':g.auth?'Indisponível':'Google não conectado';
+  if(calendar) calendar.textContent=c.ok?'Conectado e respondendo':c.auth?'Indisponível':'Google não conectado';
+  if(status){
+    const n=[g.ok,c.ok].filter(Boolean).length;
+    status.textContent=n+' GOOGLE ATIVO'+(n===1?'':'S');
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('page-integrations')) refreshConnectionHub();
+});
+</script>
 </body>
 </html>
