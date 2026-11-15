@@ -1,57 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
 <title id="title">PRIMORIS</title>
-<desc id="desc">Símbolo futurista do PRIMORIS formado por um P geométrico e anéis de energia.</desc>
 <defs>
-  <linearGradient id="bg" x1="70" y1="30" x2="450" y2="480" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#070817"/>
-    <stop offset=".48" stop-color="#160a30"/>
-    <stop offset="1" stop-color="#050713"/>
+  <linearGradient id="bg" x1="70" y1="40" x2="440" y2="470" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#050713"/><stop offset=".5" stop-color="#16072f"/><stop offset="1" stop-color="#030711"/>
   </linearGradient>
-  <linearGradient id="prism" x1="116" y1="390" x2="405" y2="118" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#54e8ff"/>
-    <stop offset=".48" stop-color="#8f63ff"/>
-    <stop offset="1" stop-color="#ff4fd8"/>
-  </linearGradient>
-  <linearGradient id="shine" x1="160" y1="360" x2="360" y2="150" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#d9fbff"/>
-    <stop offset=".5" stop-color="#54e8ff"/>
-    <stop offset="1" stop-color="#ff8ce8"/>
-  </linearGradient>
-  <radialGradient id="core" cx="50%" cy="42%" r="65%">
-    <stop stop-color="#54e8ff" stop-opacity=".32"/>
-    <stop offset=".55" stop-color="#8d55ff" stop-opacity=".12"/>
-    <stop offset="1" stop-color="#02030a" stop-opacity="0"/>
+  <radialGradient id="orb" cx="42%" cy="35%" r="68%">
+    <stop stop-color="#ffffff"/><stop offset=".07" stop-color="#bfffff"/>
+    <stop offset=".18" stop-color="#54e8ff"/><stop offset=".38" stop-color="#4968ff"/>
+    <stop offset=".62" stop-color="#a23cff"/><stop offset=".82" stop-color="#25054e"/><stop offset="1" stop-color="#05030e"/>
   </radialGradient>
+  <linearGradient id="ring" x1="90" y1="420" x2="420" y2="90" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#54e8ff"/><stop offset=".48" stop-color="#7864ff"/><stop offset="1" stop-color="#ff4fd8"/>
+  </linearGradient>
   <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
-    <feGaussianBlur stdDeviation="8" result="blur"/>
-    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <feGaussianBlur stdDeviation="9" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
-    <feGaussianBlur stdDeviation="18"/>
+  <filter id="soft" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="20"/>
   </filter>
 </defs>
 
 <rect width="512" height="512" rx="116" fill="url(#bg)"/>
-<circle cx="256" cy="256" r="190" fill="url(#core)"/>
 
-<!-- energia externa -->
-<circle cx="256" cy="256" r="178" fill="none" stroke="#54e8ff" stroke-width="2" opacity=".22"/>
-<circle cx="256" cy="256" r="154" fill="none" stroke="url(#prism)" stroke-width="3" stroke-dasharray="8 20" opacity=".55"/>
-<path d="M256 58v28M256 426v28M58 256h28M426 256h28" stroke="url(#prism)" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<!-- halo de energia -->
+<circle cx="256" cy="256" r="184" fill="none" stroke="#54e8ff" stroke-width="2" opacity=".16"/>
+<circle cx="256" cy="256" r="160" fill="none" stroke="url(#ring)" stroke-width="4" stroke-dasharray="10 18" opacity=".65"/>
+<circle cx="256" cy="256" r="139" fill="none" stroke="#8f63ff" stroke-width="2" stroke-dasharray="3 15" opacity=".5"/>
 
-<!-- brilho atrás do símbolo -->
-<path d="M166 390V122h108c70 0 112 36 112 91 0 56-42 91-112 91h-50v86h-58Zm58-143h48c35 0 55-12 55-34 0-22-20-34-55-34h-48v68Z" fill="#54e8ff" opacity=".2" filter="url(#softGlow)"/>
+<!-- energia difusa -->
+<circle cx="256" cy="256" r="112" fill="#8b4dff" opacity=".22" filter="url(#soft)"/>
 
-<!-- símbolo P geométrico -->
-<path d="M154 390V122h112c69 0 111 36 111 91 0 56-42 91-111 91h-55v86h-57Zm57-139h51c38 0 57-13 57-38 0-24-19-37-57-37h-51v75Z"
-      fill="none" stroke="url(#prism)" stroke-width="16" stroke-linejoin="round" filter="url(#glow)"/>
+<!-- núcleo PRIMORIS -->
+<circle cx="256" cy="256" r="91" fill="url(#orb)" stroke="#54e8ff" stroke-width="4" filter="url(#glow)"/>
+<circle cx="256" cy="256" r="63" fill="none" stroke="#ffffff" stroke-width="2" opacity=".3"/>
+<circle cx="256" cy="256" r="27" fill="#02030a" opacity=".92"/>
+<circle cx="246" cy="245" r="9" fill="#fff" opacity=".95" filter="url(#glow)"/>
 
-<!-- núcleo -->
-<path d="M211 251h51c38 0 57-13 57-38 0-24-19-37-57-37h-51v75Z" fill="url(#shine)" opacity=".96"/>
-<path d="M154 390V122h18v250h84" fill="none" stroke="#eaffff" stroke-width="4" opacity=".72" stroke-linecap="round"/>
+<!-- órbitas -->
+<ellipse cx="256" cy="256" rx="204" ry="72" fill="none" stroke="url(#ring)" stroke-width="3" opacity=".42" transform="rotate(-24 256 256)"/>
+<ellipse cx="256" cy="256" rx="204" ry="72" fill="none" stroke="#54e8ff" stroke-width="2" opacity=".25" transform="rotate(34 256 256)"/>
 
-<!-- cortes digitais -->
-<path d="M116 174h22M374 338h22M128 354h18M366 158h18" stroke="#54e8ff" stroke-width="4" stroke-linecap="round" opacity=".65"/>
-<circle cx="128" cy="174" r="4" fill="#ff4fd8" filter="url(#glow)"/>
-<circle cx="384" cy="338" r="4" fill="#54e8ff" filter="url(#glow)"/>
+<!-- pontos de energia -->
+<circle cx="83" cy="177" r="5" fill="#54e8ff" filter="url(#glow)"/>
+<circle cx="427" cy="335" r="5" fill="#ff4fd8" filter="url(#glow)"/>
+<circle cx="391" cy="119" r="3" fill="#9a6cff"/>
+<circle cx="121" cy="396" r="3" fill="#54e8ff"/>
+
+<!-- quatro marcas de orientação -->
+<path d="M256 48v30M256 434v30M48 256h30M434 256h30" stroke="url(#ring)" stroke-width="5" stroke-linecap="round" opacity=".72"/>
 </svg>
