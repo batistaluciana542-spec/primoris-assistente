@@ -2082,7 +2082,14 @@ async function speakWithElevenLabs(clean, voiceModeState){
     if(overlay&&primorisVoiceModeActive){overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
     if(orb)orb.style.transform='scale(1.12)';
     const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean})});
-    if(!r.ok)throw new Error((await r.text().catch(()=>''))||('TTS HTTP '+r.status));
+    if(!r.ok){
+      let detail='TTS HTTP '+r.status;
+      try{
+        const body=await r.json();
+        detail=body?.details||body?.error||detail;
+      }catch{}
+      throw new Error(detail);
+    }
     const blob=await r.blob();
     const url=URL.createObjectURL(blob);
     const audio=new Audio(url);
@@ -2098,11 +2105,20 @@ async function speakWithElevenLabs(clean, voiceModeState){
         clearTimeout(voiceRestartTimer);voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){}}},300);
       }
     };
-    audio.onerror=()=>{throw new Error('O navegador não conseguiu reproduzir o áudio da ElevenLabs.')};
+    audio.onerror=()=>{
+      const msg='O navegador não conseguiu reproduzir o áudio da ElevenLabs.';
+      console.warn('ElevenLabs audio:',msg);
+      const status=document.getElementById('voiceSettingsStatus');
+      if(status)status.textContent=msg;
+    };
     await audio.play();
     return true;
   }catch(e){
-    console.warn('ElevenLabs TTS:',e);
+    const message=String(e?.message||e||'Falha desconhecida');
+    console.warn('ElevenLabs TTS:',message);
+    const status=document.getElementById('voiceSettingsStatus');
+    if(status)status.textContent='ElevenLabs: '+message;
+    try{toast('ElevenLabs: '+message)}catch{}
     return false;
   }
 }
