@@ -1185,7 +1185,10 @@ async function applyAIAction(a){
     const description=(a.description||a.title||'Movimentação registrada pelo PRIMORIS').trim();
     const category=(a.category||'Outros').trim();const f=loadFinanceData();
     f.transactions.push({id:id(),description,type:a.financeType==='entrada'?'entrada':'gasto',amount,category,date:new Date().toISOString().slice(0,10),source:'assistant'});
-    saveFinanceData(f);renderFinancas();renderDashboard();
+    saveFinanceData(f);
+    renderFinancas();
+    renderDashboard();
+    showPage('finance');
     return a.financeType==='entrada'?('Entrada de '+moneyBR(amount)+' registrada automaticamente em '+category+': '+description+'.'):('Despesa de '+moneyBR(amount)+' registrada automaticamente em '+category+': '+description+'.');
   }
   if(a.type==='expense'){
@@ -1732,7 +1735,20 @@ async function testarGemini(){
 <script id="primoris-finance-js">
 const FIN_KEY='primoris_financas_v1';let financeEditId=null,eventEditId=null,memoryEditId=null;
 function loadFinanceData(){try{let x=JSON.parse(localStorage.getItem(FIN_KEY)||'{}');return{opening:Number(x.opening??x.tenho??0),transactions:Array.isArray(x.transactions)?x.transactions:[],legacy:{gastei:Number(x.gastei||0),devo:Number(x.devo||0)}}}catch{return{opening:0,transactions:[],legacy:{gastei:0,devo:0}}}}
-function saveFinanceData(f){localStorage.setItem(FIN_KEY,JSON.stringify(f))}
+function saveFinanceData(f){
+  const normalized={
+    opening:Number(f?.opening)||0,
+    transactions:Array.isArray(f?.transactions)?f.transactions:[],
+    legacy:{
+      gastei:Number(f?.legacy?.gastei)||0,
+      devo:Number(f?.legacy?.devo)||0
+    }
+  };
+  localStorage.setItem(FIN_KEY,JSON.stringify(normalized));
+  const check=JSON.parse(localStorage.getItem(FIN_KEY)||'null');
+  if(!check||!Array.isArray(check.transactions))throw new Error('Não foi possível salvar as finanças neste dispositivo.');
+  return normalized;
+}
 function moneyBR(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function financeBalance(f){return f.opening+f.transactions.reduce((n,x)=>n+(x.type==='entrada'?x.amount:x.type==='gasto'||x.type==='pagamento'?-x.amount:0),0)}
 function monthlySpent(f){let m=new Date().toISOString().slice(0,7);return f.transactions.filter(x=>x.type==='gasto'&&String(x.date).startsWith(m)).reduce((n,x)=>n+x.amount,0)+(f.transactions.length?0:f.legacy.gastei)}
