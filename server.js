@@ -414,6 +414,7 @@ function providerOrder(requested) {
 // ELEVENLABS TTS
 // =====================================================
 app.post("/api/tts", async (req,res)=>{
+  console.log("[TTS] /api/tts recebido", new Date().toISOString());
   try{
     const apiKey=process.env.ELEVENLABS_API_KEY;
     if(!apiKey)return res.status(503).json({error:"elevenlabs_not_configured",details:"ELEVENLABS_API_KEY não está configurada no servidor."});
@@ -424,11 +425,12 @@ app.post("/api/tts", async (req,res)=>{
     const modelId=process.env.ELEVENLABS_MODEL||"eleven_flash_v2_5";
     const response=await fetch("https://api.elevenlabs.io/v1/text-to-speech/"+encodeURIComponent(voiceId)+"?output_format=mp3_44100_128",{method:"POST",headers:{"xi-api-key":apiKey,"Content-Type":"application/json","Accept":"audio/mpeg"},body:JSON.stringify({text,model_id:modelId,language_code:"pt",voice_settings:{stability:0.5,similarity_boost:0.75,style:0.15,use_speaker_boost:true}})});
     const raw=await response.arrayBuffer();
-    if(!response.ok){let detail="ElevenLabs respondeu com erro HTTP "+response.status+".";try{const j=JSON.parse(Buffer.from(raw).toString("utf8"));detail=j?.detail?.message||j?.detail||j?.message||detail}catch{}return res.status(response.status).json({error:"elevenlabs_error",details:detail});}
+    if(!response.ok){let detail="ElevenLabs respondeu com erro HTTP "+response.status+".";try{const j=JSON.parse(Buffer.from(raw).toString("utf8"));detail=j?.detail?.message||j?.detail||j?.message||detail}catch{} console.error("[TTS] ElevenLabs HTTP",response.status,detail); return res.status(response.status).json({error:"elevenlabs_error",details:detail});}
     res.set("Content-Type",response.headers.get("content-type")||"audio/mpeg");
     res.set("Cache-Control","no-store");
+    console.log("[TTS] ElevenLabs respondeu OK", response.status, response.headers.get("content-type")||"audio/mpeg");
     res.send(Buffer.from(raw));
-  }catch(e){console.error("ElevenLabs TTS:",e);res.status(e?.name==="AbortError"?504:502).json({error:"elevenlabs_connection_error",details:e?.message||"Falha de conexão com ElevenLabs."});}
+  }catch(e){console.error("[TTS] ElevenLabs conexão:",e?.message||e);res.status(e?.name==="AbortError"?504:502).json({error:"elevenlabs_connection_error",details:e?.message||"Falha de conexão com ElevenLabs."});}
 });
 
 // =====================================================
