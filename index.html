@@ -555,6 +555,16 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 @media(prefers-reduced-motion:reduce){.ai-composer-inner,.ai-send{transition:none}}
 </style>
 </style>
+<style id="primoris-mic-button-refresh">
+#voiceButton.voice-btn,#voiceButton.ai-mic{position:relative;width:52px;height:52px;min-width:52px;flex:0 0 52px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(121,226,255,.28);border-radius:16px;background:linear-gradient(145deg,rgba(24,30,55,.98),rgba(12,16,31,.98));color:#dffbff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 24px rgba(0,0,0,.28);transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+#voiceButton.voice-btn:before,#voiceButton.voice-btn:after,#voiceButton.ai-mic:before,#voiceButton.ai-mic:after{display:none!important;content:none!important}
+#voiceButton .primoris-mic-icon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px rgba(84,232,255,.22))}
+#voiceButton.voice-btn:hover,#voiceButton.ai-mic:hover{transform:translateY(-1px);border-color:rgba(84,232,255,.62);background:linear-gradient(145deg,rgba(27,39,65,.98),rgba(14,18,38,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 10px 28px rgba(35,180,255,.12)}
+#voiceButton.voice-btn:active,#voiceButton.ai-mic:active{transform:scale(.96)}
+#voiceButton.voice-btn.listening,#voiceButton.ai-mic.listening{border-color:rgba(255,104,218,.7);background:linear-gradient(145deg,rgba(74,39,96,.98),rgba(28,18,52,.98));box-shadow:0 0 0 4px rgba(255,104,218,.08),0 0 28px rgba(255,79,216,.2)}
+#voiceButton.voice-btn.listening .primoris-mic-icon,#voiceButton.ai-mic.listening .primoris-mic-icon{color:#ffb8ef;filter:drop-shadow(0 0 8px rgba(255,79,216,.45))}
+@media(max-width:700px){#voiceButton.voice-btn,#voiceButton.ai-mic{width:54px;height:54px;min-width:54px;flex-basis:54px;border-radius:15px}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -708,7 +718,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 
     <form id="chatForm" class="ai-composer">
       <div class="ai-composer-inner">
-        <button id="voiceButton" class="ai-mic" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙</button>
+        <button id="voiceButton" class="ai-mic" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS"><svg class="primoris-mic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a3.5 3.5 0 0 0-3.5 3.5v5a3.5 3.5 0 0 0 7 0V7A3.5 3.5 0 0 0 12 3.5Z"/><path d="M5.5 11.5v.5a6.5 6.5 0 0 0 13 0v-.5"/><path d="M12 18.5V21"/><path d="M9.5 21h5"/></svg></button>
         <input id="chatInput" autocomplete="off" placeholder="Pergunte qualquer coisa ao PRIMORIS..." aria-label="Mensagem para o PRIMORIS">
         <button class="ai-send" type="submit" aria-label="Enviar mensagem">↑</button>
       </div>
