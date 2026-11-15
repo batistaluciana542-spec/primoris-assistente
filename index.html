@@ -1088,6 +1088,13 @@ async function applyAIAction(a){
     if(!confirm(`Excluir a tarefa “${matches[0].title}”?`))return 'Tudo bem, não excluí a tarefa.';
     data.tasks=data.tasks.filter(x=>x.id!==matches[0].id);save();render();return `A tarefa “${matches[0].title}” foi excluída.`;
   }
+  if(a.type==='delete_opportunity'){
+    const q=(a.target||a.title||'').toLocaleLowerCase('pt-BR').trim();
+    const matches=(data.opportunities||[]).filter(x=>q&&(String(x.title||'').toLocaleLowerCase('pt-BR').includes(q)||q.includes(String(x.title||'').toLocaleLowerCase('pt-BR'))));
+    if(matches.length!==1)return matches.length?'Encontrei mais de uma oportunidade parecida. Qual delas você quer excluir?':'Não consegui identificar a oportunidade com segurança. Qual é o título?';
+    if(!confirm(`Excluir a oportunidade “${matches[0].title}”?`))return 'Tudo bem, não excluí a oportunidade.';
+    data.opportunities=data.opportunities.filter(x=>x.id!==matches[0].id);save();render();showPage('opportunities');return `A oportunidade “${matches[0].title}” foi excluída.`;
+  }
   if(a.type==='note'){
     normalizeMemories();const note=(a.description||a.title||'').trim();if(!note)return 'O que você gostaria que eu anotasse?';
     data.memories.push({id:id(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na sua Memória: “${note}”.`;
