@@ -1111,15 +1111,18 @@ function parseLocalFinanceAction(q){
   const lower=text.toLocaleLowerCase('pt-BR');
   const isEntry=/\b(entrada|receita|ganho|recebi|recebimento)\b/i.test(lower);
   const isExpense=/\b(despesa|gasto|gastei|paguei|pagamento)\b/i.test(lower);
-  if(!isEntry&&!isExpense)return null;
+  const isDebt=/\b(divida|devida|devo|devendo|dever|fiado|emprestimo)\b/i.test(lower);
+  const isDebtPayment=/\b(quitei|quitar|paguei|pagamento|pagar)\b/i.test(lower)&&/\b(divida|devida|devo|devendo|dever|fiado)\b/i.test(lower);
+  if(!isEntry&&!isExpense&&!isDebt&&!isDebtPayment)return null;
   const amount=parsePortugueseMoney(text);
   if(!(amount>0))return {clarification:'Qual é o valor da movimentação? Ex.: “dez reais” ou “R$ 10,00”.'};
-  const type=isEntry?'entrada':'gasto';
+  const type=isDebtPayment?'pagamento':isDebt?'divida':isEntry?'entrada':'gasto';
   const description=text
-    .replace(/\b(?:registre|registrar|registra|lance|lançar|lanca|adicione|adicionar|adiciona|salve|salvar|salva|uma|uma nova|nova|entrada|receita|ganho|recebi|recebimento|despesa|gasto|gastei|paguei|pagamento)\b/gi,' ')
+    .replace(/\b(?:registre|registrar|registra|lance|lançar|lanca|adicione|adicionar|adiciona|salve|salvar|salva|uma|uma nova|nova|entrada|receita|ganho|recebi|recebimento|despesa|gasto|gastei|paguei|pagamento|divida|devida|devo|devendo|dever|fiado|emprestimo|quitei|quitar|pagar)\b/gi,' ')
     .replace(/r\$?\s*\d+(?:[.,]\d{1,2})?|\b(?:zero|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|quatorze|catorze|quinze|dezesseis|dezessete|dezoito|dezenove|vinte|trinta|quarenta|cinquenta|sessenta|setenta|oitenta|noventa)(?:\s+e\s+(?:um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove))?\s*reais?/gi,' ')
     .replace(/\s+/g,' ').replace(/^[,;: -]+|[,;: -]+$/g,'').trim();
-  return {type:'finance_local',financeType:type,amount,description:description||('Movimentação de '+moneyBR(amount)),category:isEntry?'Entradas':'Outros'};
+  const category=isDebt||isDebtPayment?'Dívidas':isEntry?'Entradas':'Outros';
+  return {type:'finance_local',financeType:type,amount,description:description||('Movimentação de '+moneyBR(amount)),category};
 }
 async function requestAIAction(q){
   const financeLocal=parseLocalFinanceAction(q);
