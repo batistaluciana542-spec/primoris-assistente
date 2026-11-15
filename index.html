@@ -422,7 +422,112 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 .pw-task-list{display:grid;gap:8px}.pw-task{padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
 @media(max-width:900px){.pw-window{width:calc(100vw - 20px);min-width:0;min-height:150px}.pw-body{max-height:105px}.pw-title{height:44px}.pw-launcher{right:10px;bottom:78px}}
 @media(max-width:700px){.pw-launcher button{width:52px;height:52px;padding:0}}
-</style></head>
+</style><style id="primoris-modern-page">
+:root{
+ --bg:#07080d;--panel:#0d1018;--panel2:#111622;--line:rgba(255,255,255,.075);
+ --text:#f7f8fc;--muted:#8d95a8;--cyan:#61e7ff;--pink:#c98cff;--violet:#8d72ff;
+ --green:#61e6a8;--danger:#ff7187;--shadow:0 24px 70px rgba(0,0,0,.38);
+}
+html{background:#07080d}
+body{
+ background:
+ radial-gradient(700px 500px at 12% -10%,rgba(111,79,255,.13),transparent 65%),
+ radial-gradient(650px 480px at 92% 0%,rgba(54,201,255,.08),transparent 65%),
+ #07080d;
+ color:var(--text);
+}
+body:before{display:none}
+.sidebar{
+ width:258px;padding:18px 12px;background:rgba(7,8,13,.88);
+ border-right:1px solid rgba(255,255,255,.07);backdrop-filter:blur(24px);
+}
+.logo{padding:10px 14px 26px}
+.logo strong{font-size:21px;letter-spacing:4px}
+.logo small{font-size:10px;letter-spacing:2.4px;color:#667086}
+.nav{gap:4px}
+.nav button{
+ color:#8992a8;border:1px solid transparent;border-radius:12px;
+ padding:11px 13px;font-size:14px;letter-spacing:.1px;
+}
+.nav button:hover{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.07);box-shadow:none}
+.nav button.active{
+ color:#fff;background:linear-gradient(90deg,rgba(97,231,255,.09),rgba(141,114,255,.06));
+ border-color:rgba(97,231,255,.12);box-shadow:inset 2px 0 var(--cyan);
+}
+.main{margin-left:258px;width:calc(100% - 258px);max-width:1540px;padding:28px 32px 60px}
+.top{margin-bottom:24px;align-items:flex-end}
+.eyebrow{font-size:10px;letter-spacing:2.6px;color:#718096}
+.clock{font-size:24px;letter-spacing:1px}
+.date{font-size:13px;margin-top:2px}
+.page{animation:pageIn .22s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{
+ padding:30px;border-radius:24px;border:1px solid rgba(255,255,255,.075);
+ background:linear-gradient(145deg,rgba(18,21,32,.97),rgba(10,12,19,.97));
+ box-shadow:var(--shadow);
+}
+.hero:after{width:260px;height:260px;right:-130px;top:-130px;background:rgba(97,231,255,.07)}
+h1{font-size:clamp(26px,4vw,44px);letter-spacing:-1px}
+h2{font-size:23px;letter-spacing:-.3px}
+h3{font-size:17px}
+.grid,.grid2,.dashboard-columns{gap:12px;margin-top:12px}
+.card{
+ border:1px solid rgba(255,255,255,.065);border-radius:17px;padding:17px;
+ background:linear-gradient(145deg,rgba(17,20,29,.94),rgba(11,13,20,.94));
+ box-shadow:0 12px 35px rgba(0,0,0,.16);transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.card:hover{transform:translateY(-2px);border-color:rgba(97,231,255,.19);box-shadow:0 16px 42px rgba(0,0,0,.22)}
+.stat{font-size:27px;letter-spacing:-.5px}
+.badge{font-size:10px;letter-spacing:.5px;background:rgba(255,255,255,.025)}
+.btn{
+ border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:9px 13px;
+ background:rgba(255,255,255,.045);color:#f7f8fc;font-weight:700;
+ transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(97,231,255,.35);background:rgba(97,231,255,.07)}
+.btn.primary{background:linear-gradient(135deg,rgba(97,231,255,.19),rgba(141,114,255,.19));border-color:rgba(97,231,255,.25)}
+input,textarea,select{
+ border:1px solid rgba(255,255,255,.08);background:#0a0c13;color:#fff;border-radius:11px;
+}
+input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-shadow:0 0 0 3px rgba(97,231,255,.07)}
+.item{
+ padding:12px;border:1px solid rgba(255,255,255,.055);border-radius:12px;
+ background:rgba(255,255,255,.018);
+}
+.item:hover{border-color:rgba(255,255,255,.1)}
+.event-meta{font-size:12px;color:#7f889c}
+.chat{padding:10px 3px 15px}
+.bubble{border-radius:16px;padding:12px 14px}
+.bubble.ai{background:#10131c;border-color:rgba(255,255,255,.07)}
+.bubble.user{background:linear-gradient(135deg,#1c4350,#40304f);border-color:rgba(97,231,255,.14)}
+.mobilebar{
+ background:rgba(10,11,17,.94);border-color:rgba(255,255,255,.08);
+ box-shadow:0 16px 40px rgba(0,0,0,.35)
+}
+.toast{background:#11141d;border-color:rgba(255,255,255,.08)}
+/* Give every major page a consistent premium surface without changing its functionality. */
+.page>.card:first-child,.page>.hero:first-child{margin-bottom:2px}
+.finance-card,.skill-card,.dev-stat,.os-tile,.climate-hour,.climate-day,.email-item{
+ border-color:rgba(255,255,255,.065);box-shadow:none
+}
+.os-shell{border-color:rgba(255,255,255,.08);box-shadow:var(--shadow)}
+#primorisVoiceSettings{border-color:rgba(255,255,255,.08)!important;box-shadow:none!important}
+@media(max-width:900px){
+ .main{padding:20px 16px 90px}
+}
+@media(max-width:600px){
+ .main{padding:16px 12px 88px}
+ .hero{padding:22px 18px;border-radius:20px}
+ .card{padding:15px;border-radius:15px}
+ .top{margin-bottom:18px}
+ .clock{font-size:19px}
+ h1{font-size:28px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
 <body>
 <div class="app">
 <aside class="sidebar">
