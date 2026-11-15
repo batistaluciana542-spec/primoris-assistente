@@ -1927,35 +1927,13 @@ function stopSpeaking(){
  if(speechSupported())window.speechSynthesis.cancel();
  setSpeakingOrb(false);
 }
-function primorisTextToSpeech(text){
-  let t=String(text??'');
-  t=t.replace(/\r/g,'');
-  t=t.replace(/\`\`\`[\\s\\S]*?\`\`\`/g,' ');
-  t=t.replace(/!\\[([^\\]]*)\\]\\([^)]*\\)/g,'$1');
-  t=t.replace(/\\[([^\\]]+)\\]\\([^)]*\\)/g,'$1');
-  t=t.replace(/^#{1,6}\\s+/gm,'');
-  t=t.replace(/(^|\\n)\\s*>\\s?/g,'$1');
-  t=t.replace(/(^|\\n)\\s*(?:[-*+]\\s+|\\d+[.)]\\s+)/g,'$1');
-  t=t.replace(/\\*\\*([^*]+)\\*\\*/g,'$1');
-  t=t.replace(/__([^_]+)__/g,'$1');
-  t=t.replace(/\\*([^*\\n]+)\\*/g,'$1');
-  t=t.replace(/_([^_\\n]+)_/g,'$1');
-  t=t.replace(/~~([^~\\n]+)~~/g,'$1');
-  t=t.replace(/\`([^\`]+)\`/g,'$1');
-  t=t.replace(/\\|/g,' ');
-  t=t.replace(/^[ \\t]*[-*_]{3,}[ \\t]*$/gm,'');
-  t=t.replace(/[ \\t]{2,}/g,' ');
-  t=t.replace(/\\n{3,}/g,'\\n\\n');
-  return t.trim();
-}
 function speakText(text){
  if(!speechSupported()||!text)return;
  try{
-   const speechText=primorisTextToSpeech(text);
-   if(!speechText)return;
    applyVoiceControls();
    const s=getVoiceSettings(),v=preferredVoiceFromList(s);
    stopSpeaking();
+   const speechText=String(text).replace(/\*/g,'').replace(/`/g,'').replace(/^#{1,6}\s+/gm,'');
    const u=new SpeechSynthesisUtterance(speechText);
    u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
    if(v)u.voice=v;
