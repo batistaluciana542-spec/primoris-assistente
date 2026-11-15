@@ -386,7 +386,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
     <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button data-page="skills">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
-  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
+  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
 <main class="main">
@@ -416,6 +416,39 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <section id="page-assistant" class="page">
     <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
     <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
+  </section>
+
+  <section id="page-image-lab" class="page">
+    <div class="row"><div><h2>Imagem IA</h2><div class="muted">Envie uma foto, diga o que precisa e deixe a IA analisar o conteúdo.</div></div></div>
+    <div class="image-lab-grid">
+      <div class="card image-drop">
+        <div class="row"><h3>📷 Sua imagem</h3><span class="badge">VISÃO IA</span></div>
+        <input id="imageLabFile" type="file" accept="image/*" hidden onchange="imageLabFileChanged(event)">
+        <div id="imageLabEmpty" class="image-empty">
+          <div><div style="font-size:52px">🖼️</div><strong>Adicione uma foto</strong><p>Use a galeria ou a câmera do celular.</p><button class="btn primary" type="button" onclick="document.getElementById('imageLabFile').click()">Escolher foto</button></div>
+        </div>
+        <img id="imageLabPreview" class="image-preview" alt="Imagem enviada para análise">
+        <div id="imageLabFileName" class="image-file-name"></div>
+        <div class="form" style="margin-top:12px">
+          <textarea id="imageLabPrompt" placeholder="Ex.: Leia esta atividade e resolva as questões. Explique as respostas de forma simples."></textarea>
+        </div>
+        <div class="image-lab-actions">
+          <button class="btn primary" type="button" onclick="analyzeImageLab()">🧠 Analisar com IA</button>
+          <button class="btn" type="button" onclick="clearImageLab()">Limpar</button>
+        </div>
+        <div id="imageLabStatus" class="image-status"></div>
+      </div>
+      <div class="card image-result-card">
+        <div class="row"><h3>🧠 Resultado</h3><span id="imageLabProvider" class="badge">AGUARDANDO</span></div>
+        <div id="imageLabResult" class="image-result muted">A resposta da IA aparecerá aqui.</div>
+        <div class="image-lab-actions">
+          <button class="btn primary" type="button" onclick="makeAnsweredImage()" id="imageLabMakeImage" disabled>🖼️ Criar foto respondida</button>
+          <button class="btn" type="button" onclick="downloadAnsweredImage()" id="imageLabDownload" disabled>⬇️ Baixar resultado</button>
+        </div>
+        <canvas id="imageLabCanvas" class="image-answer-canvas"></canvas>
+      </div>
+    </div>
+    <div class="card" style="margin-top:15px"><h3>Como funciona</h3><p class="muted">A imagem é enviada ao Gemini para interpretação. O PRIMORIS recebe a leitura, responde ao seu pedido e pode montar uma nova imagem com a foto original e a resposta organizada. O arquivo final é criado no próprio aparelho.</p></div>
   </section>
 
   <section id="page-tasks" class="page">
@@ -1938,6 +1971,113 @@ window.addEventListener('load',()=>{
 });
 </script>
 
+
+
+<script id="primoris-image-lab-js">
+let imageLabDataUrl="",imageLabResultText="",imageLabAnswerUrl="";
+function imageLabFileChanged(event){
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){toast("Escolha uma imagem.");return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height));
+      const c=document.createElement("canvas");
+      c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+      const ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);
+      imageLabDataUrl=c.toDataURL("image/jpeg",.82);
+      const preview=document.getElementById("imageLabPreview");
+      preview.src=imageLabDataUrl;preview.classList.add("show");
+      document.getElementById("imageLabEmpty").style.display="none";
+      document.getElementById("imageLabFileName").textContent=file.name+" · "+Math.round(file.size/1024)+" KB";
+      imageLabAnswerUrl="";
+      document.getElementById("imageLabMakeImage").disabled=true;
+      document.getElementById("imageLabDownload").disabled=true;
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+async function analyzeImageLab(){
+  const prompt=String(document.getElementById("imageLabPrompt")?.value||"").trim();
+  const status=document.getElementById("imageLabStatus");
+  const result=document.getElementById("imageLabResult");
+  const badge=document.getElementById("imageLabProvider");
+  if(!imageLabDataUrl){toast("Adicione uma foto primeiro.");return}
+  if(!prompt){toast("Escreva o que você quer que a IA faça com a foto.");return}
+  status.textContent="Analisando a imagem...";
+  result.textContent="PRIMORIS está lendo a imagem e preparando a resposta.";
+  badge.textContent="PROCESSANDO";
+  document.getElementById("imageLabMakeImage").disabled=true;
+  document.getElementById("imageLabDownload").disabled=true;
+  try{
+    const r=await fetch("/api/vision",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:imageLabDataUrl,prompt})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.details||j.error||"Não foi possível analisar a imagem.");
+    imageLabResultText=String(j.text||"Sem resposta.");
+    result.textContent=imageLabResultText;
+    result.classList.remove("muted");
+    badge.textContent=j.provider||"GEMINI VISION";
+    status.textContent="Imagem analisada com sucesso.";
+    document.getElementById("imageLabMakeImage").disabled=false;
+  }catch(e){
+    result.textContent="Falha: "+(e.message||"erro desconhecido");
+    result.classList.add("muted");
+    badge.textContent="ERRO";
+    status.textContent="";
+  }
+}
+function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight){
+  const words=String(text).split(/\s+/);let line="";
+  for(const word of words){
+    const test=line?line+" "+word:word;
+    if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,y);line=word;y+=lineHeight}else line=test;
+  }
+  if(line){ctx.fillText(line,x,y);y+=lineHeight}
+  return y;
+}
+function makeAnsweredImage(){
+  if(!imageLabDataUrl||!imageLabResultText)return;
+  const img=new Image();
+  img.onload=()=>{
+    const width=Math.min(1400,Math.max(700,img.width));
+    const scale=width/img.width,height=Math.round(img.height*scale);
+    const textArea=Math.min(1700,Math.max(500,Math.ceil(imageLabResultText.length/70)*30+190));
+    const c=document.getElementById("imageLabCanvas");
+    c.width=width;c.height=height+textArea;
+    const ctx=c.getContext("2d");
+    ctx.fillStyle="#070812";ctx.fillRect(0,0,c.width,c.height);
+    ctx.drawImage(img,0,0,width,height);
+    ctx.fillStyle="#0d1020";ctx.fillRect(0,height,width,textArea);
+    ctx.fillStyle="#54e8ff";ctx.font="700 25px Orbitron";ctx.fillText("PRIMORIS // RESPOSTA",28,height+42);
+    ctx.fillStyle="#f3f5ff";ctx.font="600 18px Rajdhani";
+    wrapCanvasText(ctx,imageLabResultText,28,height+78,width-56,27);
+    imageLabAnswerUrl=c.toDataURL("image/png");
+    document.getElementById("imageLabDownload").disabled=false;
+    toast("Foto respondida criada.");
+    c.scrollIntoView({behavior:"smooth",block:"nearest"});
+  };
+  img.src=imageLabDataUrl;
+}
+function downloadAnsweredImage(){
+  if(!imageLabAnswerUrl){makeAnsweredImage();return}
+  const a=document.createElement("a");a.href=imageLabAnswerUrl;a.download="primoris-resposta.png";a.click();
+}
+function clearImageLab(){
+  imageLabDataUrl="";imageLabResultText="";imageLabAnswerUrl="";
+  const input=document.getElementById("imageLabFile");if(input)input.value="";
+  const preview=document.getElementById("imageLabPreview");if(preview){preview.src="";preview.classList.remove("show")}
+  const empty=document.getElementById("imageLabEmpty");if(empty)empty.style.display="grid";
+  const name=document.getElementById("imageLabFileName");if(name)name.textContent="";
+  const result=document.getElementById("imageLabResult");if(result){result.textContent="A resposta da IA aparecerá aqui.";result.classList.add("muted")}
+  const status=document.getElementById("imageLabStatus");if(status)status.textContent="";
+  const badge=document.getElementById("imageLabProvider");if(badge)badge.textContent="AGUARDANDO";
+  document.getElementById("imageLabMakeImage").disabled=true;
+  document.getElementById("imageLabDownload").disabled=true;
+}
+</script>
 
 </body>
 </html>
