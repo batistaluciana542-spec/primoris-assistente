@@ -367,17 +367,6 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 .pwa-banner .pwa-icon{font-size:25px}.pwa-banner .pwa-copy{flex:1}.pwa-banner strong{display:block;font:700 13px Orbitron}.pwa-banner small{display:block;color:var(--muted);margin-top:3px}
 .offline-indicator{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;display:none;padding:8px 13px;border:1px solid rgba(255,100,124,.4);border-radius:999px;background:rgba(45,10,20,.94);color:#ffb0bb;font-size:12px;font-weight:700}
 .offline-indicator.show{display:block}
-.assistant-orb-wrap{display:flex;align-items:center;gap:12px}
-.assistant-voice-orb{width:48px;height:48px;border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff 0 4%,#54e8ff 10%,#8b3dff 38%,#18082e 72%);box-shadow:0 0 14px rgba(84,232,255,.35),0 0 30px rgba(139,61,255,.2);transition:transform .25s ease,box-shadow .25s ease}
-.assistant-voice-orb:before,.assistant-voice-orb:after{content:"";position:absolute;inset:-5px;border:1px solid rgba(84,232,255,.35);border-radius:50%;transform:scale(.92);opacity:.65}
-.assistant-voice-orb:after{inset:-10px;border-color:rgba(190,70,255,.25);transform:scale(.82)}
-.assistant-voice-orb span{width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 12px #54e8ff}
-.assistant-voice-orb.speaking{animation:primorisOrbPulse .72s ease-in-out infinite alternate;box-shadow:0 0 20px rgba(84,232,255,.8),0 0 48px rgba(190,70,255,.65)}
-.assistant-voice-orb.speaking:before{animation:primorisOrbRing .9s linear infinite}
-.assistant-voice-orb.speaking:after{animation:primorisOrbRing 1.4s linear infinite reverse}
-@keyframes primorisOrbPulse{from{transform:scale(1)}to{transform:scale(1.16)}}
-@keyframes primorisOrbRing{from{transform:scale(.9) rotate(0deg);opacity:.35}to{transform:scale(1.18) rotate(180deg);opacity:.9}}
-@media(max-width:600px){.assistant-orb-wrap{gap:8px}.assistant-voice-orb{width:42px;height:42px}}
 .voice-speaking{display:inline-flex!important;align-items:center;gap:7px;color:var(--cyan)!important}
 .voice-speaking:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:primorisVoiceDot 1s infinite}
 @keyframes primorisVoiceDot{50%{opacity:.25;transform:scale(.7)}}
@@ -425,7 +414,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   </section>
 
   <section id="page-assistant" class="page">
-    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><div class="assistant-orb-wrap"><div id="assistantVoiceOrb" class="assistant-voice-orb" aria-label="PRIMORIS falando"><span></span></div><button class="btn" onclick="clearChat()">Limpar</button></div></div>
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
     <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
   </section>
 
@@ -565,47 +554,6 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="settings-links"><button class="btn" onclick="showPage('memory')">Memória</button><button class="btn" onclick="showPage('assistant')">IA</button><button class="btn" onclick="showPage('agenda')">Google Calendar</button><button class="btn" onclick="showPage('news')">Notícias</button><button class="btn" onclick="showPage('finance')">Finanças</button><button class="btn" onclick="showPage('integrations')">Integrações</button></div>
     <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do PRIMORIS</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="cloudflare">☁️ Cloudflare AI</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted ai-provider-status">Verificando disponibilidade...</span></div></div>
 
-    <div class="card" style="margin-top:14px">
-      <h3>🔊 Voz do PRIMORIS</h3>
-      <p class="muted">Escolha como o PRIMORIS fala. A configuração fica salva neste aparelho.</p>
-      <div class="voice-settings-grid">
-        <div>
-          <label for="voiceGender" class="muted">Preferência</label>
-          <select id="voiceGender" onchange="setVoiceGender(this.value)">
-            <option value="auto">🤖 Automática</option>
-            <option value="male">👨 Voz masculina</option>
-            <option value="female">👩 Voz feminina</option>
-          </select>
-        </div>
-        <div>
-          <label for="voiceSelect" class="muted">Voz disponível no aparelho</label>
-          <select id="voiceSelect" onchange="setVoiceSelection(this.value)">
-            <option value="auto">Carregando vozes...</option>
-          </select>
-        </div>
-        <div class="wide voice-preview">
-          <button class="btn primary" type="button" onclick="testSelectedVoice()">🔊 Testar voz</button>
-          <button class="btn" type="button" onclick="refreshVoiceList()">↻ Atualizar vozes</button><button class="btn" type="button" onclick="stopSpeaking()">⏹️ Parar voz</button>
-          <span id="voiceSettingsStatus" class="muted">Detectando vozes disponíveis...</span>
-        </div>
-        <div>
-          <label for="voiceRate" class="muted">⚡ Velocidade</label>
-          <div class="voice-range"><input id="voiceRate" type="range" min="0.6" max="1.4" step="0.05" value="0.96" oninput="voiceSliderChanged()"><output id="voiceRateValue">0.96x</output></div>
-        </div>
-        <div>
-          <label for="voicePitch" class="muted">🎵 Tom</label>
-          <div class="voice-range"><input id="voicePitch" type="range" min="0.5" max="1.5" step="0.05" value="0.92" oninput="voiceSliderChanged()"><output id="voicePitchValue">0.92</output></div>
-        </div>
-        <div>
-          <label for="voiceVolume" class="muted">🔉 Volume</label>
-          <div class="voice-range"><input id="voiceVolume" type="range" min="0" max="1" step="0.05" value="1" oninput="voiceSliderChanged()"><output id="voiceVolumeValue">100%</output></div>
-        </div>
-        <div>
-          <label class="muted">💾 Preferência</label>
-          <div class="voice-help">As alterações são salvas automaticamente. “Automática” escolhe uma voz em português compatível com a preferência selecionada.</div>
-        </div>
-      </div>
-    </div>
     <div class="card appearance-card" style="margin-top:14px">
   <div class="appearance-head"><div><h3>🎨 Aparência</h3><p class="muted">Mude toda a identidade visual do PRIMORIS.</p></div><span class="appearance-live">● AO VIVO</span></div>
   <div id="appearanceThemes" class="theme-grid">
@@ -653,8 +601,8 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     (function(){
       const KEY='primoris_voice_profile_v2'; let voices=[]; const synth=window.speechSynthesis;
       const $=id=>document.getElementById(id);
-      function settings(){try{return Object.assign({voice:'auto',style:'futuristic',lang:'pt-BR',rate:1.05,pitch:.92,volume:1},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {voice:'auto',style:'futuristic',lang:'pt-BR',rate:.96,pitch:.92,volume:1}}}
-      function save(){const s={voice:$('pvVoiceSelect').value,style:$('pvStyle').value,lang:$('pvLang').value,rate:+$('pvRate').value,pitch:+$('pvPitch').value,volume:+$('pvVolume').value};localStorage.setItem(KEY,JSON.stringify(s));return s}
+      function settings(){try{const saved=JSON.parse(localStorage.getItem(KEY)||'{}');const legacy=JSON.parse(localStorage.getItem('primoris_voice_settings_v1')||'{}');return Object.assign({voice:legacy.voiceName||'auto',style:'futuristic',lang:'pt-BR',rate:legacy.rate||1.05,pitch:legacy.pitch||.92,volume:legacy.volume??1},saved)}catch(e){return {voice:'auto',style:'futuristic',lang:'pt-BR',rate:1.05,pitch:.92,volume:1}}}
+      function save(){const s={voice:$('pvVoiceSelect').value,style:$('pvStyle').value,lang:$('pvLang').value,rate:+$('pvRate').value,pitch:+$('pvPitch').value,volume:+$('pvVolume').value};localStorage.setItem(KEY,JSON.stringify(s));try{const legacy=JSON.parse(localStorage.getItem('primoris_voice_settings_v1')||'{}');localStorage.setItem('primoris_voice_settings_v1',JSON.stringify({gender:legacy.gender||'auto',voiceName:s.voice||'auto',rate:s.rate,pitch:s.pitch,volume:s.volume}))}catch(e){localStorage.setItem('primoris_voice_settings_v1',JSON.stringify({gender:'auto',voiceName:s.voice||'auto',rate:s.rate,pitch:s.pitch,volume:s.volume}))}return s}
       function preferred(s){if(!voices.length)return null; if(s.voice!=='auto')return voices.find(v=>v.name===s.voice)||null; const lang=s.lang.toLowerCase(); return voices.find(v=>(v.lang||'').toLowerCase()===lang)||voices.find(v=>(v.lang||'').toLowerCase().startsWith(lang.split('-')[0]))||voices.find(v=>v.default)||voices[0]}
       function load(){if(!synth)return; voices=synth.getVoices()||[]; const sel=$('pvVoiceSelect'); if(!sel)return; const s=settings(); sel.innerHTML=''; const auto=document.createElement('option'); auto.value='auto'; auto.textContent='🤖 Automática'; sel.appendChild(auto); voices.filter(v=>(v.lang||'').toLowerCase().startsWith('pt')).forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';sel.appendChild(o)}); sel.value=(s.voice==='auto'||voices.some(v=>v.name===s.voice))?s.voice:'auto'; $('pvStyle').value=s.style; $('pvLang').value=s.lang; $('pvRate').value=s.rate; $('pvPitch').value=s.pitch; $('pvVolume').value=s.volume; updateRanges(); $('pvVoiceInfo').textContent=voices.length?' · '+voices.length+' vozes detectadas':'';}
       function updateRanges(){$('pvRateValue').textContent=(+$('pvRate').value).toFixed(2)+'x';$('pvPitchValue').textContent=(+$('pvPitch').value).toFixed(2);$('pvVolumeValue').textContent=Math.round(+$('pvVolume').value*100)+'%';}
