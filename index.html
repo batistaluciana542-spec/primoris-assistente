@@ -729,7 +729,25 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
       function preferred(s){if(!voices.length)return null; if(s.voice!=='auto')return voices.find(v=>v.name===s.voice)||null; const lang=s.lang.toLowerCase(); return voices.find(v=>(v.lang||'').toLowerCase()===lang)||voices.find(v=>(v.lang||'').toLowerCase().startsWith(lang.split('-')[0]))||voices.find(v=>v.default)||voices[0]}
       function load(){if(!synth)return; voices=synth.getVoices()||[]; const sel=$('pvVoiceSelect'); if(!sel)return; const s=settings(); sel.innerHTML=''; const auto=document.createElement('option'); auto.value='auto'; auto.textContent='🤖 Automática'; sel.appendChild(auto); voices.filter(v=>(v.lang||'').toLowerCase().startsWith('pt')).forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';sel.appendChild(o)}); sel.value=(s.voice==='auto'||voices.some(v=>v.name===s.voice))?s.voice:'auto'; $('pvStyle').value=s.style; $('pvLang').value=s.lang; $('pvRate').value=s.rate; $('pvPitch').value=s.pitch; $('pvVolume').value=s.volume; updateRanges(); $('pvVoiceInfo').textContent=voices.length?' · '+voices.length+' vozes detectadas':'';}
       function updateRanges(){$('pvRateValue').textContent=(+$('pvRate').value).toFixed(2)+'x';$('pvPitchValue').textContent=(+$('pvPitch').value).toFixed(2);$('pvVolumeValue').textContent=Math.round(+$('pvVolume').value*100)+'%';}
-      window.testPrimorisVoice=function(){const s=save();if(!synth){$('pvStatusText').textContent='Síntese de voz indisponível neste navegador.';return} synth.cancel(); const v=preferred(s); const u=new SpeechSynthesisUtterance($('pvTestText').value||'PRIMORIS online.');u.lang=s.lang;u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;u.onstart=()=>{$('pvStatusText').textContent='PRIMORIS falando...';$('pvOrb').style.boxShadow='0 0 20px var(--pink)';};u.onend=()=>{$('pvStatusText').textContent='PRIMORIS pronto';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};synth.speak(u)};
+      window.testPrimorisVoice=function(){
+        const s=save();
+        if(!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)){$('pvStatusText').textContent='Síntese de voz não disponível neste navegador.';return}
+        const run=()=>{
+          try{
+            synth.cancel();
+            const text=$('pvTestText').value||'PRIMORIS online.';
+            const u=new SpeechSynthesisUtterance(text);
+            u.lang='pt-BR';u.rate=Number.isFinite(s.rate)?s.rate:1;u.pitch=Number.isFinite(s.pitch)?s.pitch:1;u.volume=Number.isFinite(s.volume)?s.volume:1;
+            const available=synth.getVoices()||[];const v=preferred(s);if(v&&available.some(x=>x.name===v.name&&x.lang===v.lang))u.voice=v;
+            u.onstart=()=>{$('pvStatusText').textContent='PRIMORIS falando...';$('pvOrb').style.boxShadow='0 0 20px var(--pink)'};
+            u.onend=()=>{$('pvStatusText').textContent='PRIMORIS pronto';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
+            u.onerror=e=>{$('pvStatusText').textContent='Erro de voz: '+(e.error||'desconhecido');$('pvOrb').style.boxShadow='0 0 12px var(--cyan)';console.warn('Teste de voz:',e.error,e)};
+            synth.resume();synth.speak(u);
+          }catch(e){$('pvStatusText').textContent='Erro de voz: '+(e.message||'desconhecido');console.warn('Teste de voz:',e)}
+        };
+        run();
+        setTimeout(()=>{if(!synth.speaking&&!synth.pending){try{run()}catch(e){}}},900);
+      };
       window.stopPrimorisVoice=function(){if(synth)synth.cancel();$('pvStatusText').textContent='PRIMORIS parado';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
       window.savePrimorisVoiceSettings=function(){save();$('pvStatusText').textContent='Perfil de voz salvo neste aparelho.';if(typeof toast==='function')toast('Perfil de voz salvo.')};
       ['pvRate','pvPitch','pvVolume'].forEach(id=>$(id)?.addEventListener('input',updateRanges));
