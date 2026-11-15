@@ -334,8 +334,10 @@ async function chamarOpenAI(payload) {
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
   if (!apiKey) return { ok:false, status:503, body:{error:{message:"OPENAI_API_KEY não está configurada no servidor."}}, model };
+  // O roteador gratuito pode demorar quando está escolhendo/acionando um provedor.
+  // Damos até 60s antes de considerar a chamada realmente travada.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const timeout = setTimeout(() => controller.abort(), 60000);
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method:"POST",
@@ -986,7 +988,7 @@ async function chamarOpenRouter(payload, tentativa = 1) {
   } catch (e) {
     console.error("OpenRouter: falha na chamada | " + (e.name || "Erro") + " | " + (e.message || "erro desconhecido"));
     if (e.name === "AbortError") {
-      return { ok: false, status: 504, body: { error: { message: "O OpenRouter demorou mais de 30 segundos para responder." } }, model };
+      return { ok: false, status: 504, body: { error: { message: "O OpenRouter demorou mais de 60 segundos para responder." } }, model };
     }
     return { ok: false, status: 502, body: { error: { message: "Falha de conexão com OpenRouter: " + (e.message || "erro desconhecido") } }, model };
   } finally {
