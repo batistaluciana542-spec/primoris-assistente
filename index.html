@@ -547,7 +547,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 .ai-eyebrow{font:700 9px Orbitron;letter-spacing:2px;color:#6f7b97}.ai-topbar h2{margin:3px 0 2px;font-size:24px;letter-spacing:-.5px}.ai-topbar p{margin:0;color:#737e99;font-size:12px}
 .ai-top-actions{display:flex;align-items:center;gap:8px}.ai-icon-btn,.ai-voice-btn,.ai-clear-btn{height:38px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);color:#cbd2e3;border-radius:11px;padding:0 12px;font-weight:700}.ai-icon-btn{width:38px;padding:0;font-size:20px}.ai-voice-btn span{font-size:9px;color:#65e7a9;margin-right:5px}.ai-voice-btn:hover,.ai-icon-btn:hover,.ai-clear-btn:hover{border-color:rgba(97,231,255,.3);background:rgba(97,231,255,.05)}
 .ai-suggestions{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 8px}.ai-suggestions button{border:1px solid rgba(255,255,255,.075);background:#0c0f17;color:#aeb7cc;border-radius:20px;padding:8px 12px;font-size:11px}.ai-suggestions button:hover{color:#fff;border-color:rgba(97,231,255,.25);background:#101722}
-.ai-conversation{flex:1;min-height:360px;display:flex;flex-direction:column;margin-top:8px;padding:20px 4px 10px;overflow:auto}.ai-conversation:has(#chat:empty)::after{content:'Pergunte, peça ou conte o que precisa.\A O PRIMORIS está pronto.';white-space:pre;display:block;margin:auto;text-align:center;color:#59647d;font-size:14px;line-height:1.8;opacity:.8}
+.ai-conversation{position:relative;flex:1;min-height:360px;display:flex;flex-direction:column;margin-top:8px;padding:20px 4px 10px;overflow:auto}.ai-conversation:has(#chat:empty)::after{content:'Pergunte, peça ou conte o que precisa.\A O PRIMORIS está pronto.';white-space:pre;display:block;margin:auto;text-align:center;color:#59647d;font-size:14px;line-height:1.8;opacity:.8}.ai-conversation > .primoris-ai-eye{position:absolute;left:50%;top:50%;width:clamp(170px,26vw,250px);margin:0;transform:translate(-50%,-52%);z-index:1;pointer-events:none}.ai-conversation > #chat{position:relative;z-index:2;margin-top:auto!important}.ai-conversation > #voiceStatus{position:relative;z-index:3;flex:0 0 auto}
 .primoris-ai-page #chat{width:100%;max-width:850px;margin:0 auto;padding:0 8px 20px}.primoris-ai-page #chat:empty{display:none}.primoris-ai-page .bubble{max-width:78%;border-radius:18px;padding:12px 15px;margin:8px 0;font-size:14px;line-height:1.55;box-shadow:none}.primoris-ai-page .bubble.ai{background:#10141d;border:1px solid rgba(255,255,255,.06);color:#dce2ee}.primoris-ai-page .bubble.user{margin-left:auto;background:linear-gradient(135deg,#173a43,#29203d);border:1px solid rgba(97,231,255,.12);color:#f5f7fc}
 .primoris-ai-page #voiceStatus{align-self:center;margin:6px 0 0;font-size:11px;color:#59647b;background:transparent}
 .ai-composer{width:100%;max-width:850px;margin:0 auto;padding-top:12px}.ai-composer-inner{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(13,16,24,.96);box-shadow:0 16px 45px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.015);transition:border-color .18s,box-shadow .18s}.ai-composer-inner:focus-within{border-color:rgba(97,231,255,.28);box-shadow:0 18px 50px rgba(0,0,0,.3),0 0 0 3px rgba(97,231,255,.04)}.ai-composer input{flex:1!important;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;height:44px;padding:0 7px!important;font-size:14px}.ai-composer input::placeholder{color:#59647b}.ai-mic,.ai-send{width:42px;height:42px;border-radius:13px;border:1px solid rgba(255,255,255,.07);display:grid;place-items:center}.ai-mic{background:rgba(255,255,255,.025);color:#9da8bd;font-size:16px}.ai-mic:hover{color:#fff;border-color:rgba(97,231,255,.25)}.ai-send{background:linear-gradient(135deg,#4ddff7,#7863ff);color:#fff;font-size:21px;font-weight:800;border:0;box-shadow:0 6px 18px rgba(97,120,255,.22)}.ai-send:hover{transform:translateY(-1px)}.ai-composer-meta{display:flex;justify-content:space-between;gap:12px;padding:8px 6px;color:#505a70;font-size:10px}
@@ -768,7 +768,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 #primorisLaunchScreen .launch-inner{position:relative;z-index:2;width:min(92vw,560px);height:360px;display:grid;place-items:center;text-align:center}
 #primorisLaunchScreen .launch-phase1,#primorisLaunchScreen .launch-phase2{position:absolute;inset:0;display:grid;place-items:center}
 #primorisLaunchScreen .launch-phase1{animation:primorisPhase1 4.8s ease forwards}
-#primorisLaunchScreen .launch-eye{position:relative;width:min(78vw,340px);height:min(50vw,215px);display:grid;place-items:center;filter:drop-shadow(0 0 24px rgba(84,232,255,.22))}\n#primorisLaunchScreen .launch-eye:global{}\n#primorisLaunchScreen .launch-eye .eye-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 8px #54e8ff;opacity:0;animation:primorisSpark 2.8s ease-in-out infinite}\n#primorisLaunchScreen .launch-eye .s1{left:18%;top:27%;animation-delay:.2s}\n#primorisLaunchScreen .launch-eye .s2{right:16%;top:38%;animation-delay:1s;background:#ff4fd8;box-shadow:0 0 8px #ff4fd8}\n#primorisLaunchScreen .launch-eye .s3{left:27%;bottom:22%;animation-delay:1.7s}\n#primorisLaunchScreen .launch-eye .s4{right:28%;bottom:18%;animation-delay:2.2s;background:#9a6cff;box-shadow:0 0 8px #9a6cff}
+#primorisLaunchScreen .launch-eye{position:relative;width:min(78vw,340px);height:min(50vw,215px);display:grid;place-items:center;filter:drop-shadow(0 0 24px rgba(84,232,255,.22))}\n\n#primorisLaunchScreen .launch-eye .eye-spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 8px #54e8ff;opacity:0;animation:primorisSpark 2.8s ease-in-out infinite}\n#primorisLaunchScreen .launch-eye .s1{left:18%;top:27%;animation-delay:.2s}\n#primorisLaunchScreen .launch-eye .s2{right:16%;top:38%;animation-delay:1s;background:#ff4fd8;box-shadow:0 0 8px #ff4fd8}\n#primorisLaunchScreen .launch-eye .s3{left:27%;bottom:22%;animation-delay:1.7s}\n#primorisLaunchScreen .launch-eye .s4{right:28%;bottom:18%;animation-delay:2.2s;background:#9a6cff;box-shadow:0 0 8px #9a6cff}
 #primorisLaunchScreen .launch-eye::before{content:"";position:absolute;width:88%;height:72%;border:1px solid rgba(84,232,255,.5);border-radius:55% 45% 50% 50% / 55% 50% 50% 45%;box-shadow:0 0 18px rgba(84,232,255,.13),inset 0 0 20px rgba(154,108,255,.06);transform:rotate(-2deg);animation:primorisEyeLook 4.2s ease-in-out infinite}
 #primorisLaunchScreen .launch-eye::after{content:"";position:absolute;width:74%;height:52%;border:1px solid rgba(255,79,216,.25);border-radius:50%;box-shadow:0 0 22px rgba(255,79,216,.07);animation:primorisEyeFrame 3.4s ease-in-out infinite reverse}
 #primorisLaunchScreen .launch-orbit{position:absolute;width:108%;height:68%;border:1px solid rgba(154,108,255,.24);border-radius:50%;transform:rotate(-16deg);animation:primorisOrbit 7s linear infinite}
@@ -999,12 +999,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 </style>
 <section id="page-assistant" class="page primoris-ai-page">
   <div class="ai-shell">
-<div class="primoris-ai-eye" aria-label="PRIMORIS AI">
-  <div class="eye-ray"></div><div class="eye-ray ray2"></div><div class="eye-ray ray3"></div><div class="eye-ray ray4"></div><div class="eye-ray ray5"></div><div class="eye-ray ray6"></div>
-  <div class="eye-ring r3"></div><div class="eye-ring r2"></div><div class="eye-ring r1"></div>
-  <div class="eye-core"></div><div class="eye-label">PRIMORIS AI</div>
-</div>
-
     <div class="ai-topbar">
       <div class="ai-identity">
         <div class="ai-mark"><span>✦</span></div>
@@ -1029,6 +1023,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </div>
 
     <div class="ai-conversation">
+      <div class="primoris-ai-eye" aria-label="PRIMORIS AI">
+  <div class="eye-ray"></div><div class="eye-ray ray2"></div><div class="eye-ray ray3"></div><div class="eye-ray ray4"></div><div class="eye-ray ray5"></div><div class="eye-ray ray6"></div>
+  <div class="eye-ring r3"></div><div class="eye-ring r2"></div><div class="eye-ring r1"></div>
+  <div class="eye-core"></div><div class="eye-label">PRIMORIS AI</div>
+</div>
       <div id="chat" class="chat"></div>
       <div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div>
     </div>
