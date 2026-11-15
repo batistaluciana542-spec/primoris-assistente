@@ -2077,8 +2077,10 @@ window.speakText=function(text){
       u.onboundary=(event)=>{pulse(event.name==='sentence'?1:.62);};
       u.onend=()=>{next();};
       u.onerror=()=>{hideOrb();next();};
-      window.speechSynthesis.resume();
-      window.speechSynthesis.speak(u);
+      try{window.speechSynthesis.resume()}catch(e){}
+      setTimeout(()=>{
+        try{window.speechSynthesis.speak(u)}catch(e){console.warn('Falha ao iniciar fala:',e);u.onerror&&u.onerror(e)}
+      },90);
     };
     next();
   }catch(e){
