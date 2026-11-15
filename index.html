@@ -2010,101 +2010,65 @@ function isPrimorisInstalled(){
 
 /* Voz mais natural: divide respostas longas em blocos curtos e mantém os controles já salvos. */
 window.speakText=function(text){
-  if(!speechSupported()||!text)return;
-  let raf=0,energy=0;
+  if(!text || !speechSupported())return;
+  const clean=String(text).replace(/https?:\\/\\/\\S+/g,'').replace(/[*_`~]/g,'').replace(/#{1,6}\\s+/g,'').replace(/\\s+/g,' ').trim();
+  if(!clean)return;
   try{
-    applyVoiceControls();
-    const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/[*_`~]/g,'').replace(/#{1,6}\s+/g,'').replace(/\s+/g,' ').trim();
-    if(!clean)return;
-    stopSpeaking();
-   if(primorisVoiceModeActive && voiceListening){voicePausedForSpeech=true;voiceManualStop=true;voiceFinalText='';try{voiceRecognition.stop()}catch(e){}}
+    if(primorisVoiceModeActive && voiceListening){
+      voicePausedForSpeech=true;voiceManualStop=true;voiceFinalText='';
+      try{voiceRecognition?.stop()}catch(e){}
+    }
+    const synth=window.speechSynthesis;
+    synth.cancel();
+    const settings=getVoiceSettings();
+    const u=new SpeechSynthesisUtterance(clean);
+    u.lang='pt-BR';
+    u.rate=Number.isFinite(Number(settings.rate))?Number(settings.rate):0.96;
+    u.pitch=Number.isFinite(Number(settings.pitch))?Number(settings.pitch):0.92;
+    u.volume=Number.isFinite(Number(settings.volume))?Number(settings.volume):1;
+    const voices=synth.getVoices()||[];
+    const preferred=preferredVoiceFromList(settings);
+    if(preferred && voices.some(v=>v.name===preferred.name && v.lang===preferred.lang))u.voice=preferred;
     const overlay=document.getElementById('primorisSpeakingOverlay');
     const orb=document.getElementById('primorisSpeakingOrb');
-    const showOrb=()=>{
-      if(!overlay||!primorisVoiceModeActive)return;
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden','false');
-    };
-    const hideOrb=()=>{
-      if(raf)cancelAnimationFrame(raf);
-      raf=0;energy=0;
-      if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
-      if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
-    };
-    const animate=()=>{
-      if(!overlay?.classList.contains('active'))return;
-      const scale=.985+energy*.09+Math.sin(performance.now()/115)*.018;
-      if(orb){
-        orb.style.transform='scale('+scale.toFixed(3)+')';
-        orb.style.filter='brightness('+(1+energy*.2).toFixed(2)+') saturate('+(1+energy*.15).toFixed(2)+')';
-      }
-      energy*=.91;
-      raf=requestAnimationFrame(animate);
-    };
-    const pulse=(strength)=>{
-      showOrb();
-      energy=Math.min(1,Math.max(energy,strength||.7));
-      if(!raf)raf=requestAnimationFrame(animate);
-    };
-    const chunks=[];
-    const sentences=clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[clean];
-    let current='';
-    for(const sentence of sentences){
-      if((current+' '+sentence).trim().length>260){
-        if(current.trim())chunks.push(current.trim());
-        current=sentence.trim();
-      }else current=(current+' '+sentence).trim();
-    }
-    if(current)chunks.push(current);
-    let i=0;
     const status=document.getElementById('voiceSettingsStatus');
     const voiceStatus=document.getElementById('voiceStatus');
-    const next=()=>{
-      if(i>=chunks.length){
-        hideOrb();
-        if(status)status.textContent='Voz pronta.';
-        if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking');}
-        if(primorisVoiceModeActive && voicePausedForSpeech){
-          voicePausedForSpeech=false;voiceManualStop=false;voiceFinalText='';
-          clearTimeout(voiceRestartTimer);
-          voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){console.warn('Reconexão após fala:',e)} }},250);
-        }
-        return;
-      }
-      const u=new SpeechSynthesisUtterance(chunks[i++]);
-      u.lang=(v&&v.lang)||'pt-BR';u.rate=Number.isFinite(s.rate)?s.rate:0.96;u.pitch=Number.isFinite(s.pitch)?s.pitch:0.92;u.volume=Number.isFinite(s.volume)?s.volume:1;
-      if(v && (primorisVoices||[]).some(x=>x.name===v.name && x.lang===v.lang))u.voice=v;
-      let retried=false;
-      u.onstart=()=>{showOrb();pulse(.82);if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
-      u.onboundary=(event)=>{pulse(event.name==='sentence'?1:.62);};
-      u.onend=()=>{next();};
-      u.onerror=(event)=>{
-        console.warn('Falha TTS:',event?.error||event);
-        if(!retried && (event?.error==='voice-unavailable'||event?.error==='language-unavailable'||event?.error==='synthesis-failed')){
-          retried=true;
-          try{window.speechSynthesis.cancel()}catch(e){}
-          const fallback=new SpeechSynthesisUtterance(u.text);
-          fallback.lang='pt-BR';fallback.rate=u.rate;fallback.pitch=u.pitch;fallback.volume=u.volume;
-          fallback.onstart=u.onstart;fallback.onboundary=u.onboundary;fallback.onend=u.onend;
-          fallback.onerror=()=>{hideOrb();next();};
-          setTimeout(()=>{try{window.speechSynthesis.resume();window.speechSynthesis.speak(fallback)}catch(e){hideOrb();next()}},120);
-          return;
-        }
-        hideOrb();next();
-      };
-      try{window.speechSynthesis.cancel();window.speechSynthesis.resume()}catch(e){}
-      setTimeout(()=>{
-        try{window.speechSynthesis.speak(u)}catch(e){console.warn('Falha ao iniciar fala:',e);u.onerror({error:'synthesis-failed'})}
-      },120);
+    const hide=()=>{
+      if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true')}
+      if(orb){orb.style.transform='scale(1)';orb.style.filter=''}
+      if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking')}
     };
-    next();
-  }catch(e){
-    if(raf)cancelAnimationFrame(raf);
-    const overlay=document.getElementById('primorisSpeakingOverlay');
-    if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
-    console.warn('Voz PRIMORIS:',e);
-    toast('Não foi possível reproduzir a voz agora.');
-  }
+    u.onstart=()=>{
+      if(primorisVoiceModeActive&&overlay){overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
+      if(orb)orb.style.transform='scale(1.12)';
+      if(status)status.textContent='PRIMORIS falando...';
+      if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}
+    };
+    u.onend=()=>{
+      hide();
+      if(primorisVoiceModeActive&&voicePausedForSpeech){
+        voicePausedForSpeech=false;voiceManualStop=false;voiceFinalText='';
+        clearTimeout(voiceRestartTimer);
+        voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){}}},300);
+      }
+    };
+    u.onerror=(e)=>{
+      console.warn('TTS PRIMORIS:',e?.error||e);
+      hide();
+      if(primorisVoiceModeActive&&voicePausedForSpeech){
+        voicePausedForSpeech=false;voiceManualStop=false;voiceFinalText='';
+        clearTimeout(voiceRestartTimer);
+        voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){}}},300);
+      }
+    };
+    synth.resume();
+    synth.speak(u);
+    setTimeout(()=>{
+      if(!synth.speaking&&!synth.pending){
+        try{const retry=new SpeechSynthesisUtterance(clean);retry.lang='pt-BR';retry.rate=u.rate;retry.pitch=u.pitch;retry.volume=u.volume;retry.onend=u.onend;retry.onerror=u.onerror;synth.speak(retry)}catch(e){console.warn('Retry TTS:',e)}
+      }
+    },700);
+  }catch(e){console.warn('Voz PRIMORIS:',e)}
 };
 
 async function runFullDiagnostics(){
