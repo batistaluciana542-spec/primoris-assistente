@@ -14,7 +14,7 @@ const parser = new Parser();
 
 app.set("trust proxy", 1);
 
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json({ limit: "12mb" }));
 
 const SESSION_SECRET = process.env.SESSION_SECRET || "change-me";
 app.use(session({
@@ -1042,6 +1042,37 @@ function compactAIContext(value, key="", depth=0) {
   }
   return undefined;
 }
+
+
+app.post("/api/vision", async (req,res)=>{
+  try{
+    const apiKey=process.env.GEMINI_API_KEY;
+    if(!apiKey)return res.status(503).json({error:"gemini_not_configured",details:"GEMINI_API_KEY não está configurada no Render."});
+    const image=String(req.body?.image||"");
+    const prompt=String(req.body?.prompt||"").trim();
+    if(!image.startsWith("data:image/"))return res.status(400).json({error:"image_required",details:"Envie uma imagem válida."});
+    if(!prompt)return res.status(400).json({error:"prompt_required",details:"Informe o que a IA deve fazer com a imagem."});
+    if(image.length>9000000)return res.status(413).json({error:"image_too_large",details:"A imagem ficou grande demais. Tente uma foto menor."});
+    const match=image.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+    if(!match)return res.status(400).json({error:"invalid_image"});
+    const mime=match[1],data=match[2];
+    const model=process.env.GEMINI_VISION_MODEL||process.env.GEMINI_MODEL||"gemini-2.5-flash";
+    const url="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent?key="+encodeURIComponent(apiKey);
+    const visionPrompt=`Você é o módulo de visão do PRIMORIS. Analise cuidadosamente a imagem enviada e cumpra o pedido do usuário. Se for uma atividade escolar, transcreva as questões relevantes, resolva com raciocínio correto e organize as respostas de forma numerada. Explique de maneira clara e adequada para estudo. Não invente texto que não esteja legível na imagem; quando algo estiver ilegível, avise. Responda em português do Brasil.
+
+PEDIDO DO USUÁRIO:
+${prompt.slice(0,5000)}`;
+    const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{role:"user",parts:[{inline_data:{mime_type:mime,data}},{text:visionPrompt}]}],generationConfig:{temperature:.2,maxOutputTokens:1800}})});
+    const body=await response.json().catch(()=>({}));
+    if(!response.ok)return res.status(502).json({error:"vision_failed",details:body?.error?.message||"O Gemini não conseguiu analisar a imagem."});
+    const text=body?.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("").trim();
+    if(!text)return res.status(502).json({error:"vision_empty",details:"A IA não retornou uma resposta."});
+    res.json({ok:true,text,provider:"Google Gemini Vision",model});
+  }catch(e){
+    console.error("Vision:",e);
+    res.status(500).json({error:"vision_server_error",details:e.message||"Falha ao analisar a imagem."});
+  }
+});
 
 app.post("/api/ai", async (req,res)=>{
   try{
