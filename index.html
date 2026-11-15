@@ -594,6 +594,11 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 
     <div class="card" style="margin-top:14px">
       <div class="row"><div><h3>💬 WhatsApp</h3><div class="muted">Os contatos e o envio já ficam nesta mesma central.</div></div><span class="badge">ATIVO</span></div>
+      <div class="card" style="margin-top:12px;background:rgba(84,232,255,.035)">
+        <div class="row"><div><h4 style="margin:0">📇 Contatos do telefone</h4><div class="muted">Selecione os contatos que o PRIMORIS poderá usar para preparar mensagens. O navegador só entrega os contatos que você escolher.</div></div><span class="badge">PRIVACIDADE</span></div>
+        <div class="actions" style="margin-top:12px"><button class="btn primary" type="button" onclick="importPhoneContacts()">📇 Selecionar contatos do telefone</button></div>
+        <small class="muted">Depois de selecionados, nome e número ficam salvos localmente neste aparelho para a IA localizar o contato sem você digitar o número.</small>
+      </div>
       <form id="whatsappContactForm" class="form" style="margin-top:12px" onsubmit="saveWhatsAppContact(event)">
         <div class="grid2" style="margin-top:0">
           <input id="whatsappContactName" placeholder="Nome do contato" required>
@@ -815,6 +820,26 @@ function loadWhatsAppContacts(){
   catch{return []}
 }
 function saveWhatsAppContacts(list){localStorage.setItem('primoris_whatsapp_contacts',JSON.stringify(list))}
+async function importPhoneContacts(){
+  if(!('contacts' in navigator) || !navigator.contacts?.select){toast('Seu navegador não oferece o seletor de contatos. Use o cadastro manual abaixo.');return;}
+  try{
+    const supported=typeof navigator.contacts.getProperties==='function'?await navigator.contacts.getProperties():['name','tel'];
+    const props=['name','tel'].filter(p=>supported.includes(p));
+    if(!props.includes('name')||!props.includes('tel')){toast('O navegador não consegue fornecer nome e telefone dos contatos.');return;}
+    const picked=await navigator.contacts.select(props,{multiple:true});
+    const current=loadWhatsAppContacts();let added=0;
+    for(const contact of picked||[]){
+      const name=Array.isArray(contact.name)?String(contact.name[0]||'').trim():String(contact.name||'').trim();
+      const phones=Array.isArray(contact.tel)?contact.tel.map(String).filter(Boolean):[];
+      if(!name||!phones.length)continue;
+      const phone=normalizeWhatsAppNumber(phones[0]);
+      if(phone.length<10||phone.length>15)continue;
+      const key=normalizeContactName(name);const idx=current.findIndex(x=>normalizeContactName(x.name)===key);const item={name,phone,source:'phonebook'};
+      if(idx>=0)current[idx]=item;else{current.push(item);added++;}
+    }
+    saveWhatsAppContacts(current);renderWhatsAppContacts();toast(added?added+' contato(s) importado(s) do telefone.':'Nenhum contato novo foi importado.');
+  }catch(err){if(err?.name==='AbortError')return;console.warn('Seletor de contatos:',err);toast('Não foi possível acessar os contatos. Tente novamente pelo botão.');}
+}
 function normalizeContactName(value){return String(value||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
 function renderWhatsAppContacts(){
   const box=$('whatsappContacts');if(!box)return;
@@ -879,6 +904,8 @@ function handleWhatsAppChatRequest(query){
   let message='';
   const msgMatch=q.match(/(?:\b(?:dizendo|avisando(?:\s+que)?|escrevendo|falando(?:\s+que)?|mensagem(?:\s+que)?|texto)\b\s*[:,-]?\s*|:\s*)(.+)$/i);
   if(msgMatch)message=msgMatch[1].trim();
+  if(!message){const naturalMsg=q.match(/\b(?:e\s+)?(?:fale|fala|diga|diz|avise|avisa|escreva|escreve)\s+(?:que|assim|o seguinte)\s+(.+)$/i);if(naturalMsg)message=naturalMsg[1].trim();}
+  if(message)message=message.replace(/^[\"“']|[\"”']$/g,'').trim();
 
   if(phone&&$('whatsappPhone'))$('whatsappPhone').value=phone;
   if(message&&$('whatsappMessage'))$('whatsappMessage').value=message;
