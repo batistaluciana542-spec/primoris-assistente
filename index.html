@@ -2013,7 +2013,7 @@ window.speakText=function(text){
   let raf=0,energy=0;
   try{
     applyVoiceControls();
-    const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+    const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/[*_`~]/g,'').replace(/#{1,6}\s+/g,'').replace(/\s+/g,' ').trim();
     if(!clean)return;
     stopSpeaking();
     const overlay=document.getElementById('primorisSpeakingOverlay');
