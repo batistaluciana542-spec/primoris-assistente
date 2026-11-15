@@ -417,7 +417,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 <aside class="sidebar">
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
-    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button data-page="skills">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
+    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
   <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button type="button" onclick="showPage('image-lab')" data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
@@ -2313,5 +2313,22 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="primoris-speaking-orb" id="primorisSpeakingOrb">
     <div class="primoris-speaking-label">PRIMORIS<br><span>CONVERSANDO</span></div>
   </div>
-</div></body>
+</div><script id="skills-navigation-fix">
+function openSkillsPage(){
+  try{
+    document.querySelectorAll('.page').forEach(function(el){el.classList.toggle('active',el.id==='page-skills');});
+    document.querySelectorAll('[data-page]').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-page')==='skills');});
+    window.scrollTo(0,0);
+    if(typeof window.renderSkills==='function') window.renderSkills();
+    return false;
+  }catch(e){
+    console.error('PRIMORIS Skills:',e);
+    return false;
+  }
+}
+document.addEventListener('DOMContentLoaded',function(){
+  var btn=document.getElementById('skillsNavButton');
+  if(btn) btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openSkillsPage();},true);
+});
+</script></body>
 </html>
