@@ -2173,5 +2173,32 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(document.getElementById('page-integrations')) refreshConnectionHub();
 });
 </script>
+
+<script id="primoris-navigation-rescue">
+/* Fallback de navegação: mantém os botões funcionais mesmo se algum módulo anterior falhar. */
+(function(){
+  function go(page){
+    try{
+      document.querySelectorAll('.page').forEach(function(el){el.classList.toggle('active',el.id==='page-'+page);});
+      document.querySelectorAll('[data-page]').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-page')===page);});
+      window.scrollTo(0,0);
+      if(page==='email'&&typeof window.loadEmails==='function')window.loadEmails();
+      if(page==='agenda'&&typeof window.renderAgenda==='function')window.renderAgenda();
+      if(page==='memory'&&typeof window.renderMemories==='function')window.renderMemories();
+      if(page==='finance'&&typeof window.renderFinancas==='function')window.renderFinancas();
+      if(page==='skills'&&typeof window.renderSkills==='function')window.renderSkills();
+      if(page==='os'&&typeof window.updateOSDashboard==='function')window.updateOSDashboard();
+      if(page==='devpanel'&&typeof window.renderDevLog==='function')window.renderDevLog();
+      if(page==='integrations'&&typeof window.refreshConnectionHub==='function')window.refreshConnectionHub();
+      return false;
+    }catch(e){console.error('PRIMORIS navigation:',e);return false;}
+  }
+  window.showPage=go;
+  document.addEventListener('click',function(ev){
+    const btn=ev.target.closest('[data-page]');
+    if(btn){ev.preventDefault();ev.stopPropagation();go(btn.getAttribute('data-page'));}
+  },true);
+})();
+</script>
 </body>
 </html>
