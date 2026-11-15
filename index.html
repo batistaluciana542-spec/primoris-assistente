@@ -2313,7 +2313,31 @@ document.addEventListener('DOMContentLoaded',()=>{
   <div class="primoris-speaking-orb" id="primorisSpeakingOrb">
     <div class="primoris-speaking-label">PRIMORIS<br><span>CONVERSANDO</span></div>
   </div>
-</div><script id="skills-navigation-fix">
+</div><script id="skills-real-actions">
+(function(){
+  function skillAction(id){
+    const routes={assistant:'assistant',whatsapp:'integrations',gmail:'email',taskAgent:'tasks',memory:'memory',study:'studies',tasks:'tasks',agenda:'agenda',voice:'settings',search:'search',finance:'finance'};
+    const page=routes[id];
+    if(!page)return;
+    if(id==='voice'){
+      if(typeof showPage==='function')showPage('settings');
+      setTimeout(()=>document.getElementById('pvVoiceSelect')?.focus(),180);
+      return;
+    }
+    if(typeof showPage==='function')showPage(page);
+  }
+  window.skillAction=skillAction;
+  document.addEventListener('click',function(ev){
+    const btn=ev.target.closest('[data-skill-toggle]');
+    if(!btn)return;
+    const id=btn.getAttribute('data-skill-toggle');
+    setTimeout(function(){
+      const active=loadSkills()[id];
+      if(active)skillAction(id);
+    },0);
+  },true);
+})();
+</script><script id="skills-navigation-fix">
 function openSkillsPage(){
   try{
     document.querySelectorAll('.page').forEach(function(el){el.classList.toggle('active',el.id==='page-skills');});
