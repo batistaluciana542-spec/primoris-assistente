@@ -1625,12 +1625,26 @@ function parseLocalFinanceAction(q){
   const category=isDebt||isDebtPayment?'Dívidas':isEntry?'Entradas':'Outros';
   return {type:'finance_local',financeType:type,amount,description:description||('Movimentação de '+moneyBR(amount)),category};
 }
+function buildAIContext(){
+  const enabled=loadSkills();
+  const anyDisabled=PRIMORIS_SKILLS.some(s=>enabled[s.id]===false);
+  return {
+    userProfile:{name:'Anthony'},
+    userName:'Anthony',
+    tasks:enabled.tasks||enabled.taskAgent?data.tasks||[]:[],
+    events:enabled.agenda?data.events||[]:[],
+    studies:enabled.study?data.studies||[]:[],
+    opportunities:enabled.search?data.opportunities||[]:[],
+    memories:enabled.memory?data.memories||[]:[],
+    recentChat:anyDisabled?[]:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))
+  };
+}
 async function requestAIAction(q){
   const financeLocal=parseLocalFinanceAction(q);
   if(financeLocal)return financeLocal;
   const whatsappLocal=handleWhatsAppChatRequest(q);
   if(whatsappLocal)return {type:'local_message',message:whatsappLocal};
-  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
+  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:buildAIContext(),currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
   if(j.clarification&&!j.action)return {clarification:j.clarification};
@@ -2337,6 +2351,15 @@ $('agendaForm').onsubmit=async e=>{e.preventDefault();let x={id:eventEditId||cry
 if(eventEditId)data.events=data.events.map(v=>String(v.id||'')===eventEditId?x:v);else data.events.push(x);save();e.target.reset();cancelEventEdit();renderAgenda();render();toast(x.source==='google'?'Evento salvo no Google Calendar':'Evento salvo neste aparelho')};
 async function handleNaturalAction(q){
  let t=q.toLowerCase(),m;
+ if(/\b(saldo|gastos?|despesas?|d[ií]vidas?|entrada|receita|financeiro|finan[cç]as?)\b/i.test(q)){
+   const blocked=requireSkill('finance');if(blocked)return blocked;
+ }
+ if(/\b(agenda|compromissos?|eventos?|reuni[aã]o|o que eu tenho hoje|o que tenho hoje|amanh[ãa]).*\b/i.test(q)&&/\b(hoje|amanh[ãa]|agenda|compromisso|evento|reuni[aã]o)\b/i.test(q)){
+   const blocked=requireSkill('agenda');if(blocked)return blocked;
+ }
+ if(/\b(tarefa|tarefas|lembrete|lembra|lembrar)\b/i.test(q)&&/\b(crie|cria|adicione|adiciona|anote|anota|registre|registra|mostra|listar|lista|o que|quais)\b/i.test(q)){
+   const blocked=requireSkill(/\b(lembrete|lembra|lembrar)\b/i.test(q)?'taskAgent':'tasks');if(blocked)return blocked;
+ }
  if(/\b(estudo|estudos|estudar|plano de estudos|sess[aã]o de estudo)\b/i.test(q)&&/\b(crie|cria|adicione|adiciona|registre|registra|monte|monta|faça|faz)\b/i.test(q)){
    const blocked=requireSkill('study');if(blocked)return blocked;
  }
@@ -2357,22 +2380,22 @@ async function handleNaturalAction(q){
    title=title.trim()||'Nova oportunidade';data.opportunities.push({id:crypto.randomUUID(),title,link:'',notes:q,date:new Date().toISOString(),source:'assistant'});save();render();showPage('opportunities');return `Oportunidade “${title}” salva na área Oportunidades.`;
  }
 if((m=t.match(/(?:lembra|anota|registre|registra|salva|guarda)(?:\s+que)?\s+(.+)/i))&&/(prefiro|gosto|não gosto|nao gosto|sou|tenho|estudo|rotina|importante)/i.test(m[1])&&!/estudei\s+.+\s+por\s+\d+\s+minutos?/.test(m[1])){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:m[1].replace(/[.!?]+$/,''),category:/estud/i.test(m[1])?'Estudos':/rotina|amanh|todo dia/i.test(m[1])?'Rotina':/prefiro|gosto/i.test(m[1])?'Preferências':'Observações',createdAt:new Date().toISOString()});save();renderMemories();return'Memória registrada e será enviada no contexto das próximas conversas.'}
-if((m=t.match(/(?:registra|anota|registre)\s+que\s+estudei\s+(.+?)\s+por\s+(\d+)\s+minutos?/i))){data.studies.push({title:m[1],minutes:Number(m[2]),notes:'Registrado pelo assistente',date:new Date().toISOString()});save();render();return`Estudo de ${m[1]} registrado por ${m[2]} minutos.`}
+if((m=t.match(/(?:registra|anota|registre)\s+que\s+estudei\s+(.+?)\s+por\s+(\d+)\s+minutos?/i))){const blocked=requireSkill('study');if(blocked)return blocked;data.studies.push({title:m[1],minutes:Number(m[2]),notes:'Registrado pelo assistente',date:new Date().toISOString()});save();render();return`Estudo de ${m[1]} registrado por ${m[2]} minutos.`}
 if(/quanto.*(posso gastar|tenho|devo)|saldo/.test(t)){let f=loadFinanceData();return`Saldo: ${moneyBR(financeBalance(f))}; gastos: ${moneyBR(monthlySpent(f))}; dívidas: ${moneyBR(financeDebt(f))}; disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}.`}
 if(/o que eu tenho hoje|compromissos de hoje|agenda de hoje/.test(t)){let d=new Date().toDateString(),xs=data.events.filter(x=>new Date(x.date).toDateString()===d);return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Você não tem eventos registrados para hoje.'}
 if(/amanh[ãa]/.test(t)&&/(agenda|compromisso|evento|o que tenho|mostra)/.test(t)){let d=new Date();d.setDate(d.getDate()+1);let xs=data.events.filter(x=>new Date(x.date).toDateString()===d.toDateString());return xs.length?xs.map(x=>`${x.title} às ${new Date(x.date).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`).join('; '):'Não há eventos registrados para amanhã.'}
 if(/(?:cria|crie|marca|marque|agenda|agende).*(?:evento|compromisso|reuni[aã]o)/i.test(q)&&/(hoje|amanh[ãa]|\d{1,2}\/\d{1,2})/i.test(q)){let title=(q.match(/(?:evento|compromisso|reuni[aã]o)\s+(?:chamado\s+)?(.+?)(?=\s+(?:hoje|amanh[ãa]|\d{1,2}\/\d{1,2})|\s+às?\s+\d|$)/i)||[])[1]||'Compromisso';let d=new Date();if(/amanh[ãa]/i.test(q))d.setDate(d.getDate()+1);let dm=q.match(/(\d{1,2})\/(\d{1,2})/);if(dm)d.setMonth(Number(dm[2])-1,Number(dm[1]));let tm=q.match(/(?:às?|as)\s*(\d{1,2})(?::(\d{2}))?/i);if(!tm)return'Qual horário devo usar para esse evento?';d.setHours(Number(tm[1]),Number(tm[2]||0),0,0);let end=new Date(d);end.setHours(end.getHours()+1);let x={id:crypto.randomUUID(),title:title.trim(),date:d.toISOString(),source:'local'};try{let r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:x.title,start:d.toISOString(),end:end.toISOString()})});if(r.ok){let j=await r.json();x.id=j.event?.id||x.id;x.source='google'}else if(r.status!==401)throw new Error('O servidor não confirmou a criação do evento.')}catch(err){if(!navigator.onLine)return'Estou sem conexão e não consegui confirmar a criação do evento.';if(err.message.includes('não confirmou'))return err.message}data.events.push(x);save();renderAgenda();render();return x.source==='google'?'Evento criado no Google Calendar.':'Google Calendar não conectado: evento salvo apenas neste aparelho.'}
-if(/(?:anota|lembra|cria|marca).*(?:estudar|estudo|tarefa).*(?:amanh[ãa]|hoje)/.test(t)||/(?:anota|lembra).*(?:amanh[ãa]|hoje).*(?:estudar|estudo)/.test(t)){let title=(q.match(/estudar\s+(.+?)(?:\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Estudar matemática';let due=new Date();if(/amanh[ãa]/i.test(q))due.setDate(due.getDate()+1);data.tasks.push({id:crypto.randomUUID(),title:'Estudar '+title.trim(),date:due.toISOString(),dueDate:due.toISOString().slice(0,10),done:false});save();render();return`Tarefa “Estudar ${title.trim()}” anotada para ${due.toLocaleDateString('pt-BR')}.`}
+if(/(?:anota|lembra|cria|marca).*(?:estudar|estudo|tarefa).*(?:amanh[ãa]|hoje)/.test(t)||/(?:anota|lembra).*(?:amanh[ãa]|hoje).*(?:estudar|estudo)/.test(t)){const blocked=requireSkill(/lembra|anota.*lembrete/.test(t)?'taskAgent':'tasks');if(blocked)return blocked;let title=(q.match(/estudar\s+(.+?)(?:\s+amanh[ãa]|\s+hoje|$)/i)||[])[1]||'Estudar matemática';let due=new Date();if(/amanh[ãa]/i.test(q))due.setDate(due.getDate()+1);data.tasks.push({id:crypto.randomUUID(),title:'Estudar '+title.trim(),date:due.toISOString(),dueDate:due.toISOString().slice(0,10),done:false});save();render();return`Tarefa “Estudar ${title.trim()}” anotada para ${due.toLocaleDateString('pt-BR')}.`}
 // Fallback de ações locais para comandos explícitos quando o Gemini não estiver disponível.
-if(/(?:registre|registra|anote|anota|lance|lança).*(?:despesa|gasto)/i.test(q)){
+if(/(?:registre|registra|anote|anota|lance|lança).*(?:despesa|gasto)/i.test(q)){const blocked=requireSkill('finance');if(blocked)return blocked;
   const vm=q.match(/r\$\s*([\d.,]+)|(?:de|por)\s*([\d.,]+)\s*(?:reais)?/i);const raw=vm?(vm[1]||vm[2]):'';const amount=raw?Number(raw.replace(/\./g,'').replace(',','.')):0;
   if(amount>0){const cm=q.match(/(?:com|em)\s+(.+?)(?:[.!?]|$)/i);const category=(cm?.[1]||'Outros').trim();const f=loadFinanceData();f.transactions.push({id:crypto.randomUUID(),description:'Despesa com '+category,type:'gasto',amount,category,date:new Date().toISOString().slice(0,10)});saveFinanceData(f);renderFinancas();return `Despesa de ${moneyBR(amount)} registrada em ${category}.`;}
 }
-if(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\b/i.test(q)){
+if(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\b/i.test(q)){const blocked=requireSkill('tasks');if(blocked)return blocked;
   const title=q.replace(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\s*(?:para|de)?\s*/i,'').trim();
   if(title){data.tasks.push({id:crypto.randomUUID(),title,date:new Date().toISOString(),dueDate:null,dueTime:null,done:false,source:'assistant'});save();render();return `Tarefa “${title}” adicionada ao PRIMORIS.`;}
 }
-if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){
+if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){const blocked=requireSkill('memory');if(blocked)return blocked;
   const note=q.replace(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i,'').trim();
   if(note){normalizeMemories();data.memories.push({id:crypto.randomUUID(),text:note,category:'Observações',createdAt:new Date().toISOString()});save();renderMemories();return `Anotação salva na Memória: “${note}”.`;}
 }
