@@ -1770,13 +1770,57 @@ function smartDashboardBrief(){
 }
 
 function renderDashboard(){
- const ev=(data.events||[]).filter(x=>new Date(x.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
- $('dashEvents').innerHTML=ev.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum compromisso futuro registrado.</div>';
- const rem=(data.reminders||[]).filter(x=>!x.done&&x.date).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
- $('dashReminders').innerHTML=rem.map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum lembrete futuro registrado.</div>';
- if(typeof loadFinanceData==='function') { const f=loadFinanceData();$('dashFinance').textContent=`Saldo ${moneyBR(financeBalance(f))} · Gastos no mês ${moneyBR(monthlySpent(f))} · Dívidas ${moneyBR(financeDebt(f))}`; }
- $('dashStudies').innerHTML=(data.studies||[]).slice(-4).reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title)}</b><div class="event-meta">${escapeHtml(x.kind||'Estudo')}${x.grade!==null&&x.grade!==undefined?' · Nota '+escapeHtml(x.grade):''}</div></div>`).join('')||'<div class="muted">Nenhum registro de estudo.</div>';
- renderDashboardNotifications();if($('brief'))$('brief').textContent=smartDashboardBrief();
+  const now=new Date();
+  const ev=(data.events||[])
+    .filter(x=>{const d=new Date(x.date);return x.date&&!Number.isNaN(d.getTime())&&d>=now;})
+    .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+  const eventBox=$('dashEvents');
+  if(eventBox)eventBox.innerHTML=ev.map(x=>`<div class="item"><b>${escapeHtml(x.title||'Compromisso')}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum compromisso futuro registrado.</div>';
+
+  const rem=(data.reminders||[])
+    .filter(x=>!x.done&&x.date)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+  const reminderBox=$('dashReminders');
+  if(reminderBox)reminderBox.innerHTML=rem.map(x=>`<div class="item"><b>${escapeHtml(x.title||'Lembrete')}</b><div class="event-meta">${new Date(x.date).toLocaleString('pt-BR')}</div></div>`).join('')||'<div class="muted">Nenhum lembrete futuro registrado.</div>';
+
+  const pending=(data.tasks||[]).filter(x=>!x.done);
+  const taskBox=$('dashTaskPreview');
+  if(taskBox)taskBox.innerHTML=pending.slice(0,3).map(x=>`<div><b>${escapeHtml(x.title||'Tarefa')}</b><div class="event-meta">${escapeHtml(x.dueDate||'Sem prazo')}${x.dueTime?' · '+escapeHtml(x.dueTime):''}</div></div>`).join('')||'<div class="muted">Nenhuma tarefa pendente.</div>';
+
+  const nextEvent=ev[0],nextTask=pending.slice().sort((a,b)=>{
+    const da=a.dueDate?new Date((a.dueDate||'')+'T'+(a.dueTime||'23:59')):new Date('2999-12-31');
+    const db=b.dueDate?new Date((b.dueDate||'')+'T'+(b.dueTime||'23:59')):new Date('2999-12-31');
+    return da-db;
+  })[0];
+  const nextEventBox=$('dashNextEvent');
+  if(nextEventBox)nextEventBox.textContent=nextEvent?String(nextEvent.title||'Compromisso'):'Nenhum';
+  const nextTaskBox=$('dashNextTask');
+  if(nextTaskBox)nextTaskBox.textContent=nextTask?String(nextTask.title||'Tarefa'):'Nenhuma';
+
+  if(typeof loadFinanceData==='function'){
+    const f=loadFinanceData();
+    const entries=(f.transactions||[]).filter(x=>x.type==='entrada').reduce((s,x)=>s+Number(x.amount||0),0);
+    const spent=monthlySpent(f);
+    const debt=financeDebt(f);
+    const balance=financeBalance(f);
+    if($('dashFinanceValue'))$('dashFinanceValue').textContent=moneyBR(balance);
+    if($('dashFinanceIn'))$('dashFinanceIn').textContent=moneyBR(entries);
+    if($('dashFinanceOut'))$('dashFinanceOut').textContent=moneyBR(spent);
+    if($('dashFinanceDebt'))$('dashFinanceDebt').textContent=moneyBR(debt);
+  }
+
+  const studyBox=$('dashStudies');
+  if(studyBox)studyBox.innerHTML=(data.studies||[]).slice(-4).reverse().map(x=>`<div class="item"><b>${escapeHtml(x.title||'Estudo')}</b><div class="event-meta">${escapeHtml(x.kind||'Estudo')}${x.grade!==null&&x.grade!==undefined?' · Nota '+escapeHtml(x.grade):''}</div></div>`).join('')||'<div class="muted">Nenhum registro de estudo.</div>';
+
+  if($('dashboardDate'))$('dashboardDate').textContent=now.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'}).replace(/\./g,'').toUpperCase();
+  if($('dashboardGreeting')){
+    const h=now.getHours();
+    $('dashboardGreeting').textContent=h<12?'BOM DIA':h<18?'BOA TARDE':'BOA NOITE';
+  }
+  if($('dashboardClock'))$('dashboardClock').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+  renderDashboardNotifications();
+  if($('brief'))$('brief').textContent=smartDashboardBrief();
 }
 function renderGlobalSearch(){
  const q=($('globalSearch')?.value||'').trim().toLocaleLowerCase('pt-BR'),box=$('globalSearchResults');if(!box)return;if(!q){box.innerHTML='<div class="muted">Digite um termo para pesquisar nos seus dados locais.</div>';return}
