@@ -526,6 +526,18 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* PRIMORIS layout rescue: keep the fixed sidebar out of the flex sizing calculation. */
+.app{display:block!important;min-height:100vh;width:100%;}
+.main{display:block!important;margin-left:258px!important;width:auto!important;max-width:none!important;min-width:0!important;padding-right:32px!important;}
+.main>*{min-width:0;max-width:100%;}
+.grid,.grid2,.dashboard-columns,.news,.skills-grid,.dev-grid,.finance-grid{min-width:0;}
+@media(max-width:900px){
+  .main{margin-left:0!important;width:100%!important;max-width:none!important;padding:20px 16px 90px!important;}
+}
+@media(max-width:600px){
+  .main{padding:16px 12px 88px!important;}
+}
 </style>
 </head>
 <body>
