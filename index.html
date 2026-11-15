@@ -3260,6 +3260,45 @@ document.addEventListener('DOMContentLoaded',function(){
  window.minimizePrimorisWindow=function(type){const w=$('pw-'+type);if(w)w.classList.add('hidden')};
  window.closePrimorisWindow=function(type){const w=$('pw-'+type);if(w)w.remove()};
 })();
+</script><style id="primoris-launch-splash-v1">
+#primorisLaunchSplash{
+  position:fixed;inset:0;z-index:100000;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 42%,rgba(28,10,65,.96),rgba(3,5,15,.99) 72%);
+  transition:opacity .42s ease,visibility .42s ease;
+}
+#primorisLaunchSplash.done{opacity:0;visibility:hidden;pointer-events:none}
+.pls-eye{position:relative;width:min(62vw,270px);aspect-ratio:1;display:grid;place-items:center}
+.pls-core{width:42%;height:42%;border-radius:50%;background:radial-gradient(circle,#fff 0 5%,#54e8ff 12%,#3d63ff 30%,#9a45ff 55%,#12052d 78%,#03040d);box-shadow:0 0 22px #54e8ff,0 0 58px rgba(154,108,255,.8);animation:plsPulse 1s ease-in-out infinite}
+.pls-ring{position:absolute;border-radius:50%;border:2px solid rgba(84,232,255,.5)}
+.pls-r1{inset:18%;border-color:rgba(255,79,216,.65);animation:plsSpin 1.6s linear infinite}
+.pls-r2{inset:5%;border-style:dashed;animation:plsSpinReverse 2.2s linear infinite}
+.pls-r3{inset:-10%;border-color:rgba(154,108,255,.32);animation:plsExpand 1s ease-in-out infinite}
+.pls-ray{position:absolute;top:0;left:50%;width:2px;height:18%;transform-origin:50% 100%;background:linear-gradient(#54e8ff,transparent);filter:drop-shadow(0 0 7px #54e8ff);opacity:.8}
+.pls-ray:nth-child(2){transform:rotate(60deg)}.pls-ray:nth-child(3){transform:rotate(120deg)}.pls-ray:nth-child(4){transform:rotate(180deg)}.pls-ray:nth-child(5){transform:rotate(240deg)}.pls-ray:nth-child(6){transform:rotate(300deg)}
+.pls-label{position:absolute;bottom:-38px;color:#54e8ff;font:800 11px Orbitron;letter-spacing:3px;text-shadow:0 0 14px #54e8ff}
+@keyframes plsPulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.08);filter:brightness(1.3)}}
+@keyframes plsSpin{to{transform:rotate(360deg)}}@keyframes plsSpinReverse{to{transform:rotate(-360deg)}}
+@keyframes plsExpand{0%,100%{transform:scale(.96);opacity:.35}50%{transform:scale(1.04);opacity:1}}
+@media(prefers-reduced-motion:reduce){.pls-core,.pls-r1,.pls-r2,.pls-r3{animation:none}}
+</style>
+<div id="primorisLaunchSplash" aria-hidden="true">
+  <div class="pls-eye">
+    <div class="pls-ray"></div><div class="pls-ray"></div><div class="pls-ray"></div><div class="pls-ray"></div><div class="pls-ray"></div><div class="pls-ray"></div>
+    <div class="pls-ring pls-r3"></div><div class="pls-ring pls-r2"></div><div class="pls-ring pls-r1"></div>
+    <div class="pls-core"></div><div class="pls-label">PRIMORIS</div>
+  </div>
+</div>
+<script id="primoris-launch-splash-js">
+(function(){
+  function finish(){
+    const s=document.getElementById('primorisLaunchSplash');
+    if(!s)return;
+    s.classList.add('done');
+    setTimeout(()=>s.remove(),500);
+  }
+  window.addEventListener('load',()=>setTimeout(finish,700),{once:true});
+  setTimeout(finish,1800);
+})();
 </script></body>
 </html>
 
