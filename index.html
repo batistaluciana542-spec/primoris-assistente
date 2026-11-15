@@ -1033,7 +1033,7 @@ $('gmailDraftForm')?.addEventListener('submit',createGmailDraft);
 
 function isPotentialActionRequest(q){
   return /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|preciso|quero|gostaria|poderia|pode)\b/i.test(q)
-    && /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|despesa|gasto|tarefa|compromisso|evento|reuni[aã]o|consulta|estudar|estudo|estudos|oportunidade|oportunidades|plano de estudos|sess[aã]o)\b/i.test(q);
+    && /\b(lembre?-me|lembra|lembrete|adicione|adiciona|crie|cria|anote|anota|registre|registra|marcar|marque|marca|agendar|agende|agenda|agendo|salve|salva|guarde|guarda|lance|lan[cç]a|despesa|gasto|entrada|receita|ganho|dinheiro|financeir[oa]|tarefa|compromisso|evento|reuni[aã]o|consulta|estudar|estudo|estudos|oportunidade|oportunidades|plano de estudos|sess[aã]o)\b/i.test(q);
 }
 function parseLocalAppointment(q){
   const intent=/(?:\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b.*\b(?:compromisso|evento|reuni[aã]o|consulta)\b|\b(?:compromisso|evento|reuni[aã]o|consulta)\b.*\b(?:marcar|marque|marca|agendar|agende|agenda|criar|crie)\b)/i;
@@ -1090,9 +1090,40 @@ function actionDateTime(date,time){
   const d=new Date(`${date}T${hhmm}:00`);
   return Number.isNaN(d.getTime())?null:d;
 }
+function parsePortugueseMoney(text){
+  const q=String(text||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const numeric=q.match(/(?:r\$\s*)?\b(\d+(?:[.,]\d{1,2})?)\s*(?:reais?|rs)?\b/);
+  if(numeric){
+    const raw=numeric[1].includes(',')?numeric[1].replace(/\./g,'').replace(',','.'):numeric[1];
+    const n=Number(raw); if(Number.isFinite(n)&&n>0)return n;
+  }
+  const units={zero:0,um:1,uma:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:6,sete:7,oito:8,nove:9,dez:10,onze:11,doze:12,treze:13,quatorze:14,catorze:14,quinze:15,dezesseis:16,dezessete:17,dezoito:18,dezenove:19};
+  const tens={vinte:20,trinta:30,quarenta:40,cinquenta:50,sessenta:60,setenta:70,oitenta:80,noventa:90};
+  const m=q.match(/\b([a-z]+)(?:\s+e\s+([a-z]+))?\s+reais?\b/);
+  if(m){
+    const a=units[m[1]]??tens[m[1]], b=m[2]?units[m[2]]:0;
+    if(Number.isFinite(a)&&Number.isFinite(b))return a+b;
+  }
+  return 0;
+}
+function parseLocalFinanceAction(q){
+  const text=String(q||'').trim();
+  const lower=text.toLocaleLowerCase('pt-BR');
+  const isEntry=/\b(entrada|receita|ganho|recebi|recebimento)\b/i.test(lower);
+  const isExpense=/\b(despesa|gasto|gastei|paguei|pagamento)\b/i.test(lower);
+  if(!isEntry&&!isExpense)return null;
+  const amount=parsePortugueseMoney(text);
+  if(!(amount>0))return {clarification:'Qual é o valor da movimentação? Ex.: “dez reais” ou “R$ 10,00”.'};
+  const type=isEntry?'entrada':'gasto';
+  const description=text
+    .replace(/\b(?:registre|registrar|registra|lance|lançar|lanca|adicione|adicionar|adiciona|salve|salvar|salva|uma|uma nova|nova|entrada|receita|ganho|recebi|recebimento|despesa|gasto|gastei|paguei|pagamento)\b/gi,' ')
+    .replace(/r\$?\s*\d+(?:[.,]\d{1,2})?|\b(?:zero|um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|quatorze|catorze|quinze|dezesseis|dezessete|dezoito|dezenove|vinte|trinta|quarenta|cinquenta|sessenta|setenta|oitenta|noventa)(?:\s+e\s+(?:um|uma|dois|duas|tres|quatro|cinco|seis|sete|oito|nove))?\s*reais?/gi,' ')
+    .replace(/\s+/g,' ').replace(/^[,;: -]+|[,;: -]+$/g,'').trim();
+  return {type:'finance_local',financeType:type,amount,description:description||('Movimentação de '+moneyBR(amount)),category:isEntry?'Entradas':'Outros'};
+}
 async function requestAIAction(q){
-  // Comandos de WhatsApp são locais e determinísticos. Não envie esse pedido
-  // para a IA, pois ela pode responder que não possui acesso a contatos/mensagens.
+  const financeLocal=parseLocalFinanceAction(q);
+  if(financeLocal)return financeLocal;
   const whatsappLocal=handleWhatsAppChatRequest(q);
   if(whatsappLocal)return {type:'local_message',message:whatsappLocal};
   const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
@@ -1148,6 +1179,14 @@ async function applyAIAction(a){
       return synced?`Lembrete e tarefa registrados; também adicionei ao Google Calendar para ${due.toLocaleString('pt-BR')}.`:`Lembrete e tarefa registrados no PRIMORIS para ${due.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronização externa.`;
     }
     return a.type==='reminder'?`Lembrete registrado como tarefa para ${due?due.toLocaleString('pt-BR'):'a data informada'}.`:`Tarefa “${title}” adicionada ao PRIMORIS.`;
+  }
+  if(a.type==='finance_local'){
+    const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da movimentação?';
+    const description=(a.description||a.title||'Movimentação registrada pelo PRIMORIS').trim();
+    const category=(a.category||'Outros').trim();const f=loadFinanceData();
+    f.transactions.push({id:id(),description,type:a.financeType==='entrada'?'entrada':'gasto',amount,category,date:new Date().toISOString().slice(0,10),source:'assistant'});
+    saveFinanceData(f);renderFinancas();renderDashboard();
+    return a.financeType==='entrada'?('Entrada de '+moneyBR(amount)+' registrada automaticamente em '+category+': '+description+'.'):('Despesa de '+moneyBR(amount)+' registrada automaticamente em '+category+': '+description+'.');
   }
   if(a.type==='expense'){
     const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da despesa?';
