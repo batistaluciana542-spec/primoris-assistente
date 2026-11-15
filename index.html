@@ -1168,7 +1168,7 @@ $('chatForm').onsubmit=async e=>{
       .slice(0,-1)
       .slice(-10)
       .map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent.trim().slice(0,1800)}));
-    const context={...data,userProfile:{name:'Anthony'},userName:'Anthony',calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),recentChat,currentDate:new Date().toISOString()};
+    const context={...data,userProfile:{name:'Anthony'},userName:'Anthony',calendar:data.events||[],memories:Array.isArray(data.memories)?data.memories:[],memory:data.memory||'',finances:loadFinanceData(),recentChat,currentDate:new Date().toISOString(),conversationRules:'Você pode chamar o usuário de Anthony ocasionalmente, mas NÃO cumprimente nem repita o nome Anthony em todas as respostas. Use o nome apenas quando fizer sentido no contexto. Responda diretamente à pergunta quando não houver motivo para usar o nome.'};
     const selectedProvider=getAIProvider();
     const controller=new AbortController();
     const aiTimeout=setTimeout(()=>controller.abort(),35000);
