@@ -411,13 +411,25 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 @media(max-width:900px){.os-extra-grid,.diag-summary{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.pwa-banner{bottom:82px}.os-extra-grid,.diag-summary{grid-template-columns:1fr}}
 </style>
-</head>
+<style id="primoris-smart-suite-css">
+.smart-suite{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+.smart-agent-log{max-height:230px;overflow:auto;display:grid;gap:7px;margin-top:12px}
+.smart-agent-log .item{font-size:13px}
+.day-timeline{display:grid;gap:10px;margin-top:14px}
+.day-block{display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:start}
+.day-time{font:700 13px Orbitron;color:var(--cyan);padding-top:12px}
+.day-content{border:1px solid var(--line);border-radius:15px;padding:13px;background:rgba(255,255,255,.025)}
+.smart-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:11px;color:var(--cyan);margin:3px}
+.memory-intel{border-color:rgba(154,108,255,.35);background:linear-gradient(145deg,rgba(154,108,255,.08),rgba(84,232,255,.04))}
+.search-smart-grid{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px}
+@media(max-width:600px){.smart-suite{grid-template-columns:1fr}.day-block{grid-template-columns:1fr;gap:5px}.day-time{padding-top:0}.search-smart-grid{grid-template-columns:1fr}}
+</style></head>
 <body>
 <div class="app">
 <aside class="sidebar">
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
-    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
+    <button data-page="home">⌂ Hoje</button><button data-page="my-day">☀️ Meu Dia</button><button data-page="agent">⚡ Agente</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
   <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button type="button" onclick="showPage('image-lab')" data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
@@ -532,7 +544,11 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     </div>
   </section>
 
-  <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div></section>
+  <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div>
+<div class="card memory-intel" style="margin-top:14px">
+  <div class="row"><div><span class="badge">MEMÓRIA INTELIGENTE</span><h3>Contexto aprendido</h3><p class="muted">O PRIMORIS salva automaticamente apenas preferências ou informações quando você deixa isso explícito, como “lembre que...” ou “eu prefiro...”.</p></div><span class="smart-chip">● ATIVO</span></div>
+  <div id="smartMemoryStatus" class="muted" style="margin-top:8px">Detecção automática pronta.</div>
+</div></section>
 
   <section id="page-integrations" class="page">
     <div class="row">
@@ -612,6 +628,12 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 
   <section id="page-search" class="page"><h2>Busca no PRIMORIS</h2><p class="muted">Pesquise tarefas, memórias, anotações, compromissos e movimentações financeiras.</p>
     <div class="card"><input id="globalSearch" placeholder="Digite para pesquisar..." oninput="renderGlobalSearch()"><div id="globalSearchResults" class="search-results"></div></div>
+<div class="card memory-intel" style="margin-top:14px">
+  <div class="row"><div><span class="badge">PESQUISA INTELIGENTE</span><h3>Pesquisar na web + explicar com IA</h3><p class="muted">Abra uma busca externa ou peça ao PRIMORIS para explicar o assunto usando a IA selecionada.</p></div></div>
+  <div class="search-smart-grid"><input id="smartWebQuery" placeholder="Ex.: como funciona energia solar?"><button class="btn primary" type="button" onclick="smartWebSearch()">🌐 Pesquisar</button></div>
+  <div class="actions" style="margin-top:10px"><button class="btn" type="button" onclick="smartExplainSearch()">🧠 Explicar com IA</button></div>
+  <div id="smartSearchResult" class="item" style="margin-top:12px">Nenhuma pesquisa executada.</div>
+</div></div>
   </section>
 
   <section id="page-skills" class="page">
@@ -732,11 +754,29 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 
 <section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
 
-</main>
+
+<section id="page-my-day" class="page">
+  <div class="row"><div><div class="eyebrow">PRIMORIS // DAILY COMMAND</div><h2>Meu Dia</h2><div class="muted">Um resumo automático de tarefas, compromissos e estudos. Porque lembrar de tudo sozinho é uma atividade que a humanidade claramente não domina.</div></div><button class="btn primary" type="button" onclick="renderMyDay()">↻ Atualizar</button></div>
+  <div class="smart-suite">
+    <div class="card"><span class="badge">PRIORIDADES</span><div id="myDaySummary" class="stat">0</div><div class="muted">itens para prestar atenção hoje</div></div>
+    <div class="card"><span class="badge">PRÓXIMO</span><div id="myDayNext" style="font-weight:800;margin-top:8px">Nada agendado.</div><div id="myDayNextMeta" class="muted"></div></div>
+  </div>
+  <div class="card" style="margin-top:15px"><div class="row"><h3>📋 Linha do dia</h3><span id="myDayDate" class="muted"></span></div><div id="myDayTimeline" class="day-timeline"></div></div>
+</section>
+
+<section id="page-agent" class="page">
+  <div><div class="eyebrow">PRIMORIS // ACTION AGENT</div><h2>Agente de Ações</h2><p class="muted">Escreva uma sequência de coisas para fazer. O agente interpreta cada etapa, executa o que o PRIMORIS já consegue fazer e registra o resultado.</p></div>
+  <div class="card" style="margin-top:15px">
+    <textarea id="agentCommand" placeholder="Ex.: criar tarefa estudar matemática amanhã; salvar uma memória que prefiro estudar à noite; adicionar um compromisso amanhã às 15h"></textarea>
+    <div class="actions" style="margin-top:10px"><button class="btn primary" type="button" onclick="runPrimorisAgent()">⚡ Executar agente</button><button class="btn" type="button" onclick="clearAgentLog()">Limpar atividade</button></div>
+    <div id="agentStatus" class="muted" style="margin-top:10px">Agente pronto.</div>
+    <div id="agentLog" class="smart-agent-log"></div>
+  </div>
+</section></main>
 </div>
 
 <nav class="mobilebar" aria-label="Navegação principal; deslize para ver todas as páginas">
-<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
+<button type="button" data-page="home" aria-label="Hoje">⌂<br>Hoje</button><button type="button" data-page="my-day" aria-label="Meu Dia">☀️<br>Dia</button><button type="button" data-page="agent" aria-label="Agente">⚡<br>Agente</button><button type="button" data-page="assistant" aria-label="Assistente">◉<br>IA</button><button type="button" data-page="agenda" aria-label="Agenda">◷<br>Agenda</button><button type="button" data-page="tasks" aria-label="Tarefas">✓<br>Tarefas</button><button type="button" data-page="studies" aria-label="Estudos">▣<br>Estudos</button><button type="button" data-page="opportunities" aria-label="Oportunidades">◇<br>Oportun.</button><button type="button" data-page="news" aria-label="Informações">◈<br>Info</button><button type="button" data-page="email" aria-label="E-mails">✉<br>E-mails</button><button type="button" data-page="memory" aria-label="Memória">♢<br>Memória</button><button type="button" data-page="integrations" aria-label="Integrações">⌁<br>Integra</button><button type="button" data-page="settings" aria-label="Configurações">⚙<br>Config.</button><button type="button" data-page="search" aria-label="Busca">⌕<br>Busca</button><button type="button" data-page="skills" aria-label="Skills">🧩<br>Skills</button><button type="button" data-page="os" aria-label="PRIMORIS OS">◈<br>OS</button><button type="button" data-page="devpanel" aria-label="Dev Panel">🛠️<br>Dev</button><button type="button" data-page="finance" aria-label="Finanças">💰<br>Finanças</button><button type="button" data-page="diagnostics" aria-label="Diagnóstico">⌁<br>Testes</button>
 </nav>
 <div id="toast" class="toast"></div>
 <div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
@@ -2412,5 +2452,73 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 })();
 </script>
-</body>
+<script id="primoris-smart-suite-js">
+function renderMyDay(){
+  const d=new Date(),today=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  const tasks=(data.tasks||[]).filter(x=>!x.done);
+  const events=(data.events||[]).filter(x=>{const dt=new Date(x.date);return !isNaN(dt)&&dt.toDateString()===d.toDateString()});
+  const studies=(data.studies||[]).filter(x=>String(x.date||'').slice(0,10)===new Date().toISOString().slice(0,10));
+  const total=tasks.length+events.length+studies.length;
+  const s=document.getElementById('myDaySummary'),date=document.getElementById('myDayDate'),box=document.getElementById('myDayTimeline'),next=document.getElementById('myDayNext'),meta=document.getElementById('myDayNextMeta');
+  if(s)s.textContent=total;
+  if(date)date.textContent=today;
+  const items=[];
+  events.forEach(e=>items.push({time:new Date(e.date),label:e.title||'Compromisso',meta:'Agenda'}));
+  tasks.filter(t=>t.dueDate&&t.dueDate===new Date().toISOString().slice(0,10)).forEach(t=>items.push({time:t.dueTime?new Date(t.dueDate+'T'+t.dueTime):new Date(t.dueDate+'T23:59'),label:t.title,meta:'Tarefa · '+(t.priority||'média')}));
+  studies.forEach(x=>items.push({time:new Date(),label:x.title,meta:'Estudo · '+(x.minutes||0)+' min'}));
+  items.sort((a,b)=>a.time-b.time);
+  if(box)box.innerHTML=items.length?items.map(x=>'<div class="day-block"><div class="day-time">'+(isNaN(x.time)?'--:--':x.time.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}))+'</div><div class="day-content"><b>'+escapeHtml(x.label)+'</b><div class="muted">'+escapeHtml(x.meta)+'</div></div></div>').join(''):'<div class="muted">Nenhum item para hoje. Estranhamente, o universo concedeu uma pausa.</div>';
+  const future=(data.events||[]).map(e=>({e,t:new Date(e.date)})).filter(x=>!isNaN(x.t)&&x.t>=new Date()).sort((a,b)=>a.t-b.t)[0];
+  if(next)next.textContent=future?future.e.title:'Nada agendado.';
+  if(meta)meta.textContent=future?future.t.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'';
+}
+async function runPrimorisAgent(){
+  const input=document.getElementById('agentCommand'),log=document.getElementById('agentLog'),status=document.getElementById('agentStatus');
+  const raw=String(input?.value||'').trim(); if(!raw){toast('Escreva o que o agente deve fazer.');return}
+  const parts=raw.split(/\n|;|\s+e\s+(?=(?:criar|adicionar|salvar|marcar|anotar|lembrar|excluir|registrar|agendar)\b)/i).map(x=>x.trim()).filter(Boolean).slice(0,6);
+  if(status)status.textContent='Agente executando '+parts.length+' etapa(s)...';
+  if(log&&log.textContent.includes('Nenhuma'))log.innerHTML='';
+  for(let i=0;i<parts.length;i++){
+    const p=parts[i]; if(log)log.insertAdjacentHTML('beforeend','<div class="item">⚙️ <b>Etapa '+(i+1)+'</b><br>'+escapeHtml(p)+'<br><small>Processando...</small></div>');
+    try{
+      const a=await requestAIAction(p);
+      if(a?.clarification){if(log)log.lastElementChild.innerHTML='<div class="item">⚠️ <b>Etapa '+(i+1)+'</b><br>'+escapeHtml(a.clarification)+'</div>';continue}
+      if(!a){if(log)log.lastElementChild.innerHTML='<div class="item">⚠️ <b>Etapa '+(i+1)+'</b><br>Não consegui transformar esta etapa em uma ação.</div>';continue}
+      const result=await applyAIAction(a);
+      if(log)log.lastElementChild.innerHTML='<div class="item">✓ <b>Etapa '+(i+1)+'</b><br>'+escapeHtml(result||'Executada com sucesso.')+'</div>';
+    }catch(e){if(log)log.lastElementChild.innerHTML='<div class="item">❌ <b>Etapa '+(i+1)+'</b><br>'+escapeHtml(e.message||'Falha')+'</div>'}
+  }
+  if(status)status.textContent='Agente finalizou.';
+  renderMyDay(); render();
+}
+function clearAgentLog(){const x=document.getElementById('agentLog');if(x)x.innerHTML='';const s=document.getElementById('agentStatus');if(s)s.textContent='Agente pronto.'}
+function smartWebSearch(){
+  const q=String(document.getElementById('smartWebQuery')?.value||'').trim();if(!q){toast('Digite o que deseja pesquisar.');return}
+  const box=document.getElementById('smartSearchResult');if(box)box.innerHTML='🌐 Abrindo pesquisa para <b>'+escapeHtml(q)+'</b>...';
+  try{window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener,noreferrer')}catch(e){window.location.href='https://www.google.com/search?q='+encodeURIComponent(q)}
+}
+async function smartExplainSearch(){
+  const q=String(document.getElementById('smartWebQuery')?.value||'').trim();if(!q){toast('Digite um assunto primeiro.');return}
+  const box=document.getElementById('smartSearchResult');if(box)box.textContent='🧠 Consultando a IA...';
+  try{
+    const r=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'Explique de forma clara e objetiva este assunto para mim: '+q,provider:getAIProvider()})});
+    const j=await r.json().catch(()=>({})); if(!r.ok)throw new Error(j.details||j.error||'Falha na IA.');
+    if(box)box.textContent=cleanAIText(j.text||j.response||'Sem resposta.');
+  }catch(e){if(box)box.textContent='Falha: '+(e.message||'erro desconhecido')}
+}
+function smartRememberFromText(text){
+  const raw=String(text||'').trim(),lower=raw.toLocaleLowerCase('pt-BR');
+  const triggers=['lembre que ','lembra que ','anote que ','guarde que ','eu prefiro ','eu gosto de ','não gosto de ','nao gosto de '];
+  const hit=triggers.find(t=>lower.includes(t));if(!hit)return;
+  const idx=lower.indexOf(hit),note=raw.slice(idx+hit.length).trim().replace(/[.!?]+$/,'');if(note.length<4||note.length>240)return;
+  normalizeMemories();
+  const exists=data.memories.some(m=>String(m.text||'').toLocaleLowerCase('pt-BR')===note.toLocaleLowerCase('pt-BR'));if(exists)return;
+  data.memories.push({id:crypto.randomUUID(),text:note,category:'Preferências',createdAt:new Date().toISOString(),source:'smart-memory'});save();renderMemories();const s=document.getElementById('smartMemoryStatus');if(s)s.textContent='✓ Memória salva automaticamente: '+note;toast('Memória inteligente salva.');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMyDay();
+  const form=document.getElementById('chatForm'),input=document.getElementById('chatInput');
+  if(form&&input)form.addEventListener('submit',()=>setTimeout(()=>smartRememberFromText(input.value),0));
+});
+</script></body>
 </html>
