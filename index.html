@@ -1187,7 +1187,7 @@ async function applyAIAction(a){
     const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da movimentação?';
     const description=(a.description||a.title||'Movimentação registrada pelo PRIMORIS').trim();
     const category=(a.category||'Outros').trim();const f=loadFinanceData();
-    f.transactions.push({id:id(),description,type:a.financeType==='entrada'?'entrada':'gasto',amount,category,date:new Date().toISOString().slice(0,10),source:'assistant'});
+    f.transactions.push({id:id(),description,type:['entrada','gasto','divida','pagamento'].includes(a.financeType)?a.financeType:'gasto',amount,category,date:new Date().toISOString().slice(0,10),source:'assistant'});
     saveFinanceData(f);
     renderFinancas();
     renderDashboard();
