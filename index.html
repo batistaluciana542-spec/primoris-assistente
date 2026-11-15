@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070812">
-<meta name="description" content="PRIMORIS — Assistente Pessoal Futurista">
-<title>PRIMORIS — Assistente Pessoal</title>
+<meta name="description" content="ORION — Assistente Pessoal Futurista">
+<title>ORION — Assistente Pessoal</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -136,7 +136,7 @@ linear-gradient(145deg,rgba(13,16,35,.98),rgba(5,7,16,.98));box-shadow:0 20px 80
 .finance-entry p{margin:0;opacity:.7;font-size:12px;line-height:1.5}
 @media(max-width:600px){.finance-grid{grid-template-columns:1fr}}
 
-/* PRIMORIS v5 */
+/* ORION v5 */
 .memory-form,.agenda-form,.finance-form{display:grid;gap:10px}
 .memory-tools{display:grid;grid-template-columns:1fr 190px;gap:10px;margin-top:14px}
 .memory-item,.movement-item{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
@@ -270,7 +270,7 @@ body.theme-clean{background:#eef3f8!important;color:#182334!important}body.theme
 body.theme-matrix .card,body.theme-matrix .panel{border-color:rgba(72,255,145,.16)!important}body.theme-crimson .card,body.theme-crimson .panel{border-color:rgba(255,89,109,.16)!important}
 @media(max-width:850px){.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.appearance-head{display:block}.appearance-live{display:inline-block;margin-top:10px}.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.theme-preview{height:62px}}
 </style><style id="primoris-theme-full-background-fix">
-/* PRIMORIS — temas mais vivos, com o centro da interface realmente colorido. */
+/* ORION — temas mais vivos, com o centro da interface realmente colorido. */
 html,body{min-height:100%;background-color:#070b18}
 body{
   background:
@@ -527,7 +527,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
  *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
 
-/* PRIMORIS layout rescue: keep the fixed sidebar out of the flex sizing calculation. */
+/* ORION layout rescue: keep the fixed sidebar out of the flex sizing calculation. */
 .app{display:block!important;min-height:100vh;width:100%;}
 .main{display:block!important;margin-left:258px!important;width:auto!important;max-width:none!important;min-width:0!important;padding-right:32px!important;}
 .main>*{min-width:0;max-width:100%;}
@@ -547,7 +547,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 .ai-eyebrow{font:700 9px Orbitron;letter-spacing:2px;color:#6f7b97}.ai-topbar h2{margin:3px 0 2px;font-size:24px;letter-spacing:-.5px}.ai-topbar p{margin:0;color:#737e99;font-size:12px}
 .ai-top-actions{display:flex;align-items:center;gap:8px}.ai-icon-btn,.ai-voice-btn,.ai-clear-btn{height:38px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);color:#cbd2e3;border-radius:11px;padding:0 12px;font-weight:700}.ai-icon-btn{width:38px;padding:0;font-size:20px}.ai-voice-btn span{font-size:9px;color:#65e7a9;margin-right:5px}.ai-voice-btn:hover,.ai-icon-btn:hover,.ai-clear-btn:hover{border-color:rgba(97,231,255,.3);background:rgba(97,231,255,.05)}
 .ai-suggestions{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0 8px}.ai-suggestions button{border:1px solid rgba(255,255,255,.075);background:#0c0f17;color:#aeb7cc;border-radius:20px;padding:8px 12px;font-size:11px}.ai-suggestions button:hover{color:#fff;border-color:rgba(97,231,255,.25);background:#101722}
-.ai-conversation{position:relative;flex:1;min-height:360px;display:flex;flex-direction:column;margin-top:8px;padding:20px 4px 10px;overflow:auto}.ai-conversation:has(#chat:empty)::after{content:'Pergunte, peça ou conte o que precisa.\A O PRIMORIS está pronto.';white-space:pre;display:block;margin:auto;text-align:center;color:#59647d;font-size:14px;line-height:1.8;opacity:.8}.ai-conversation > .primoris-ai-eye{position:absolute;left:50%;top:50%;width:clamp(170px,26vw,250px);margin:0;transform:translate(-50%,-52%);z-index:1;pointer-events:none}.ai-conversation > #chat{position:relative;z-index:2;margin-top:auto!important}.ai-conversation > #voiceStatus{position:relative;z-index:3;flex:0 0 auto}
+.ai-conversation{position:relative;flex:1;min-height:360px;display:flex;flex-direction:column;margin-top:8px;padding:20px 4px 10px;overflow:auto}.ai-conversation:has(#chat:empty)::after{content:'Pergunte, peça ou conte o que precisa.\A O ORION está pronto.';white-space:pre;display:block;margin:auto;text-align:center;color:#59647d;font-size:14px;line-height:1.8;opacity:.8}.ai-conversation > .primoris-ai-eye{position:absolute;left:50%;top:50%;width:clamp(170px,26vw,250px);margin:0;transform:translate(-50%,-52%);z-index:1;pointer-events:none}.ai-conversation > #chat{position:relative;z-index:2;margin-top:auto!important}.ai-conversation > #voiceStatus{position:relative;z-index:3;flex:0 0 auto}
 .primoris-ai-page #chat{width:100%;max-width:850px;margin:0 auto;padding:0 8px 20px}.primoris-ai-page #chat:empty{display:none}.primoris-ai-page .bubble{max-width:78%;border-radius:18px;padding:12px 15px;margin:8px 0;font-size:14px;line-height:1.55;box-shadow:none}.primoris-ai-page .bubble.ai{background:#10141d;border:1px solid rgba(255,255,255,.06);color:#dce2ee}.primoris-ai-page .bubble.user{margin-left:auto;background:linear-gradient(135deg,#173a43,#29203d);border:1px solid rgba(97,231,255,.12);color:#f5f7fc}
 .primoris-ai-page #voiceStatus{align-self:center;margin:6px 0 0;font-size:11px;color:#59647b;background:transparent}
 .ai-composer{width:100%;max-width:850px;margin:0 auto;padding-top:12px}.ai-composer-inner{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(13,16,24,.96);box-shadow:0 16px 45px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.015);transition:border-color .18s,box-shadow .18s}.ai-composer-inner:focus-within{border-color:rgba(97,231,255,.28);box-shadow:0 18px 50px rgba(0,0,0,.3),0 0 0 3px rgba(97,231,255,.04)}.ai-composer input{flex:1!important;border:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;height:44px;padding:0 7px!important;font-size:14px}.ai-composer input::placeholder{color:#59647b}.ai-mic,.ai-send{width:42px;height:42px;border-radius:13px;border:1px solid rgba(255,255,255,.07);display:grid;place-items:center}.ai-mic{background:rgba(255,255,255,.025);color:#9da8bd;font-size:16px}.ai-mic:hover{color:#fff;border-color:rgba(97,231,255,.25)}.ai-send{background:linear-gradient(135deg,#4ddff7,#7863ff);color:#fff;font-size:21px;font-weight:800;border:0;box-shadow:0 6px 18px rgba(97,120,255,.22)}.ai-send:hover{transform:translateY(-1px)}.ai-composer-meta{display:flex;justify-content:space-between;gap:12px;padding:8px 6px;color:#505a70;font-size:10px}
@@ -566,7 +566,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 @media(max-width:700px){#voiceButton.voice-btn,#voiceButton.ai-mic{width:54px;height:54px;min-width:54px;flex-basis:54px;border-radius:15px}}
 </style>
 <style id="primoris-restyle-v6">
-/* PRIMORIS // visual system refresh for all non-IA pages */
+/* ORION // visual system refresh for all non-IA pages */
 :root{
   --bg:#08090d;--panel:#101217;--panel2:#151820;--line:rgba(255,255,255,.09);
   --text:#f5f6f8;--muted:#8d94a3;--cyan:#69d9ff;--pink:#d98cff;--violet:#8e7dff;
@@ -668,7 +668,7 @@ input:focus,textarea:focus,select:focus{border-color:rgba(105,217,255,.45);box-s
   .clock{font-size:19px}
 }
 </style><style id="primoris-neon-restyle-v7">
-/* PRIMORIS // volta do visual neon: profundidade + cor + brilho */
+/* ORION // volta do visual neon: profundidade + cor + brilho */
 :root{
  --bg:#070812;--panel:#101329;--panel2:#151a35;--line:rgba(104,180,255,.20);
  --text:#f5f7ff;--muted:#9aa4c5;--cyan:#54e8ff;--pink:#ff4fd8;--violet:#9a6cff;
@@ -743,7 +743,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 @media(max-width:600px){.main{padding:15px 12px 88px}}
 </style>
 <style id="primoris-ai-eye-v1">
-/* Identidade visual: Olho digital do PRIMORIS */
+/* Identidade visual: Olho digital do ORION */
 .primoris-ai-eye{position:relative;width:clamp(170px,28vw,290px);aspect-ratio:1/1;margin:0 auto 22px;display:grid;place-items:center;filter:drop-shadow(0 0 28px rgba(84,232,255,.16));}
 .primoris-ai-eye .eye-core{position:relative;width:46%;height:46%;border-radius:50%;background:radial-gradient(circle,#f8ffff 0 4%,#54e8ff 9%,#3d63ff 28%,#8e3cff 52%,#12052d 76%,#04040d 100%);box-shadow:0 0 18px rgba(84,232,255,.95),0 0 48px rgba(154,108,255,.65),inset 0 0 22px rgba(255,79,216,.45);z-index:3;animation:primorisEyePulse 2.6s ease-in-out infinite}
 .primoris-ai-eye .eye-ring{position:absolute;border-radius:50%;border:1px solid rgba(84,232,255,.55);box-shadow:0 0 18px rgba(84,232,255,.18),inset 0 0 18px rgba(154,108,255,.08)}
@@ -812,7 +812,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 @media(max-width:600px){#primorisLaunchScreen .launch-inner{height:320px}#primorisLaunchScreen .launch-eye{width:86vw;height:56vw}#primorisLaunchScreen .launch-title{font-size:22px;letter-spacing:6px}#primorisLaunchScreen .launch-core{width:96px;height:96px}#primorisLaunchScreen .launch-core::after{font-size:34px}#primorisLaunchScreen .launch-final{top:calc(50% + 72px)}}
 @media(prefers-reduced-motion:reduce){#primorisLaunchScreen *{animation:none!important}#primorisLaunchScreen .launch-phase1{display:none}#primorisLaunchScreen .launch-phase2{opacity:1;visibility:visible;transform:none}#primorisLaunchScreen .launch-core{opacity:1;transform:none}#primorisLaunchScreen .launch-core::after{opacity:1;transform:none}#primorisLaunchScreen .launch-final{opacity:1;transform:none}}
 </style>
-<div id="primorisLaunchScreen" role="status" aria-label="Carregando PRIMORIS">
+<div id="primorisLaunchScreen" role="status" aria-label="Carregando ORION">
   <div class="launch-inner">
     <div class="launch-phase1">
       <div class="launch-eye" aria-hidden="true">
@@ -825,7 +825,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       <div class="energy"></div>
       <div class="launch-core"></div>
       <div class="launch-final">
-        <div class="launch-title">PRIMORIS</div>
+        <div class="launch-title">ORION</div>
         <div class="launch-status">CARREGANDO<span class="launch-dots"></span></div>
         <div class="launch-progress" aria-hidden="true"></div>
       </div>
@@ -848,7 +848,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 <aside class="sidebar">
   <div class="logo">
     <div class="nav-brand-mark">P</div>
-    <div class="nav-brand-copy"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
+    <div class="nav-brand-copy"><strong>ORION</strong><small>PERSONAL CORE // v4.0</small></div>
   </div>
 
   <div class="nav-caption">NAVEGAÇÃO</div>
@@ -878,7 +878,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </div>
     <div class="nav-group nav-group-system">
       <div class="nav-group-title">Sistema</div>
-      <button data-page="os"><span class="nav-ico">◉</span><span>PRIMORIS OS</span></button>
+      <button data-page="os"><span class="nav-ico">◉</span><span>ORION OS</span></button>
       <button data-page="settings"><span class="nav-ico">⚙</span><span>Configurações</span></button>
       <button data-page="diagnostics"><span class="nav-ico">⌁</span><span>Diagnóstico</span></button>
       <button data-page="devpanel"><span class="nav-ico">⌘</span><span>Dev Panel</span></button>
@@ -888,18 +888,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 
 <main class="main">
   <header class="top">
-    <div><div class="eyebrow">SYSTEM // ONLINE</div><div class="status"><span class="dot"></span> PRIMORIS operacional</div></div>
+    <div><div class="eyebrow">SYSTEM // ONLINE</div><div class="status"><span class="dot"></span> ORION operacional</div></div>
     <div style="text-align:right"><div id="clock" class="clock">--:--:--</div><div id="date" class="date"></div></div>
   </header>
 
   <section id="page-home" class="page">
   <div class="dash-hero">
     <div class="dash-hero-main">
-      <div class="dash-kicker">PRIMORIS // CENTRAL</div>
+      <div class="dash-kicker">ORION // CENTRAL</div>
       <h1>Seu dia, <span>sob controle.</span></h1>
       <p>Uma visão rápida do que importa agora. Menos caixas, menos ruído, mais informação útil.</p>
       <div class="dash-actions">
-        <button class="dash-btn dash-primary" onclick="showPage('assistant')">✦ Falar com PRIMORIS</button>
+        <button class="dash-btn dash-primary" onclick="showPage('assistant')">✦ Falar com ORION</button>
         <button class="dash-btn" onclick="syncCalendar()">↻ Sincronizar agenda</button>
       </div>
     </div>
@@ -907,7 +907,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
   </div>
 
   <div class="dash-status-row">
-    <div><i></i><span>PRIMORIS ONLINE</span></div>
+    <div><i></i><span>ORION ONLINE</span></div>
     <div><i></i><span>PWA ATIVO</span></div>
     <div><i></i><span>GOOGLE CONECTADO</span></div>
     <div class="dash-time"><span id="dashboardGreeting">HOJE</span><strong id="dashboardClock">--:--</strong></div>
@@ -940,7 +940,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </button>
 
     <div class="dash-card dash-card-wide">
-      <div class="dash-card-head"><span>ACESSO RÁPIDO</span><em>PRIMORIS OS</em></div>
+      <div class="dash-card-head"><span>ACESSO RÁPIDO</span><em>ORION OS</em></div>
       <div class="dash-shortcuts">
         <button onclick="showPage('assistant')"><strong>✦</strong><span>IA</span></button>
         <button onclick="showPage('email')"><strong>✉</strong><span>Gmail</span></button>
@@ -1003,7 +1003,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       <div class="ai-identity">
         <div class="ai-mark"><span>✦</span></div>
         <div>
-          <div class="ai-eyebrow">PRIMORIS AI</div>
+          <div class="ai-eyebrow">ORION AI</div>
           <h2>Como posso ajudar?</h2>
           <p>Converse, organize tarefas, consulte seus dados ou peça uma ação.</p>
         </div>
@@ -1023,10 +1023,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </div>
 
     <div class="ai-conversation">
-      <div class="primoris-ai-eye" aria-label="PRIMORIS AI">
+      <div class="primoris-ai-eye" aria-label="ORION AI">
   <div class="eye-ray"></div><div class="eye-ray ray2"></div><div class="eye-ray ray3"></div><div class="eye-ray ray4"></div><div class="eye-ray ray5"></div><div class="eye-ray ray6"></div>
   <div class="eye-ring r3"></div><div class="eye-ring r2"></div><div class="eye-ring r1"></div>
-  <div class="eye-core"></div><div class="eye-label">PRIMORIS AI</div>
+  <div class="eye-core"></div><div class="eye-label">ORION AI</div>
 </div>
       <div id="chat" class="chat"></div>
       <div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div>
@@ -1034,11 +1034,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 
     <form id="chatForm" class="ai-composer">
       <div class="ai-composer-inner">
-        <button id="voiceButton" class="ai-mic" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS"><svg class="primoris-mic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a3.5 3.5 0 0 0-3.5 3.5v5a3.5 3.5 0 0 0 7 0V7A3.5 3.5 0 0 0 12 3.5Z"/><path d="M5.5 11.5v.5a6.5 6.5 0 0 0 13 0v-.5"/><path d="M12 18.5V21"/><path d="M9.5 21h5"/></svg></button>
-        <input id="chatInput" autocomplete="off" placeholder="Pergunte qualquer coisa ao PRIMORIS..." aria-label="Mensagem para o PRIMORIS">
+        <button id="voiceButton" class="ai-mic" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o ORION"><svg class="primoris-mic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a3.5 3.5 0 0 0-3.5 3.5v5a3.5 3.5 0 0 0 7 0V7A3.5 3.5 0 0 0 12 3.5Z"/><path d="M5.5 11.5v.5a6.5 6.5 0 0 0 13 0v-.5"/><path d="M12 18.5V21"/><path d="M9.5 21h5"/></svg></button>
+        <input id="chatInput" autocomplete="off" placeholder="Pergunte qualquer coisa ao ORION..." aria-label="Mensagem para o ORION">
         <button class="ai-send" type="submit" aria-label="Enviar mensagem">↑</button>
       </div>
-      <div class="ai-composer-meta"><span>PRIMORIS pode executar ações quando você pedir.</span><span>Enter para enviar</span></div>
+      <div class="ai-composer-meta"><span>ORION pode executar ações quando você pedir.</span><span>Enter para enviar</span></div>
     </form>
   </div>
 </section>
@@ -1073,7 +1073,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
         <canvas id="imageLabCanvas" class="image-answer-canvas"></canvas>
       </div>
     </div>
-    <div class="card" style="margin-top:15px"><h3>Como funciona</h3><p class="muted">A imagem é enviada ao Gemini para interpretação. O PRIMORIS recebe a leitura, responde ao seu pedido e pode montar uma nova imagem com a foto original e a resposta organizada. O arquivo final é criado no próprio aparelho.</p></div>
+    <div class="card" style="margin-top:15px"><h3>Como funciona</h3><p class="muted">A imagem é enviada ao Gemini para interpretação. O ORION recebe a leitura, responde ao seu pedido e pode montar uma nova imagem com a foto original e a resposta organizada. O arquivo final é criado no próprio aparelho.</p></div>
   </section>
 
   <section id="page-tasks" class="page">
@@ -1110,11 +1110,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
   </section>
 
   <section id="page-email" class="page">
-    <div class="row"><div><div class="eyebrow">PRIMORIS // GMAIL</div><h2>Meus E-mails</h2><div class="muted">Leia sua caixa de entrada sem sair do PRIMORIS.</div></div><button class="btn primary" type="button" onclick="loadEmails()">↻ Atualizar</button></div>
+    <div class="row"><div><div class="eyebrow">ORION // GMAIL</div><h2>Meus E-mails</h2><div class="muted">Leia sua caixa de entrada sem sair do ORION.</div></div><button class="btn primary" type="button" onclick="loadEmails()">↻ Atualizar</button></div>
     <div class="card" style="margin-top:15px"><div class="actions"><input id="emailSearch" placeholder="Pesquisar e-mails..." onkeydown="if(event.key==='Enter')loadEmails()"><button class="btn" type="button" onclick="loadEmails()">Pesquisar</button></div><p id="emailState" class="muted" style="margin:12px 0">Verificando Gmail...</p></div>
     <div class="grid2"><div class="card"><h3>Caixa de entrada</h3><div id="emailList" class="list"><div class="muted">Carregando...</div></div></div><div class="card"><h3>Mensagem</h3><div id="emailViewer" class="email-viewer"><div class="muted">Selecione um e-mail para ler.</div></div></div></div>
     <div class="card" style="margin-top:14px">
-      <div class="row"><div><h3>✍️ Novo rascunho</h3><div class="muted">O PRIMORIS prepara o e-mail no Gmail. O envio continua sob seu controle.</div></div><span class="badge">GMAIL</span></div>
+      <div class="row"><div><h3>✍️ Novo rascunho</h3><div class="muted">O ORION prepara o e-mail no Gmail. O envio continua sob seu controle.</div></div><span class="badge">GMAIL</span></div>
       <form id="gmailDraftForm" class="form" style="margin-top:12px">
         <input id="gmailDraftTo" type="email" placeholder="Destinatário" required>
         <input id="gmailDraftSubject" placeholder="Assunto" required>
@@ -1130,7 +1130,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
   <section id="page-integrations" class="page">
     <div class="row">
       <div>
-        <div class="eyebrow">PRIMORIS // CENTRAL EXTERNA</div>
+        <div class="eyebrow">ORION // CENTRAL EXTERNA</div>
         <h2>Central de Conexões</h2>
         <div class="muted">Um único painel para serviços externos. Menos botões espalhados, menos caça ao tesouro pela interface.</div>
       </div>
@@ -1138,7 +1138,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </div>
 
     <div class="card" style="margin-top:15px">
-      <div class="row"><div><h3>🌐 Serviços conectados</h3><div class="muted">As integrações Google usam a conta já conectada ao PRIMORIS quando a permissão necessária estiver disponível.</div></div><span id="connectionHubStatus" class="hub-active-status hub-active-below"><i></i> ATIVO</span></div>
+      <div class="row"><div><h3>🌐 Serviços conectados</h3><div class="muted">As integrações Google usam a conta já conectada ao ORION quando a permissão necessária estiver disponível.</div></div><span id="connectionHubStatus" class="hub-active-status hub-active-below"><i></i> ATIVO</span></div>
       <div class="grid2" style="margin-top:14px">
         <div class="item"><div class="row"><div><b>📧 Gmail</b><small id="hubGmail" class="hub-active-status"><i></i> ATIVO</small></div><button class="btn" type="button" onclick="showPage('email')">Abrir</button></div></div>
         <div class="item"><div class="row"><div><b>📅 Google Calendar</b><small id="hubCalendar" class="hub-active-status"><i></i> ATIVO</small></div><button class="btn" type="button" onclick="showPage('agenda')">Abrir</button></div></div>
@@ -1150,7 +1150,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       <div class="card">
         <div class="row"><div><h3>💻 GitHub</h3><div class="muted">Acompanhe o projeto, repositórios e alterações.</div></div><span class="badge">EXTERNO</span></div>
         <div class="actions" style="margin-top:12px">
-          <button class="btn primary" type="button" onclick="openExternal('https://github.com/batistaluciana542-spec/primoris-assistente')">Abrir PRIMORIS</button>
+          <button class="btn primary" type="button" onclick="openExternal('https://github.com/batistaluciana542-spec/primoris-assistente')">Abrir ORION</button>
           <button class="btn" type="button" onclick="openExternal('https://github.com/')">GitHub</button>
         </div>
       </div>
@@ -1177,7 +1177,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     <div class="card" style="margin-top:14px">
       <div class="row"><div><h3>💬 WhatsApp</h3><div class="muted">Os contatos e o envio já ficam nesta mesma central.</div></div><span class="badge">ATIVO</span></div>
       <div class="card" style="margin-top:12px;background:rgba(84,232,255,.035)">
-        <div class="row"><div><h4 style="margin:0">📇 Contatos do telefone</h4><div class="muted">Selecione os contatos que o PRIMORIS poderá usar para preparar mensagens. O navegador só entrega os contatos que você escolher.</div></div><span class="badge">PRIVACIDADE</span></div>
+        <div class="row"><div><h4 style="margin:0">📇 Contatos do telefone</h4><div class="muted">Selecione os contatos que o ORION poderá usar para preparar mensagens. O navegador só entrega os contatos que você escolher.</div></div><span class="badge">PRIVACIDADE</span></div>
         <div class="actions" style="margin-top:12px"><button class="btn primary" type="button" onclick="importPhoneContacts()">📇 Selecionar contatos do telefone</button></div>
         <small class="muted">Depois de selecionados, nome e número ficam salvos localmente neste aparelho para a IA localizar o contato sem você digitar o número.</small>
       </div>
@@ -1196,7 +1196,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
           <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem..." required></textarea>
           <div class="actions"><button class="btn primary" type="submit">Abrir WhatsApp com a mensagem</button></div>
         </form>
-        <p class="muted" style="margin-top:10px">O PRIMORIS prepara a conversa, mas o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
+        <p class="muted" style="margin-top:10px">O ORION prepara a conversa, mas o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
         <p id="whatsappStatus" class="muted" aria-live="polite"></p>
         <p><a id="whatsappFallbackLink" href="#" target="_self" hidden rel="noopener">Abrir conversa no WhatsApp</a></p>
       </div>
@@ -1204,22 +1204,22 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 
     <div class="card" style="margin-top:14px">
       <h3>🧠 Próximo nível</h3>
-      <div class="muted">Drive, Docs, Sheets e Classroom já ficam reunidos aqui. Para leitura/escrita direta dentro do PRIMORIS, será necessário ampliar as permissões OAuth e ativar as APIs correspondentes no Google Cloud. O Google disponibiliza APIs dedicadas para esses serviços.</div>
+      <div class="muted">Drive, Docs, Sheets e Classroom já ficam reunidos aqui. Para leitura/escrita direta dentro do ORION, será necessário ampliar as permissões OAuth e ativar as APIs correspondentes no Google Cloud. O Google disponibiliza APIs dedicadas para esses serviços.</div>
     </div>
   </section>
 
-  <section id="page-search" class="page"><h2>Busca no PRIMORIS</h2><p class="muted">Pesquise tarefas, memórias, anotações, compromissos e movimentações financeiras.</p>
+  <section id="page-search" class="page"><h2>Busca no ORION</h2><p class="muted">Pesquise tarefas, memórias, anotações, compromissos e movimentações financeiras.</p>
     <div class="card"><input id="globalSearch" placeholder="Digite para pesquisar..." oninput="renderGlobalSearch()"><div id="globalSearchResults" class="search-results"></div></div>
   </section>
 
   <section id="page-skills" class="page">
-    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // SKILLS</div><h1>Habilidades</h1><p class="muted">Módulos que o PRIMORIS pode usar. Ative ou desative funções sem mexer nas IAs existentes.</p></div></div>
+    <div class="panel-header"><div><div class="eyebrow">ORION // SKILLS</div><h1>Habilidades</h1><p class="muted">Módulos que o ORION pode usar. Ative ou desative funções sem mexer nas IAs existentes.</p></div></div>
     <div class="card"><div class="row"><div><h3>🧩 Skills disponíveis</h3><p class="muted">As preferências ficam salvas neste aparelho.</p></div><button class="btn" type="button" onclick="resetSkills()">Restaurar</button></div><div id="skillsGrid" class="skills-grid"></div></div>
   </section>
 
   <section id="page-os" class="page">
     <div class="os-shell">
-      <div class="os-head"><div><div class="eyebrow">PRIMORIS // PERSONAL OPERATING SYSTEM</div><div class="os-name">PRIMORIS OS</div><div class="muted">Central pessoal de Anthony</div></div><span class="status"><span class="dot"></span> ONLINE</span></div>
+      <div class="os-head"><div><div class="eyebrow">ORION // PERSONAL OPERATING SYSTEM</div><div class="os-name">ORION OS</div><div class="muted">Central pessoal de Anthony</div></div><span class="status"><span class="dot"></span> ONLINE</span></div>
       <div class="os-grid">
         <button class="os-tile" type="button" onclick="showPage('assistant')"><span class="big">🧠</span><strong>Assistente</strong><small>Converse com a IA</small></button>
         <button class="os-tile" type="button" onclick="showPage('tasks')"><span class="big">📋</span><strong>Tarefas</strong><small id="osTasks">0 pendentes</small></button>
@@ -1230,12 +1230,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
         <button class="os-tile" type="button" onclick="showPage('skills')"><span class="big">🧩</span><strong>Skills</strong><small>Gerencie habilidades</small></button>
         <button class="os-tile" type="button" onclick="showPage('settings')"><span class="big">⚙️</span><strong>Configurações</strong><small>Personalize o sistema</small></button>
       </div>
-      <div class="os-footer"><span class="muted">PRIMORIS v4.0 · Anthony</span><button class="btn primary" type="button" onclick="showPage('assistant');setTimeout(()=>document.getElementById('chatInput')?.focus(),150)">Iniciar comando</button></div>
+      <div class="os-footer"><span class="muted">ORION v4.0 · Anthony</span><button class="btn primary" type="button" onclick="showPage('assistant');setTimeout(()=>document.getElementById('chatInput')?.focus(),150)">Iniciar comando</button></div>
     </div>
   </section>
 
   <section id="page-devpanel" class="page">
-    <div class="panel-header"><div><div class="eyebrow">PRIMORIS // DEVELOPER</div><h1>Dev Panel</h1><p class="muted">Painel técnico para verificar o estado do sistema. Nenhuma chave de API é exibida.</p></div></div>
+    <div class="panel-header"><div><div class="eyebrow">ORION // DEVELOPER</div><h1>Dev Panel</h1><p class="muted">Painel técnico para verificar o estado do sistema. Nenhuma chave de API é exibida.</p></div></div>
     <div class="card"><div class="row"><div><h3>🛠️ Controle do sistema</h3><p id="devPanelMode" class="muted">Modo desenvolvedor protegido.</p></div><button class="btn primary" type="button" onclick="runDevPanelScan()">Executar diagnóstico</button></div>
       <div class="dev-grid">
         <div class="dev-stat"><span class="muted">IA selecionada</span><strong id="devAI">--</strong></div>
@@ -1258,14 +1258,14 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     <div class="card" style="margin-top:14px"><h3>Resultado detalhado</h3><div id="diagDetails" class="list"><div class="muted">Nenhum teste executado.</div></div></div>
   </section>
 
-  <!-- PRIMORIS DEPLOY BUILD: backup controls are authored directly in this HTML. -->
+  <!-- ORION DEPLOY BUILD: backup controls are authored directly in this HTML. -->
   <section id="page-settings" class="page">
-    <h2>Configurações</h2><div class="muted">Ajustes e atalhos das áreas do PRIMORIS.</div>
+    <h2>Configurações</h2><div class="muted">Ajustes e atalhos das áreas do ORION.</div>
     <div class="settings-links"><button class="btn" onclick="showPage('memory')">Memória</button><button class="btn" onclick="showPage('assistant')">IA</button><button class="btn" onclick="showPage('agenda')">Google Calendar</button><button class="btn" onclick="showPage('news')">Notícias</button><button class="btn" onclick="showPage('finance')">Finanças</button><button class="btn" onclick="showPage('integrations')">Integrações</button></div>
-    <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do PRIMORIS</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="cloudflare">☁️ Cloudflare AI</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted ai-provider-status">Verificando disponibilidade...</span></div></div>
+    <div class="card" style="margin-top:14px"><h3>🤖 Inteligência do ORION</h3><p class="muted">Escolha qual IA será usada nas conversas. A escolha fica salva neste aparelho.</p><div class="actions" style="margin-top:10px;align-items:center"><select id="aiProviderSelect" class="btn" style="min-width:230px" onchange="setAIProvider(this.value)"><option value="openrouter">⚡ OpenRouter · Nemotron 3.5 Lightning</option><option value="gemini">✨ Google Gemini</option><option value="groq">⚡ Groq · GPT-OSS 120B</option><option value="cloudflare">☁️ Cloudflare AI</option><option value="auto">🔄 Automático (fallback)</option></select><span id="aiProviderStatus" class="muted ai-provider-status">Verificando disponibilidade...</span></div></div>
 
     <div class="card appearance-card" style="margin-top:14px">
-  <div class="appearance-head"><div><h3>🎨 Aparência</h3><p class="muted">Mude toda a identidade visual do PRIMORIS.</p></div><span class="appearance-live">● AO VIVO</span></div>
+  <div class="appearance-head"><div><h3>🎨 Aparência</h3><p class="muted">Mude toda a identidade visual do ORION.</p></div><span class="appearance-live">● AO VIVO</span></div>
   <div id="appearanceThemes" class="theme-grid">
     <button type="button" class="theme-choice" data-theme-choice="default" onclick="setAppearance('default')"><span class="theme-preview theme-preview-cyber"><i></i><b></b><em></em></span><strong>Cyber Neon</strong><small>Roxo · Ciano</small></button>
     <button type="button" class="theme-choice" data-theme-choice="ocean" onclick="setAppearance('ocean')"><span class="theme-preview theme-preview-ocean"><i></i><b></b><em></em></span><strong>Ocean</strong><small>Azul · Ciano</small></button>
@@ -1293,7 +1293,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       #primorisVoiceSettings .pv-orb{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
     </style>
     <div id="primorisVoiceSettings">
-      <div class="pv-title">🎙️ PRIMORIS VOICE</div>
+      <div class="pv-title">🎙️ ORION VOICE</div>
       <div class="pv-sub">Controle a voz do assistente diretamente pelas Configurações.</div>
       <div class="pv-grid">
         <label class="pv-field wide"><span class="pv-label">VOZ BASE</span><select id="pvVoiceSelect"></select></label>
@@ -1302,10 +1302,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
         <label class="pv-field wide"><span class="pv-label">VELOCIDADE</span><div class="pv-range"><input id="pvRate" type="range" min="0.65" max="1.35" step="0.05" value="0.96"><output id="pvRateValue">0.96x</output></div></label>
         <label class="pv-field"><span class="pv-label">TOM</span><div class="pv-range"><input id="pvPitch" type="range" min="0.5" max="1.5" step="0.05" value="0.92"><output id="pvPitchValue">0.92</output></div></label>
         <label class="pv-field"><span class="pv-label">VOLUME</span><div class="pv-range"><input id="pvVolume" type="range" min="0" max="1" step="0.05" value="1"><output id="pvVolumeValue">100%</output></div></label>
-        <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><input id="pvTestText" value="Olá, Anthony. PRIMORIS online. Voz configurada com sucesso."></label>
+        <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><input id="pvTestText" value="Olá, Anthony. ORION online. Voz configurada com sucesso."></label>
       </div>
       <div class="pv-actions"><button class="btn primary" type="button" onclick="testPrimorisVoice()">▶ Testar voz</button><button class="btn" type="button" onclick="stopPrimorisVoice()">■ Parar</button><button class="btn" type="button" onclick="savePrimorisVoiceSettings()">✓ Salvar perfil</button></div>
-      <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><span id="pvStatusText">PRIMORIS pronto</span><span id="pvVoiceInfo"></span></div>
+      <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><span id="pvStatusText">ORION pronto</span><span id="pvVoiceInfo"></span></div>
     </div>
     <script id="primoris-voice-settings-js">
     (function(){
@@ -1322,12 +1322,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
         const run=()=>{
           try{
             synth.cancel();
-            const text=$('pvTestText').value||'PRIMORIS online.';
+            const text=$('pvTestText').value||'ORION online.';
             const u=new SpeechSynthesisUtterance(text);
             u.lang='pt-BR';u.rate=Number.isFinite(s.rate)?s.rate:1;u.pitch=Number.isFinite(s.pitch)?s.pitch:1;u.volume=Number.isFinite(s.volume)?s.volume:1;
             const available=synth.getVoices()||[];const v=preferred(s);if(v&&available.some(x=>x.name===v.name&&x.lang===v.lang))u.voice=v;
-            u.onstart=()=>{$('pvStatusText').textContent='PRIMORIS falando...';$('pvOrb').style.boxShadow='0 0 20px var(--pink)'};
-            u.onend=()=>{$('pvStatusText').textContent='PRIMORIS pronto';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
+            u.onstart=()=>{$('pvStatusText').textContent='ORION falando...';$('pvOrb').style.boxShadow='0 0 20px var(--pink)'};
+            u.onend=()=>{$('pvStatusText').textContent='ORION pronto';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
             u.onerror=e=>{$('pvStatusText').textContent='Erro de voz: '+(e.error||'desconhecido');$('pvOrb').style.boxShadow='0 0 12px var(--cyan)';console.warn('Teste de voz:',e.error,e)};
             synth.resume();synth.speak(u);
           }catch(e){$('pvStatusText').textContent='Erro de voz: '+(e.message||'desconhecido');console.warn('Teste de voz:',e)}
@@ -1335,7 +1335,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
         run();
         setTimeout(()=>{if(!synth.speaking&&!synth.pending){try{run()}catch(e){}}},900);
       };
-      window.stopPrimorisVoice=function(){if(synth)synth.cancel();$('pvStatusText').textContent='PRIMORIS parado';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
+      window.stopPrimorisVoice=function(){if(synth)synth.cancel();$('pvStatusText').textContent='ORION parado';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
       window.savePrimorisVoiceSettings=function(){save();$('pvStatusText').textContent='Perfil de voz salvo neste aparelho.';if(typeof toast==='function')toast('Perfil de voz salvo.')};
       ['pvRate','pvPitch','pvVolume'].forEach(id=>$(id)?.addEventListener('input',updateRanges));
       $('pvVoiceSelect')?.addEventListener('change',save);$('pvStyle')?.addEventListener('change',save);$('pvLang')?.addEventListener('change',()=>{save();load()});
@@ -1346,7 +1346,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     
 
 
-<section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
+<section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">ORION // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
 
 </main>
 </div>
@@ -1357,7 +1357,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 <div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
 <div id="pwaBanner" class="pwa-banner" role="status">
   <div class="pwa-icon">📲</div>
-  <div class="pwa-copy"><strong>INSTALAR PRIMORIS</strong><small>Use o PRIMORIS como aplicativo, com acesso rápido pela tela inicial.</small></div>
+  <div class="pwa-copy"><strong>INSTALAR ORION</strong><small>Use o ORION como aplicativo, com acesso rápido pela tela inicial.</small></div>
   <button class="btn primary" type="button" onclick="installPrimoris()">Instalar</button>
   <button class="btn" type="button" onclick="dismissPWAInstall()">×</button>
 </div>
@@ -1368,7 +1368,7 @@ let data=(()=>{
   const raw=localStorage.getItem(KEY);
   if(!raw)return {profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};
   try{const parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'&&!Array.isArray(parsed)?{profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],...parsed,profile:{name:'Anthony',...(parsed.profile||{})},memories:Array.isArray(parsed.memories)?parsed.memories:[],reminders:Array.isArray(parsed.reminders)?parsed.reminders:[],notifications:Array.isArray(parsed.notifications)?parsed.notifications:[]}:{tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[]};}
-  catch(err){console.error('Dados locais do PRIMORIS inválidos; mantendo o conteúdo salvo sem sobrescrever:',err);return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};}
+  catch(err){console.error('Dados locais do ORION inválidos; mantendo o conteúdo salvo sem sobrescrever:',err);return {tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};}
 })();
 const $=id=>document.getElementById(id);
 data.profile={name:'Anthony',...(data.profile||{})};const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
@@ -1501,9 +1501,9 @@ function handleWhatsAppChatRequest(query){
 }
 
 
-const PRIMORIS_SKILLS_KEY='primoris_skills_v1';
-const PRIMORIS_DEVLOG_KEY='primoris_devlog_v1';
-const PRIMORIS_SKILLS=[
+const ORION_SKILLS_KEY='primoris_skills_v1';
+const ORION_DEVLOG_KEY='primoris_devlog_v1';
+const ORION_SKILLS=[
  {id:'assistant',icon:'🧠',name:'Assistente IA',desc:'Conversas e comandos inteligentes.',enabled:true},
  {id:'whatsapp',icon:'💬',name:'WhatsApp',desc:'Abrir conversas e preparar mensagens.',enabled:true},
  {id:'gmail',icon:'📧',name:'Gmail',desc:'Pesquisar, ler e criar rascunhos de e-mail.',enabled:true},
@@ -1516,10 +1516,10 @@ const PRIMORIS_SKILLS=[
  {id:'search',icon:'🔎',name:'Busca',desc:'Pesquisar seus dados locais.',enabled:true},
  {id:'finance',icon:'💰',name:'Finanças',desc:'Controle financeiro pessoal.',enabled:true}
 ];
-function loadSkills(){try{const x=JSON.parse(localStorage.getItem(PRIMORIS_SKILLS_KEY)||'{}');return PRIMORIS_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(PRIMORIS_SKILLS.map(s=>[s.id,s.enabled]))}}
+function loadSkills(){try{const x=JSON.parse(localStorage.getItem(ORION_SKILLS_KEY)||'{}');return ORION_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(ORION_SKILLS.map(s=>[s.id,s.enabled]))}}
 function isSkillEnabled(id){return loadSkills()[id]!==false}
 function skillBlockedMessage(id){
-  const skill=PRIMORIS_SKILLS.find(s=>s.id===id);
+  const skill=ORION_SKILLS.find(s=>s.id===id);
   return 'A skill “'+(skill?.name||id)+'” está desativada. Ative-a em Skills para eu poder usar essa função.';
 }
 function requireSkill(id){
@@ -1528,13 +1528,13 @@ function requireSkill(id){
   try{toast(message)}catch{}
   return message;
 }
-function saveSkills(x){localStorage.setItem(PRIMORIS_SKILLS_KEY,JSON.stringify(x))}
-function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" data-skill-toggle="${s.id}"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('');box.querySelectorAll('[data-skill-toggle]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleSkill(btn.getAttribute('data-skill-toggle'));});});}
+function saveSkills(x){localStorage.setItem(ORION_SKILLS_KEY,JSON.stringify(x))}
+function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=ORION_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" data-skill-toggle="${s.id}"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('');box.querySelectorAll('[data-skill-toggle]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleSkill(btn.getAttribute('data-skill-toggle'));});});}
 function toggleSkill(id){const x=loadSkills();x[id]=!x[id];saveSkills(x);renderSkills();devLog((x[id]?'Ativada':'Desativada')+' skill: '+id);toast((x[id]?'Skill ativada: ':'Skill desativada: ')+id)}
-function resetSkills(){if(!confirm('Restaurar todas as skills?'))return;localStorage.removeItem(PRIMORIS_SKILLS_KEY);renderSkills();toast('Skills restauradas')}
-function devLog(message){try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');list.unshift({time:new Date().toISOString(),message:String(message)});localStorage.setItem(PRIMORIS_DEVLOG_KEY,JSON.stringify(list.slice(0,80)))}catch{}renderDevLog()}
-function renderDevLog(){const box=$('devLog');if(!box)return;try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');box.innerHTML=list.length?list.map(x=>`<div class="item"><span class="muted">${new Date(x.time).toLocaleString('pt-BR')}</span><br>${escapeHtml(x.message)}</div>`).join(''):'<div class="muted">Nenhum evento registrado.</div>'}catch{box.innerHTML='<div class="muted">Log indisponível.</div>'}}
-function clearDevLog(){localStorage.removeItem(PRIMORIS_DEVLOG_KEY);renderDevLog();toast('Log limpo')}
+function resetSkills(){if(!confirm('Restaurar todas as skills?'))return;localStorage.removeItem(ORION_SKILLS_KEY);renderSkills();toast('Skills restauradas')}
+function devLog(message){try{const list=JSON.parse(localStorage.getItem(ORION_DEVLOG_KEY)||'[]');list.unshift({time:new Date().toISOString(),message:String(message)});localStorage.setItem(ORION_DEVLOG_KEY,JSON.stringify(list.slice(0,80)))}catch{}renderDevLog()}
+function renderDevLog(){const box=$('devLog');if(!box)return;try{const list=JSON.parse(localStorage.getItem(ORION_DEVLOG_KEY)||'[]');box.innerHTML=list.length?list.map(x=>`<div class="item"><span class="muted">${new Date(x.time).toLocaleString('pt-BR')}</span><br>${escapeHtml(x.message)}</div>`).join(''):'<div class="muted">Nenhum evento registrado.</div>'}catch{box.innerHTML='<div class="muted">Log indisponível.</div>'}}
+function clearDevLog(){localStorage.removeItem(ORION_DEVLOG_KEY);renderDevLog();toast('Log limpo')}
 function runDevPanelScan(){
  const provider=localStorage.getItem('primoris_ai_provider')||'auto';
  const storage=(()=>{try{localStorage.setItem('__p','1');localStorage.removeItem('__p');return 'OK'}catch{return 'ERRO'}})();
@@ -1680,7 +1680,7 @@ async function createLocalAppointment(parsed){
   if(blocked)return {error:blocked};
   const start=parsed.date,end=new Date(start);end.setHours(end.getHours()+1);
   const id=window.crypto?.randomUUID?crypto.randomUUID():`ev-${Date.now()}`;
-  const event={id,title:parsed.title,date:start.toISOString(),description:'Criado pelo assistente PRIMORIS',source:'local'};
+  const event={id,title:parsed.title,date:start.toISOString(),description:'Criado pelo assistente ORION',source:'local'};
   try{
     const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:event.title,description:event.description,start:start.toISOString(),end:end.toISOString()})});
     if(r.ok){const j=await r.json();event.id=j.event?.id||j.id||event.id;event.source='google';}
@@ -1825,18 +1825,18 @@ async function applyAIAction(a){
     data.tasks.push(task);save();render();
     if(a.type==='reminder'&&due){
       const end=new Date(due);end.setHours(end.getHours()+1);let synced=false;
-      try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:'Lembrete: '+title,description:'Criado pelo assistente PRIMORIS',start:due.toISOString(),end:end.toISOString()})});
+      try{const r=await fetch('/api/calendar/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({summary:'Lembrete: '+title,description:'Criado pelo assistente ORION',start:due.toISOString(),end:end.toISOString()})});
         if(r.ok){const j=await r.json();if(j.event){data.events.push({id:j.event.id,title:j.event.summary||('Lembrete: '+title),description:j.event.description||'',date:j.event.start?.dateTime||due.toISOString(),source:'google'});synced=true;}}
       }catch(err){console.warn('Calendar reminder:',err)}
-      if(!synced)data.events.push({id:id(),title:'Lembrete: '+title,description:'Lembrete criado pelo PRIMORIS',date:due.toISOString(),source:'local'});
+      if(!synced)data.events.push({id:id(),title:'Lembrete: '+title,description:'Lembrete criado pelo ORION',date:due.toISOString(),source:'local'});
       save();renderAgenda();render();
-      return synced?`Lembrete e tarefa registrados; também adicionei ao Google Calendar para ${due.toLocaleString('pt-BR')}.`:`Lembrete e tarefa registrados no PRIMORIS para ${due.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronização externa.`;
+      return synced?`Lembrete e tarefa registrados; também adicionei ao Google Calendar para ${due.toLocaleString('pt-BR')}.`:`Lembrete e tarefa registrados no ORION para ${due.toLocaleString('pt-BR')}. Conecte o Google Calendar para sincronização externa.`;
     }
-    return a.type==='reminder'?`Lembrete registrado como tarefa para ${due?due.toLocaleString('pt-BR'):'a data informada'}.`:`Tarefa “${title}” adicionada ao PRIMORIS.`;
+    return a.type==='reminder'?`Lembrete registrado como tarefa para ${due?due.toLocaleString('pt-BR'):'a data informada'}.`:`Tarefa “${title}” adicionada ao ORION.`;
   }
   if(a.type==='finance_local'){
     const amount=Number(a.amount);if(!(amount>0))return 'Qual é o valor da movimentação?';
-    const description=(a.description||a.title||'Movimentação registrada pelo PRIMORIS').trim();
+    const description=(a.description||a.title||'Movimentação registrada pelo ORION').trim();
     const category=(a.category||'Outros').trim();const f=loadFinanceData();
     f.transactions.push({id:id(),description,type:['entrada','gasto','divida','pagamento'].includes(a.financeType)?a.financeType:'gasto',amount,category,date:new Date().toISOString().slice(0,10),source:'assistant'});
     saveFinanceData(f);
@@ -1944,14 +1944,14 @@ $('chatForm').onsubmit=async e=>{
   }catch(err){
     const message=err?.name==='AbortError'?'A IA demorou mais de 35 segundos para responder.':(err?.message||'Falha desconhecida ao chamar a IA.');
     const visible=isPotentialActionRequest(q)?'Não consegui concluir esse comando. Nenhuma alteração foi feita. Detalhe: '+message:'Não consegui obter resposta da IA. Detalhe: '+message;
-    placeholder.textContent=visible;placeholder.className='bubble ai';speakText(visible);console.error('PRIMORIS AI:',err);
+    placeholder.textContent=visible;placeholder.className='bubble ai';speakText(visible);console.error('ORION AI:',err);
   }
 };
-function addChat(t,c){const avatar=c==='ai'?'<img class="primoris-avatar" src="/primoris-avatar.svg" alt="PRIMORIS">':'';$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c} ${c==='ai'?'ai-bubble':''}">${avatar}<span class="bubble-text">${escapeHtml(t)}</span></div>`);$('chat').scrollTop=$('chat').scrollHeight}
-function clearChat(){$('chat').innerHTML='<div class="bubble ai ai-bubble"><img class="primoris-avatar" src="/primoris-avatar.svg" alt="PRIMORIS"><span class="bubble-text">Olá, Anthony. PRIMORIS online. Pode falar.</span></div>'}
+function addChat(t,c){const avatar=c==='ai'?'<img class="primoris-avatar" src="/primoris-avatar.svg" alt="ORION">':'';$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c} ${c==='ai'?'ai-bubble':''}">${avatar}<span class="bubble-text">${escapeHtml(t)}</span></div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai ai-bubble"><img class="primoris-avatar" src="/primoris-avatar.svg" alt="ORION"><span class="bubble-text">Olá, Anthony. ORION online. Pode falar.</span></div>'}
 function localAI(q){
   const t=q.toLowerCase();
-  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá, Anthony. PRIMORIS online e pronto para ajudar.';
+  if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá, Anthony. ORION online e pronto para ajudar.';
   if(/hora/.test(t))return 'Agora são '+new Date().toLocaleTimeString('pt-BR')+'.';
   if(/agenda|calendário|calendario|compromisso|evento|marcado|programado|o que tenho|o que vou fazer/.test(t))return data.events?.length?'Você tem '+data.events.length+' evento(s) sincronizado(s). Abra a Agenda para ver os detalhes.':'Não há eventos sincronizados no momento.';
   if(/tarefa/.test(t))return 'Você tem '+(data.tasks||[]).filter(x=>!x.done).length+' tarefa(s) pendente(s).';
@@ -1961,7 +1961,7 @@ function localAI(q){
   if(/notifica/.test(t))return (data.notifications||[]).filter(n=>!n.read).length?'Você tem '+(data.notifications||[]).filter(n=>!n.read).length+' notificação(ões) pendente(s).':'Não há notificações pendentes.';
   if(/quanto.*(gastar|tenho|devo)|saldo|financeir/.test(t)){const f=loadFinanceData();return `Saldo: ${moneyBR(financeBalance(f))}. Gastos: ${moneyBR(monthlySpent(f))}. Dívidas: ${moneyBR(financeDebt(f))}. Disponível estimado: ${moneyBR(Math.max(0,financeBalance(f)-financeDebt(f)-(f.transactions.length?0:f.legacy.gastei)))}`;}
   if(/como.*(responder|respostas)|minha prefer[eê]ncia/.test(t)){const prefs=(data.memories||[]).filter(m=>m.category==='Preferências');if(prefs.length)return 'Vou considerar estas preferências salvas: '+prefs.map(m=>m.text).join('; ');}
-  return window.primorisAIConnected?'Estou conectado ao '+aiProviderLabel(getAIProvider())+' e pronto para ajudar.':'O servidor da IA não está disponível neste momento. Verifique a conexão do PRIMORIS.';
+  return window.primorisAIConnected?'Estou conectado ao '+aiProviderLabel(getAIProvider())+' e pronto para ajudar.':'O servidor da IA não está disponível neste momento. Verifique a conexão do ORION.';
 }
 
 async function syncCalendar(){
@@ -2240,7 +2240,7 @@ function exportData(){
     const a=document.createElement('a');
     const today=new Date();
     const date=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
-    a.href=url;a.download=`PRIMORIS-backup-${date}.json`;
+    a.href=url;a.download=`ORION-backup-${date}.json`;
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
     localStorage.setItem('primoris_last_backup',new Date().toISOString());updateBackupStatus();devLog('Backup completo exportado');toast('Backup completo exportado');
@@ -2259,7 +2259,7 @@ $('importFile').onchange=e=>{
       if(!requiredArrays.every(key=>Array.isArray(backup.primoris[key])))throw new Error('Dados principais incompletos');
       if(backup.version===1&&!['tenho','gastei','posso','devo'].every(key=>Number.isFinite(Number(backup.finances[key]))))throw new Error('Dados financeiros inválidos');
       if(backup.version===2&&(!Number.isFinite(Number(backup.finances.opening))||!Array.isArray(backup.finances.transactions)))throw new Error('Dados financeiros inválidos');
-      if(!confirm('Importar este backup substituirá os dados atuais do PRIMORIS e as finanças. Deseja continuar?'))return;
+      if(!confirm('Importar este backup substituirá os dados atuais do ORION e as finanças. Deseja continuar?'))return;
       const previousMain=localStorage.getItem(KEY);
       const previousFinances=localStorage.getItem('primoris_financas_v1');
       try{
@@ -2274,14 +2274,14 @@ $('importFile').onchange=e=>{
       render();
       if(typeof renderMemories==='function')renderMemories();
       if(typeof renderFinancas==='function')renderFinancas();
-      toast('Restauração do PRIMORIS concluída');
+      toast('Restauração do ORION concluída');
     }catch(err){console.error('Erro ao importar backup:',err);toast(err.message==='Formato de backup não reconhecido'||err.message==='Dados principais incompletos'||err.message==='Dados financeiros inválidos'?err.message:'Não foi possível restaurar o backup')}
     finally{e.target.value=''}
   };
   reader.onerror=()=>{toast('Não foi possível ler o arquivo');e.target.value=''};
   reader.readAsText(file);
 }
-function resetData(){if(confirm('Apagar todos os dados locais do PRIMORIS?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();localStorage.removeItem('primoris_last_backup');devLog('Dados locais apagados');toast('Dados locais apagados')}}
+function resetData(){if(confirm('Apagar todos os dados locais do ORION?')){data={profile:{name:'Anthony'},tasks:[],events:[],studies:[],opportunities:[],memory:'',memories:[],reminders:[],notifications:[]};save();localStorage.removeItem('primoris_financas_v1');render();renderMemories();renderFinancas();localStorage.removeItem('primoris_last_backup');devLog('Dados locais apagados');toast('Dados locais apagados')}}
 
 
 function notificationKey(type,id){return `${type}:${id}`}
@@ -2308,7 +2308,7 @@ function checkSmartNotifications(){
     if(diff>=0&&diff<=60*60*1000){
       const msg=`Tarefa: ${t.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
       const before=(data.notifications||[]).find(n=>n.key===notificationKey('task',t.id));
-      if(!before||before.read){addSmartNotification('task','Tarefa próxima',msg,t.id);showBrowserNotification('PRIMORIS · Tarefa próxima',msg)}
+      if(!before||before.read){addSmartNotification('task','Tarefa próxima',msg,t.id);showBrowserNotification('ORION · Tarefa próxima',msg)}
     }
   });
   (data.events||[]).filter(e=>e.date).forEach(e=>{
@@ -2316,7 +2316,7 @@ function checkSmartNotifications(){
     if(diff>=0&&diff<=60*60*1000){
       const msg=`${e.title} · ${due.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}`;
       const before=(data.notifications||[]).find(n=>n.key===notificationKey('event',e.id));
-      if(!before||before.read){addSmartNotification('event','Compromisso próximo',msg,e.id);showBrowserNotification('PRIMORIS · Compromisso próximo',msg)}
+      if(!before||before.read){addSmartNotification('event','Compromisso próximo',msg,e.id);showBrowserNotification('ORION · Compromisso próximo',msg)}
     }
   });
   renderDashboardNotifications();
@@ -2515,7 +2515,7 @@ if(/(?:registre|registra|anote|anota|lance|lança).*(?:despesa|gasto)/i.test(q))
 }
 if(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\b/i.test(q)){const blocked=requireSkill('tasks');if(blocked)return blocked;
   const title=q.replace(/^(?:adicione|adiciona|crie|cria|anote|anota|registre|registra)\s+(?:uma\s+)?tarefa\s*(?:para|de)?\s*/i,'').trim();
-  if(title){data.tasks.push({id:crypto.randomUUID(),title,date:new Date().toISOString(),dueDate:null,dueTime:null,done:false,source:'assistant'});save();render();return `Tarefa “${title}” adicionada ao PRIMORIS.`;}
+  if(title){data.tasks.push({id:crypto.randomUUID(),title,date:new Date().toISOString(),dueDate:null,dueTime:null,done:false,source:'assistant'});save();render();return `Tarefa “${title}” adicionada ao ORION.`;}
 }
 if(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i.test(q)){const blocked=requireSkill('memory');if(blocked)return blocked;
   const note=q.replace(/^(?:anote|anota|registre|registra)\s+(?:que\s+)?/i,'').trim();
@@ -2534,7 +2534,7 @@ if(typeof updateBackupStatus==='function')updateBackupStatus();
 let voiceRecognition=null,voiceListening=false,voiceFinalText='',voiceManualStop=false,voiceRestartTimer=null,voiceStopTimer=null,lastAIResponse='',voicePausedForSpeech=false;
 function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
 function speechSupported(){return 'speechSynthesis' in window}
-function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o PRIMORIS')}}
+function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o ORION')}}
 function initVoiceRecognition(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
  voiceRecognition=new SR();voiceRecognition.lang='pt-BR';voiceRecognition.continuous=false;voiceRecognition.interimResults=true;voiceRecognition.maxAlternatives=1;
@@ -2753,7 +2753,7 @@ function testSelectedVoice(){
   if(!speechSupported()){toast('A fala não é suportada neste navegador.');return}
   if(!v){toast('Nenhuma voz foi encontrada no aparelho.');return}
   stopSpeaking();
-  const u=new SpeechSynthesisUtterance('Olá. Eu sou o PRIMORIS. Esta é a voz que você selecionou.');
+  const u=new SpeechSynthesisUtterance('Olá. Eu sou o ORION. Esta é a voz que você selecionou.');
   u.lang=v.lang||'pt-BR';u.voice=v;u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
   window.speechSynthesis.resume();window.speechSynthesis.speak(u);
   const status=document.getElementById('voiceSettingsStatus');
@@ -2814,7 +2814,7 @@ if(speechSupported())initVoiceSettings();
 setInterval(checkSmartNotifications,30000);setTimeout(checkSmartNotifications,1200);
 </script>
 <script id="primoris-v6-js">
-/* PRIMORIS v6: voz, diagnóstico, OS e PWA. Mantém as IAs existentes intactas. */
+/* ORION v6: voz, diagnóstico, OS e PWA. Mantém as IAs existentes intactas. */
 let primorisInstallPrompt=null;
 let primorisPwaDismissed=sessionStorage.getItem('primoris_pwa_dismissed')==='1';
 
@@ -2833,11 +2833,11 @@ window.addEventListener('beforeinstallprompt',e=>{
 window.addEventListener('appinstalled',()=>{
   primorisInstallPrompt=null;
   document.getElementById('pwaBanner')?.classList.remove('show');
-  toast('PRIMORIS instalado na tela inicial.');
+  toast('ORION instalado na tela inicial.');
 });
 function installPrimoris(){
   if(window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone){
-    toast('O PRIMORIS já está instalado como aplicativo.');
+    toast('O ORION já está instalado como aplicativo.');
     return;
   }
   if(!primorisInstallPrompt){
@@ -2846,7 +2846,7 @@ function installPrimoris(){
   }
   primorisInstallPrompt.prompt();
   primorisInstallPrompt.userChoice.then(r=>{
-    if(r.outcome==='accepted')toast('Instalação do PRIMORIS iniciada.');
+    if(r.outcome==='accepted')toast('Instalação do ORION iniciada.');
     primorisInstallPrompt=null;
   }).catch(()=>{});
 }
@@ -2870,8 +2870,8 @@ async function speakWithElevenLabs(clean, voiceModeState){
     const orb=document.getElementById('primorisSpeakingOrb');
     const status=document.getElementById('voiceSettingsStatus');
     const voiceStatus=document.getElementById('voiceStatus');
-    if(status)status.textContent='PRIMORIS gerando voz...';
-    if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}
+    if(status)status.textContent='ORION gerando voz...';
+    if(voiceStatus){voiceStatus.textContent='🔊 ORION falando...';voiceStatus.classList.add('voice-speaking')}
     if(overlay&&primorisVoiceModeActive){overlay.classList.add('active');overlay.setAttribute('aria-hidden','false')}
     if(orb)orb.style.transform='scale(1.12)';
     const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean})});
@@ -2892,7 +2892,7 @@ async function speakWithElevenLabs(clean, voiceModeState){
       if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true')}
       if(orb){orb.style.transform='scale(1)';orb.style.filter=''}
       if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking')}
-      if(status)status.textContent='PRIMORIS pronto';
+      if(status)status.textContent='ORION pronto';
       if(primorisVoiceModeActive&&voicePausedForSpeech){
         voicePausedForSpeech=false;voiceManualStop=false;voiceFinalText='';
         clearTimeout(voiceRestartTimer);voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){}}},300);
@@ -2921,7 +2921,7 @@ window.speakText=function(text){
   if(!clean)return;
   if(window.__primorisElevenAudio){try{window.__primorisElevenAudio.pause();window.__primorisElevenAudio.currentTime=0}catch(e){}window.__primorisElevenAudio=null}
   // ElevenLabs é a voz principal. Se o servidor/conta não estiver disponível,
-  // mantém o SpeechSynthesis como fallback para não deixar o PRIMORIS mudo.
+  // mantém o SpeechSynthesis como fallback para não deixar o ORION mudo.
   speakWithElevenLabs(clean,{pauseRecognition:true}).then(ok=>{
     if(ok)return;
     if(!speechSupported())return;
@@ -2930,8 +2930,8 @@ window.speakText=function(text){
       const synth=window.speechSynthesis;synth.cancel();const settings=getVoiceSettings();
       const u=new SpeechSynthesisUtterance(clean);u.lang='pt-BR';u.rate=Number.isFinite(Number(settings.rate))?Number(settings.rate):0.96;u.pitch=Number.isFinite(Number(settings.pitch))?Number(settings.pitch):0.92;u.volume=Number.isFinite(Number(settings.volume))?Number(settings.volume):1;
       const voices=synth.getVoices()||[];const preferred=preferredVoiceFromList(settings);if(preferred&&voices.some(v=>v.name===preferred.name&&v.lang===preferred.lang))u.voice=preferred;
-      u.onstart=()=>{const status=document.getElementById('voiceSettingsStatus'),voiceStatus=document.getElementById('voiceStatus');if(status)status.textContent='PRIMORIS falando...';if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
-      const done=()=>{const status=document.getElementById('voiceSettingsStatus'),voiceStatus=document.getElementById('voiceStatus');if(status)status.textContent='PRIMORIS pronto';if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking')}};
+      u.onstart=()=>{const status=document.getElementById('voiceSettingsStatus'),voiceStatus=document.getElementById('voiceStatus');if(status)status.textContent='ORION falando...';if(voiceStatus){voiceStatus.textContent='🔊 ORION falando...';voiceStatus.classList.add('voice-speaking')}};
+      const done=()=>{const status=document.getElementById('voiceSettingsStatus'),voiceStatus=document.getElementById('voiceStatus');if(status)status.textContent='ORION pronto';if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking')}};
       u.onend=done;u.onerror=done;synth.resume();synth.speak(u);
     }catch(e){console.warn('Fallback TTS:',e)}
   });
@@ -2948,7 +2948,7 @@ async function runFullDiagnostics(){
     try{const r=await fn();results.push({label,ok:!!r.ok,warn:!!r.warn,detail:r.detail||'OK',ms:Math.round(performance.now()-started)});}
     catch(e){results.push({label,ok:false,warn:false,detail:e.message||'Falha',ms:Math.round(performance.now()-started)});}
   };
-  await check('Servidor',async()=>{const r=await fetch('/health?ts='+Date.now(),{cache:'no-store'});const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.status==='ok',detail:r.ok?'Online · '+(j.version||'PRIMORIS'):'HTTP '+r.status};});
+  await check('Servidor',async()=>{const r=await fetch('/health?ts='+Date.now(),{cache:'no-store'});const j=await r.json().catch(()=>({}));return {ok:r.ok&&j.status==='ok',detail:r.ok?'Online · '+(j.version||'ORION'):'HTTP '+r.status};});
   await check('Frontend',async()=>({ok:!!document.getElementById('page-home')&&!!document.getElementById('chatForm'),detail:'DOM principal carregado'}));
   await check('Armazenamento',async()=>{const k='primoris_diag_'+Date.now();localStorage.setItem(k,'ok');const ok=localStorage.getItem(k)==='ok';localStorage.removeItem(k);return {ok,detail:ok?'Leitura e gravação OK':'Falha no localStorage'}});
   await check('Internet',async()=>({ok:navigator.onLine,detail:navigator.onLine?'Conexão disponível':'Dispositivo offline'}));
@@ -2973,7 +2973,7 @@ window.addEventListener('load',()=>{
         const worker=reg.installing;
         if(worker)worker.addEventListener('statechange',()=>{
           if(worker.state==='installed'&&navigator.serviceWorker.controller){
-            toast('Nova versão do PRIMORIS disponível. Atualizando...');
+            toast('Nova versão do ORION disponível. Atualizando...');
             worker.postMessage({type:'SKIP_WAITING'});
           }
         });
@@ -3021,7 +3021,7 @@ async function analyzeImageLab(){
   if(!imageLabDataUrl){toast("Adicione uma foto primeiro.");return}
   if(!prompt){toast("Escreva o que você quer que a IA faça com a foto.");return}
   status.textContent="Analisando a imagem...";
-  result.textContent="PRIMORIS está lendo a imagem e preparando a resposta.";
+  result.textContent="ORION está lendo a imagem e preparando a resposta.";
   badge.textContent="PROCESSANDO";
   document.getElementById("imageLabMakeImage").disabled=true;
   document.getElementById("imageLabDownload").disabled=true;
@@ -3064,7 +3064,7 @@ function makeAnsweredImage(){
     ctx.fillStyle="#070812";ctx.fillRect(0,0,c.width,c.height);
     ctx.drawImage(img,0,0,width,height);
     ctx.fillStyle="#0d1020";ctx.fillRect(0,height,width,textArea);
-    ctx.fillStyle="#54e8ff";ctx.font="700 25px Orbitron";ctx.fillText("PRIMORIS // RESPOSTA",28,height+42);
+    ctx.fillStyle="#54e8ff";ctx.font="700 25px Orbitron";ctx.fillText("ORION // RESPOSTA",28,height+42);
     ctx.fillStyle="#f3f5ff";ctx.font="600 18px Rajdhani";
     wrapCanvasText(ctx,imageLabResultText,28,height+78,width-56,27);
     imageLabAnswerUrl=c.toDataURL("image/png");
@@ -3105,7 +3105,7 @@ function togglePrimorisVoiceMode(){
   if(primorisVoiceModeActive){
     if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
     const status=document.getElementById('voiceStatus');
-    if(status)status.textContent='🎙️ Modo voz ativo · fale com o PRIMORIS';
+    if(status)status.textContent='🎙️ Modo voz ativo · fale com o ORION';
     if(typeof toggleVoiceRecognition==='function' && !voiceListening) toggleVoiceRecognition();
   }else{
     try{if(voiceListening){voiceManualStop=true;voiceRecognition?.stop();}}catch(e){}
@@ -3195,7 +3195,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       if(page==='devpanel'&&typeof window.renderDevLog==='function')window.renderDevLog();
       if(page==='integrations'&&typeof window.refreshConnectionHub==='function')window.refreshConnectionHub();
       return false;
-    }catch(e){console.error('PRIMORIS navigation:',e);return false;}
+    }catch(e){console.error('ORION navigation:',e);return false;}
   }
   window.showPage=go;
   document.addEventListener('click',function(ev){
@@ -3207,7 +3207,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <div id="primorisSpeakingOverlay" aria-hidden="true">
   <button class="primoris-voice-close" type="button" onclick="closePrimorisVoiceMode()">× Fechar modo voz</button>
   <div class="primoris-speaking-orb" id="primorisSpeakingOrb">
-    <div class="primoris-speaking-label">PRIMORIS<br><span>CONVERSANDO</span></div>
+    <div class="primoris-speaking-label">ORION<br><span>CONVERSANDO</span></div>
   </div>
 </div><script id="skills-real-actions">
 (function(){
@@ -3242,7 +3242,7 @@ function openSkillsPage(){
     if(typeof window.renderSkills==='function') window.renderSkills();
     return false;
   }catch(e){
-    console.error('PRIMORIS Skills:',e);
+    console.error('ORION Skills:',e);
     return false;
   }
 }
@@ -3295,12 +3295,12 @@ document.addEventListener('DOMContentLoaded',function(){
    return p;
  }
  const defs={
-  assistant:{title:'PRIMORIS // IA',body:'<div class="muted">Converse com o PRIMORIS sem sair da tela atual.</div><div style="margin-top:12px"><input id="pwAssistantInput" placeholder="Digite um comando..."></div><div class="actions" style="margin-top:8px"><button class="btn primary" type="button" id="pwAssistantSend">Enviar para IA</button><button class="btn" type="button" onclick="showPage(\'assistant\');closePrimorisWindow(\'assistant\')">Abrir página completa</button></div><div id="pwAssistantResult" class="item" style="margin-top:10px">A resposta aparecerá aqui.</div>'},
-  tools:{title:'PRIMORIS // FERRAMENTAS',body:'<div class="pw-task-list"><button class="btn" type="button" onclick="openPrimorisWindow(\'tasks\')">✓ Tarefas</button><button class="btn" type="button" onclick="openPrimorisWindow(\'agenda\')">◷ Agenda</button><button class="btn" type="button" onclick="openPrimorisWindow(\'memory\')">♢ Memória</button><button class="btn" type="button" onclick="openPrimorisWindow(\'finance\')">💰 Finanças</button></div>'},
-  tasks:{title:'PRIMORIS // TAREFAS',body:'<div id="pwTaskList" class="pw-task-list">Carregando...</div>'},
-  agenda:{title:'PRIMORIS // AGENDA',body:'<div id="pwAgendaList" class="pw-task-list">Carregando...</div>'},
-  memory:{title:'PRIMORIS // MEMÓRIA',body:'<div id="pwMemoryList" class="pw-task-list">Carregando...</div>'},
-  finance:{title:'PRIMORIS // FINANÇAS',body:'<div id="pwFinanceInfo" class="item">Carregando...</div>'}
+  assistant:{title:'ORION // IA',body:'<div class="muted">Converse com o ORION sem sair da tela atual.</div><div style="margin-top:12px"><input id="pwAssistantInput" placeholder="Digite um comando..."></div><div class="actions" style="margin-top:8px"><button class="btn primary" type="button" id="pwAssistantSend">Enviar para IA</button><button class="btn" type="button" onclick="showPage(\'assistant\');closePrimorisWindow(\'assistant\')">Abrir página completa</button></div><div id="pwAssistantResult" class="item" style="margin-top:10px">A resposta aparecerá aqui.</div>'},
+  tools:{title:'ORION // FERRAMENTAS',body:'<div class="pw-task-list"><button class="btn" type="button" onclick="openPrimorisWindow(\'tasks\')">✓ Tarefas</button><button class="btn" type="button" onclick="openPrimorisWindow(\'agenda\')">◷ Agenda</button><button class="btn" type="button" onclick="openPrimorisWindow(\'memory\')">♢ Memória</button><button class="btn" type="button" onclick="openPrimorisWindow(\'finance\')">💰 Finanças</button></div>'},
+  tasks:{title:'ORION // TAREFAS',body:'<div id="pwTaskList" class="pw-task-list">Carregando...</div>'},
+  agenda:{title:'ORION // AGENDA',body:'<div id="pwAgendaList" class="pw-task-list">Carregando...</div>'},
+  memory:{title:'ORION // MEMÓRIA',body:'<div id="pwMemoryList" class="pw-task-list">Carregando...</div>'},
+  finance:{title:'ORION // FINANÇAS',body:'<div id="pwFinanceInfo" class="item">Carregando...</div>'}
  };
  function $(id){return document.getElementById(id)}
  function esc(v){return typeof escapeHtml==='function'?escapeHtml(String(v)):String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -3344,7 +3344,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </html>
 
 <style id="primoris-nav-redesign-v8">
-/* Navegação PRIMORIS: hierarquia clara, neon controlado e foco no item ativo. */
+/* Navegação ORION: hierarquia clara, neon controlado e foco no item ativo. */
 .sidebar{
   width:258px!important;
   padding:18px 12px 16px!important;
