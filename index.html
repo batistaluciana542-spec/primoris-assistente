@@ -56,7 +56,11 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 .primoris-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid rgba(91,230,255,.45);box-shadow:0 0 14px rgba(123,55,255,.45)}
 .ai-bubble{display:flex;align-items:flex-start;gap:4px}
 .ai-bubble .bubble-text{flex:1}
-</style><style id="primoris-speaking-orb-style">
+</style><style id="primoris-speaking-orb-style"><style id="primoris-voice-mode-style">
+.primoris-voice-close{position:absolute;top:24px;right:20px;z-index:2;border:1px solid rgba(91,224,255,.45);background:rgba(8,8,28,.72);color:#fff;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer;box-shadow:0 0 18px rgba(84,232,255,.18)}
+.primoris-voice-close:active{transform:scale(.97)}
+.primoris-speaking-label span{font-size:.72em;letter-spacing:.16em;opacity:.8}
+</style>
 #primorisSpeakingOverlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(18,8,48,.9),rgba(2,3,14,.98) 72%);backdrop-filter:blur(12px)}
 #primorisSpeakingOverlay.active{display:flex}
 .primoris-speaking-orb{width:min(68vw,410px);height:min(68vw,410px);border-radius:50%;position:relative;isolation:isolate;background:radial-gradient(circle at 34% 27%,#fff 0%,#baf4ff 7%,#58dcff 18%,#6356ff 38%,#9a22ff 57%,#210047 76%,#04000c 100%);box-shadow:0 0 28px rgba(82,225,255,.95),0 0 80px rgba(106,66,255,.95),0 0 170px rgba(0,224,255,.4);transform:scale(1);transition:transform 90ms cubic-bezier(.2,.8,.2,1),filter 120ms ease}
@@ -429,7 +433,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   </section>
 
   <section id="page-assistant" class="page">
-    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><div class="actions"><button class="btn" type="button" onclick="showPage('image-lab')">🖼️ Adicionar foto</button><button class="btn" onclick="clearChat()">Limpar</button></div></div>
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><div class="actions"><button class="btn" type="button" onclick="showPage('image-lab')">🖼️ Adicionar foto</button><button class="btn primary" type="button" onclick="togglePrimorisVoiceMode()">🔵 Modo voz</button><button class="btn" onclick="clearChat()">Limpar</button></div></div>
     <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
   </section>
 
@@ -1981,7 +1985,7 @@ window.speakText=function(text){
     const hideOrb=()=>{
       if(raf)cancelAnimationFrame(raf);
       raf=0;energy=0;
-      if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
+      if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
       if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
     };
     const animate=()=>{
@@ -2032,7 +2036,7 @@ window.speakText=function(text){
   }catch(e){
     if(raf)cancelAnimationFrame(raf);
     const overlay=document.getElementById('primorisSpeakingOverlay');
-    if(overlay){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
+    if(overlay&&!primorisVoiceModeActive){overlay.classList.remove('active');overlay.setAttribute('aria-hidden','true');}
     console.warn('Voz PRIMORIS:',e);
     toast('Não foi possível reproduzir a voz agora.');
   }
@@ -2193,6 +2197,33 @@ function clearImageLab(){
 }
 </script>
 
+<script id="primoris-voice-mode-js">
+let primorisVoiceModeActive=false;
+function togglePrimorisVoiceMode(){
+  const overlay=document.getElementById('primorisSpeakingOverlay');
+  const orb=document.getElementById('primorisSpeakingOrb');
+  if(!overlay)return;
+  primorisVoiceModeActive=!primorisVoiceModeActive;
+  overlay.classList.toggle('active',primorisVoiceModeActive);
+  overlay.setAttribute('aria-hidden',primorisVoiceModeActive?'false':'true');
+  document.body.classList.toggle('primoris-voice-mode-open',primorisVoiceModeActive);
+  if(primorisVoiceModeActive){
+    if(orb)orb.style.transform='scale(1)';
+    const status=document.getElementById('voiceStatus');
+    if(status)status.textContent='🎙️ Modo voz ativo · fale com o PRIMORIS';
+    if(typeof toggleVoiceRecognition==='function' && !voiceListening) toggleVoiceRecognition();
+  }else{
+    try{if(voiceListening){voiceManualStop=true;voiceRecognition?.stop();}}catch(e){}
+    try{window.speechSynthesis?.cancel();}catch(e){}
+    if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
+    const status=document.getElementById('voiceStatus');
+    if(status)status.textContent='🎙️ Microfone pronto';
+  }
+}
+function closePrimorisVoiceMode(){
+  if(primorisVoiceModeActive)togglePrimorisVoiceMode();
+}
+</script>
 <script id="primoris-connection-hub-js">
 function openExternal(url){
   try{ window.open(url,'_blank','noopener,noreferrer'); }
@@ -2265,8 +2296,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 <div id="primorisSpeakingOverlay" aria-hidden="true">
+  <button class="primoris-voice-close" type="button" onclick="closePrimorisVoiceMode()">× Fechar modo voz</button>
   <div class="primoris-speaking-orb" id="primorisSpeakingOrb">
-    <div class="primoris-speaking-label">PRIMORIS FALANDO</div>
+    <div class="primoris-speaking-label">PRIMORIS<br><span>CONVERSANDO</span></div>
   </div>
 </div></body>
 </html>
