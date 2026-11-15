@@ -1,13 +1,13 @@
 {
-  "name":"PRIMORIS — Assistente Pessoal",
-  "short_name":"PRIMORIS",
+  "name":"ORION — Assistente Pessoal",
+  "short_name":"ORION",
   "id":"/",
   "start_url":"/",
   "scope":"/",
   "display":"standalone",
   "background_color":"#070812",
   "theme_color":"#7c3cff",
-  "description":"PRIMORIS — Assistente pessoal futurista de Anthony.",
+  "description":"ORION — Assistente pessoal futurista de Anthony.",
   "lang":"pt-BR",
   "orientation":"portrait-primary",
   "categories":["productivity","utilities","education"],
@@ -15,8 +15,8 @@
     {"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ],
   "shortcuts":[
-    {"name":"Assistente","short_name":"IA","description":"Abrir o assistente PRIMORIS","url":"/#assistant","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
-    {"name":"PRIMORIS OS","short_name":"OS","description":"Abrir o painel central","url":"/#os","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
+    {"name":"Assistente","short_name":"IA","description":"Abrir o assistente ORION","url":"/#assistant","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
+    {"name":"ORION OS","short_name":"OS","description":"Abrir o painel central","url":"/#os","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]},
     {"name":"Skills","short_name":"Skills","description":"Gerenciar habilidades","url":"/#skills","icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml"}]}
   ]
 }
