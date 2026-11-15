@@ -2215,40 +2215,46 @@ let primorisVoiceModeActive=false;
 function togglePrimorisVoiceMode(){
   const overlay=document.getElementById('primorisSpeakingOverlay');
   const orb=document.getElementById('primorisSpeakingOrb');
-  if(!overlay){toast('Modo voz indisponível nesta versão.');return;}
+  if(!overlay)return;
   primorisVoiceModeActive=!primorisVoiceModeActive;
-  overlay.classList.toggle('active',primorisVoiceModeActive);
-  overlay.setAttribute('aria-hidden',primorisVoiceModeActive?'false':'true');
-  document.body.classList.toggle('primoris-voice-mode-open',primorisVoiceModeActive);
-  const status=document.getElementById('voiceStatus');
   if(primorisVoiceModeActive){
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.classList.add('primoris-voice-mode-open');
     if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
-    if(status)status.textContent='🎙️ Modo voz ativo · toque no microfone para falar';
-    if(typeof initVoiceRecognition==='function' && !voiceRecognition) initVoiceRecognition();
-    setTimeout(function(){
-      if(typeof voiceSupported==='function' && voiceSupported() && !voiceListening){
-        try{
-          voiceManualStop=false;
-          voiceFinalText='';
-          window.speechSynthesis?.resume();
-          voiceRecognition.start();
-        }catch(e){
-          console.warn('Modo voz:',e);
-          if(status)status.textContent='🎙️ Toque novamente para ativar o microfone';
-        }
-      }else if(typeof voiceSupported==='function' && !voiceSupported()){
-        if(status)status.textContent='🎙️ Reconhecimento de voz não disponível neste navegador';
-      }
-    },120);
+    const status=document.getElementById('voiceStatus');
+    if(status)status.textContent='🎙️ Modo voz ativo · fale com o PRIMORIS';
+    try{
+      if(typeof toggleVoiceRecognition==='function' && !voiceListening) toggleVoiceRecognition();
+    }catch(e){console.warn('Modo voz:',e);}
   }else{
-    try{voiceManualStop=true;if(voiceRecognition)voiceRecognition.stop();}catch(e){}
-    try{window.speechSynthesis?.cancel();}catch(e){}
-    if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
-    if(status)status.textContent='🎙️ Microfone pronto';
+    closePrimorisVoiceMode();
   }
 }
 function closePrimorisVoiceMode(){
-  if(primorisVoiceModeActive)togglePrimorisVoiceMode();
+  primorisVoiceModeActive=false;
+  document.body.classList.remove('primoris-voice-mode-open');
+  try{
+    if(window.voiceRestartTimer)clearTimeout(window.voiceRestartTimer);
+    if(window.voiceStopTimer)clearTimeout(window.voiceStopTimer);
+    voiceManualStop=true;
+    if(typeof voiceRecognition!=='undefined' && voiceRecognition){
+      try{voiceRecognition.abort();}catch(e){try{voiceRecognition.stop();}catch(e2){}}
+    }
+  }catch(e){}
+  try{window.speechSynthesis?.cancel();}catch(e){}
+  const overlay=document.getElementById('primorisSpeakingOverlay');
+  const orb=document.getElementById('primorisSpeakingOrb');
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+  }
+  if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
+  const status=document.getElementById('voiceStatus');
+  if(status)status.textContent='🎙️ Microfone pronto';
+  if(typeof updateVoiceUI==='function'){
+    try{updateVoiceUI();}catch(e){}
+  }
 }
 </script>
 <script id="primoris-connection-hub-js">
