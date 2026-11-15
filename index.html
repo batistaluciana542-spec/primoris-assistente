@@ -1091,6 +1091,10 @@ function actionDateTime(date,time){
   return Number.isNaN(d.getTime())?null:d;
 }
 async function requestAIAction(q){
+  // Comandos de WhatsApp são locais e determinísticos. Não envie esse pedido
+  // para a IA, pois ela pode responder que não possui acesso a contatos/mensagens.
+  const whatsappLocal=handleWhatsAppChatRequest(q);
+  if(whatsappLocal)return {type:'local_message',message:whatsappLocal};
   const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
@@ -1099,6 +1103,8 @@ async function requestAIAction(q){
 }
 async function applyAIAction(a){
   if(!a||!a.type)return null;
+  if(a.type==='local_message')return a.message||'Comando processado.';
+
   const id=()=>window.crypto?.randomUUID?crypto.randomUUID():`p-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   if(a.type==='study'){
     const title=(a.title||a.description||'').trim();if(!title)return 'Qual assunto devo adicionar aos estudos?';
