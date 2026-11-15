@@ -56,6 +56,15 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 .primoris-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid rgba(91,230,255,.45);box-shadow:0 0 14px rgba(123,55,255,.45)}
 .ai-bubble{display:flex;align-items:flex-start;gap:4px}
 .ai-bubble .bubble-text{flex:1}
+</style><style id="primoris-speaking-orb-style">
+#primorisSpeakingOverlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(24,12,60,.82),rgba(3,4,18,.96) 72%);backdrop-filter:blur(10px)}
+#primorisSpeakingOverlay.active{display:flex}
+.primoris-speaking-orb{width:min(62vw,360px);height:min(62vw,360px);border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#ffffff 0%,#9eeaff 8%,#6c4dff 30%,#8b18ff 55%,#16002f 78%,#05000d 100%);box-shadow:0 0 35px #35d9ff,0 0 90px rgba(122,58,255,.95),0 0 180px rgba(0,225,255,.42);transform:scale(1);transition:transform .12s ease-out}
+.primoris-speaking-orb::before,.primoris-speaking-orb::after{content:"";position:absolute;inset:-16px;border-radius:50%;border:2px solid rgba(73,224,255,.7);animation:primorisOrbRing 2s linear infinite}
+.primoris-speaking-orb::after{inset:-34px;border-color:rgba(171,83,255,.35);animation-duration:3s;animation-direction:reverse}
+.primoris-speaking-label{position:absolute;bottom:13%;left:0;right:0;text-align:center;color:#fff;font-weight:800;letter-spacing:.18em;font-size:13px;text-shadow:0 0 12px #35d9ff}
+@keyframes primorisOrbRing{to{transform:rotate(360deg) scale(1.04)}}
+@media(max-width:600px){.primoris-speaking-orb{width:72vw;height:72vw}.primoris-speaking-label{font-size:11px}}
 </style><style id="connection-hub-active-below-style">
 .hub-active-below{display:flex;flex-direction:row;align-items:center;width:max-content;margin-top:6px}
 </style><style id="connection-hub-active-style">
@@ -1858,7 +1867,21 @@ function testSelectedVoice(){
   const status=document.getElementById('voiceSettingsStatus');
   if(status)status.textContent='Testando: '+v.name;
 }
-function stopSpeaking(){if(speechSupported())window.speechSynthesis.cancel()}
+function setSpeakingOrb(active,pulse){
+ const overlay=document.getElementById('primorisSpeakingOverlay'),orb=document.getElementById('primorisSpeakingOrb');
+ if(!overlay||!orb)return;
+ overlay.classList.toggle('active',!!active);
+ overlay.setAttribute('aria-hidden',active?'false':'true');
+ if(active){
+   orb.style.transform='scale('+(pulse?'1.13':'1')+')';
+   clearTimeout(window.__primorisOrbTimer);
+   window.__primorisOrbTimer=setTimeout(()=>{if(overlay.classList.contains('active'))orb.style.transform='scale(1)'},150);
+ }
+}
+function stopSpeaking(){
+ if(speechSupported())window.speechSynthesis.cancel();
+ setSpeakingOrb(false);
+}
 function speakText(text){
  if(!speechSupported()||!text)return;
  try{
@@ -1868,9 +1891,13 @@ function speakText(text){
    const u=new SpeechSynthesisUtterance(String(text));
    u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;
    if(v)u.voice=v;
+   u.onstart=()=>setSpeakingOrb(true,false);
+   u.onboundary=()=>setSpeakingOrb(true,true);
+   u.onend=()=>setSpeakingOrb(false);
+   u.onerror=()=>setSpeakingOrb(false);
    window.speechSynthesis.resume();
    window.speechSynthesis.speak(u);
- }catch(e){console.warn('Falha na fala:',e)}
+ }catch(e){setSpeakingOrb(false);console.warn('Falha na fala:',e)}
 }
 function initVoiceSettings(){
   if(!speechSupported())return;
@@ -2202,5 +2229,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   },true);
 })();
 </script>
-</body>
+<div id="primorisSpeakingOverlay" aria-hidden="true">
+  <div class="primoris-speaking-orb" id="primorisSpeakingOrb">
+    <div class="primoris-speaking-label">PRIMORIS FALANDO</div>
+  </div>
+</div></body>
 </html>
