@@ -1144,12 +1144,21 @@ app.post("/api/ai/action", async (req,res)=>{
     // "esse assunto" depende do histórico/contexto; deixa a interpretação contextual decidir.
 
   }
-  if(/\b(crie|cria|adicione|adiciona|registre|registra|salve|salva)\b/i.test(q)&&/\boportunidade\b/i.test(q)){
-    let title=titleFrom([/(?:chamada?|nomeada?)\s+(.+?)$/i,/(?:oportunidade)\s+(?:para|de|sobre)?\s*(.+?)$/i,/(?:aprender|pesquisar|fazer|estudar)\s+(.+?)$/i]);
-    if(!title)title=message.replace(/.*oportunidade(?:\s+(?:para|de|sobre))?\s*/i,"").trim();
-    title=title.replace(/^eu\s+/i,"").replace(/^pesquisar\s+/i,"Pesquisar ").replace(/[.!?]+$/,"").trim();
-    if(title) return res.json({action:{type:"opportunity",title,notes:message}});
-
+  // Oportunidades: reconhece tanto comandos diretos quanto frases naturais
+  // como "quero criar uma nova oportunidade para X" ou "pode adicionar a oportunidade Y".
+  if(/\boportunidade(?:s)?\b/i.test(q)&&/\b(?:crie|criar|cria|adicione|adicionar|adiciona|registre|registrar|registra|salve|salvar|salva|guarde|guardar|guarda|lance|lançar|lan[cç]a|quero|gostaria|pode|poderia|preciso)\b/i.test(q)){
+    let title=titleFrom([
+      /(?:chamada?|nomeada?)\s+(.+?)(?:\s+e\s+(?:com|com ela|anote|adicione)|$)/i,
+      /oportunidades?\s+(?:para|de|sobre|chamada?|nomeada?)\s*(.+?)$/i,
+      /(?:criar|crie|cria|adicionar|adicione|adiciona|registrar|registre|registra|salvar|salve|salva|guardar|guarde|guarda|lançar|lance|lan[cç]a)\s+(?:uma\s+)?(?:nova\s+)?oportunidade(?:\s+(?:para|de|sobre))?\s+(.+?)$/i,
+      /(?:quero|gostaria|preciso|pode|poderia)\s+(?:de\s+)?(?:criar|adicionar|registrar|salvar|guardar|lançar)\s+(?:uma\s+)?(?:nova\s+)?oportunidade(?:\s+(?:para|de|sobre))?\s+(.+?)$/i,
+      /(?:aprender|pesquisar|fazer|estudar)\s+(.+?)$/i
+    ]);
+    if(!title)title=message.replace(/.*oportunidades?\s*(?:para|de|sobre)?\s*/i,"").trim();
+    title=title.replace(/^(?:uma|uma nova|nova)\s+/i,"").replace(/^eu\s+/i,"").replace(/^pesquisar\s+/i,"Pesquisar ").replace(/[.!?]+$/,"").trim();
+    if(title && !/^(?:criar|crie|cria|adicionar|adicione|adiciona|registrar|registre|salvar|salve|guardar|guarde)$/i.test(title)){
+      return res.json({action:{type:"opportunity",title,notes:message}});
+    }
   }
   // Interpretação semântica para frases não cobertas pelas regras determinísticas.
   // O modelo apenas propõe uma ação estruturada; a validação e gravação ficam no frontend.
