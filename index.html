@@ -1680,7 +1680,7 @@ if(typeof updateBackupStatus==='function')updateBackupStatus();
 
 
 <script id="primoris-voice-js">
-let voiceRecognition=null,voiceListening=false,voiceFinalText='',voiceManualStop=false,voiceRestartTimer=null,voiceStopTimer=null,lastAIResponse='';
+let voiceRecognition=null,voiceListening=false,voiceFinalText='',voiceManualStop=false,voiceRestartTimer=null,voiceStopTimer=null,lastAIResponse='',voicePausedForSpeech=false;
 function voiceSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
 function speechSupported(){return 'speechSynthesis' in window}
 function updateVoiceUI(){const b=document.getElementById('voiceButton');if(b){b.classList.toggle('listening',voiceListening);b.textContent='';b.setAttribute('aria-label',voiceListening?'Parar reconhecimento de voz':'Falar com o PRIMORIS')}}
@@ -1708,6 +1708,7 @@ function initVoiceRecognition(){
  voiceRecognition.onerror=e=>{console.warn('Reconhecimento de voz:',e.error);if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceManualStop=true;voiceListening=false;updateVoiceUI();toast('Permissão para o microfone foi negada.');}};
  voiceRecognition.onend=()=>{
    clearTimeout(voiceRestartTimer);
+   if(voicePausedForSpeech){voiceListening=false;updateVoiceUI();return;}
    const text=voiceFinalText.trim();
    voiceListening=false;
    updateVoiceUI();
@@ -2016,6 +2017,7 @@ window.speakText=function(text){
     const s=getVoiceSettings(),v=preferredVoiceFromList(s),clean=String(text).replace(/https?:\/\/\S+/g,'').replace(/[*_`~]/g,'').replace(/#{1,6}\s+/g,'').replace(/\s+/g,' ').trim();
     if(!clean)return;
     stopSpeaking();
+   if(primorisVoiceModeActive && voiceListening){voicePausedForSpeech=true;voiceManualStop=true;voiceFinalText='';try{voiceRecognition.stop()}catch(e){}}
     const overlay=document.getElementById('primorisSpeakingOverlay');
     const orb=document.getElementById('primorisSpeakingOrb');
     const showOrb=()=>{
@@ -2062,13 +2064,18 @@ window.speakText=function(text){
         hideOrb();
         if(status)status.textContent='Voz pronta.';
         if(voiceStatus){voiceStatus.textContent='🎙️ Microfone pronto';voiceStatus.classList.remove('voice-speaking');}
+        if(primorisVoiceModeActive && voicePausedForSpeech){
+          voicePausedForSpeech=false;voiceManualStop=false;voiceFinalText='';
+          clearTimeout(voiceRestartTimer);
+          voiceRestartTimer=setTimeout(()=>{if(primorisVoiceModeActive&&!voiceListening){try{voiceRecognition?.start()}catch(e){console.warn('Reconexão após fala:',e)} }},250);
+        }
         return;
       }
       const u=new SpeechSynthesisUtterance(chunks[i++]);
       u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
       u.onstart=()=>{showOrb();pulse(.82);if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
       u.onboundary=(event)=>{pulse(event.name==='sentence'?1:.62);};
-      u.onend=next;
+      u.onend=()=>{next();};
       u.onerror=()=>{hideOrb();next();};
       window.speechSynthesis.resume();
       window.speechSynthesis.speak(u);
