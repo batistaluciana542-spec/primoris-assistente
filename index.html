@@ -56,7 +56,21 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 .primoris-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid rgba(91,230,255,.45);box-shadow:0 0 14px rgba(123,55,255,.45)}
 .ai-bubble{display:flex;align-items:flex-start;gap:4px}
 .ai-bubble .bubble-text{flex:1}
-</style><style id="primoris-speaking-orb-style">
+<style id="primoris-mobile-speech-style">
+@media(max-width:700px){
+  #page-assistant .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%}
+  #page-assistant .actions .btn{min-height:48px;touch-action:manipulation}
+  #page-assistant .actions .btn.primary{grid-column:1/-1;border-radius:16px;font-size:15px;font-weight:800;min-height:54px;box-shadow:0 0 22px rgba(84,232,255,.22),0 0 42px rgba(154,108,255,.14)}
+  #voiceButton.voice-btn{width:54px;height:54px;min-width:54px;border-radius:50%;touch-action:manipulation}
+  #chatForm{gap:8px}
+}
+@media(max-width:420px){
+  #page-assistant .actions{grid-template-columns:1fr}
+  #page-assistant .actions .btn.primary{grid-column:auto}
+  #page-assistant .actions .btn{width:100%}
+  #voiceButton.voice-btn{width:56px;height:56px;min-width:56px}
+}
+</style></style><style id="primoris-speaking-orb-style">
 #primorisSpeakingOverlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(18,8,48,.9),rgba(2,3,14,.98) 72%);backdrop-filter:blur(12px)}
 #primorisSpeakingOverlay.active{display:flex}
 .primoris-voice-close{position:absolute;top:24px;right:20px;z-index:2;border:1px solid rgba(91,224,255,.45);background:rgba(8,8,28,.72);color:#fff;border-radius:999px;padding:10px 16px;font-weight:800;cursor:pointer;box-shadow:0 0 18px rgba(84,232,255,.18)}
