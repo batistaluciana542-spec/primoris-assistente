@@ -565,7 +565,109 @@ input:focus,textarea:focus,select:focus{border-color:rgba(97,231,255,.5);box-sha
 #voiceButton.voice-btn.listening .primoris-mic-icon,#voiceButton.ai-mic.listening .primoris-mic-icon{color:#ffb8ef;filter:drop-shadow(0 0 8px rgba(255,79,216,.45))}
 @media(max-width:700px){#voiceButton.voice-btn,#voiceButton.ai-mic{width:54px;height:54px;min-width:54px;flex-basis:54px;border-radius:15px}}
 </style>
-</head>
+<style id="primoris-restyle-v6">
+/* PRIMORIS // visual system refresh for all non-IA pages */
+:root{
+  --bg:#08090d;--panel:#101217;--panel2:#151820;--line:rgba(255,255,255,.09);
+  --text:#f5f6f8;--muted:#8d94a3;--cyan:#69d9ff;--pink:#d98cff;--violet:#8e7dff;
+  --green:#69e6a3;--danger:#ff7187;--shadow:0 16px 50px rgba(0,0,0,.30);
+}
+body{
+  background:radial-gradient(circle at 78% -10%,rgba(105,217,255,.07),transparent 28%),#08090d;
+}
+body:before{display:none}
+.sidebar{
+  width:248px;padding:18px 12px;background:rgba(9,10,14,.94);
+  border-right:1px solid rgba(255,255,255,.07);backdrop-filter:blur(18px)
+}
+.logo{padding:10px 12px 24px}.logo strong{
+  background:none;color:#f5f6f8;font-size:21px;letter-spacing:3px
+}.logo small{color:#727989;font-size:10px;letter-spacing:1.8px}
+.nav{gap:3px}.nav button{
+  color:#9ca3b1;padding:11px 12px;border-radius:11px;border-color:transparent;
+  background:transparent;box-shadow:none;transition:background .18s,border-color .18s,color .18s
+}
+.nav button:hover{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.06);box-shadow:none}
+.nav button.active{
+  color:#fff;background:rgba(105,217,255,.075);border-color:rgba(105,217,255,.12);
+  box-shadow:inset 2px 0 var(--cyan)
+}
+.main{padding:26px 30px 40px;max-width:none}
+.top{margin-bottom:22px}.eyebrow{color:#8791a4;font-size:10px;letter-spacing:2.2px}
+.clock{font-size:25px;color:#f4f5f7}.date{font-size:13px;color:#777f8f}
+.page{animation:primorisPageIn .2s ease}@keyframes primorisPageIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.hero{
+  padding:28px;border-radius:22px;border:1px solid rgba(255,255,255,.075);
+  background:linear-gradient(145deg,#12151c,#0d0f14);box-shadow:0 12px 40px rgba(0,0,0,.22)
+}
+.hero:after{background:rgba(105,217,255,.07);filter:blur(25px)}
+h1,h2{letter-spacing:-.02em}h2{font-size:24px}h3{font-size:18px}
+.card{
+  border-color:rgba(255,255,255,.075);border-radius:16px;padding:18px;
+  background:linear-gradient(145deg,#13161d,#0f1116);box-shadow:0 8px 28px rgba(0,0,0,.18)
+}
+.card:hover{transform:translateY(-1px);border-color:rgba(105,217,255,.20);box-shadow:0 12px 34px rgba(0,0,0,.24)}
+.badge{color:#aeb7c6;border-color:rgba(255,255,255,.10);background:rgba(255,255,255,.025)}
+.btn{
+  border-color:rgba(255,255,255,.11);border-radius:10px;padding:10px 13px;
+  background:#171a21;color:#eef1f5;box-shadow:none
+}
+.btn:hover{border-color:rgba(105,217,255,.30);background:#1b1f27;transform:translateY(-1px)}
+.btn.primary{background:#dbe2e8;color:#090b0e;border-color:#dbe2e8}
+.btn.primary:hover{background:#fff;border-color:#fff}
+.btn.danger{background:rgba(255,113,135,.07);border-color:rgba(255,113,135,.20)}
+input,textarea,select{
+  border-color:rgba(255,255,255,.09);background:#0b0d12;color:#f5f6f8;border-radius:10px
+}
+input:focus,textarea:focus,select:focus{border-color:rgba(105,217,255,.45);box-shadow:0 0 0 3px rgba(105,217,255,.07)}
+.item,.dev-stat,.backup-status{
+  border-color:rgba(255,255,255,.075);background:rgba(255,255,255,.025);border-radius:13px
+}
+.stat{font-size:28px}
+.dashboard-columns,.finance-grid,.dev-grid,.skills-grid{gap:16px}
+.skills-grid{margin-top:16px}.skill-card{
+  border-color:rgba(255,255,255,.075);border-radius:16px;background:#12151b
+}
+.skill-card:hover{border-color:rgba(105,217,255,.20);box-shadow:none}
+.os-shell{
+  border-color:rgba(255,255,255,.09);border-radius:22px;padding:22px;
+  background:linear-gradient(145deg,#12151b,#0c0f14);box-shadow:0 16px 55px rgba(0,0,0,.28)
+}
+.os-shell:after{display:none}.os-name{background:none;color:#f5f6f8}
+.os-tile{
+  border-color:rgba(255,255,255,.075);border-radius:15px;background:rgba(255,255,255,.025)
+}
+.os-tile:hover{border-color:rgba(105,217,255,.20);box-shadow:none}
+.finance-card{
+  border-color:rgba(255,255,255,.08);border-radius:17px;background:#12151b;box-shadow:none
+}
+.finance-actions button{background:#171a21;border-color:rgba(255,255,255,.10)}
+.climate-hero{
+  background:linear-gradient(145deg,#12171d,#0d1015);border-color:rgba(255,255,255,.08)
+}
+.climate-temp strong{background:none;color:#f5f6f8}
+.email-item.unread{border-color:rgba(105,217,255,.25);box-shadow:inset 2px 0 var(--cyan)}
+.mobilebar{
+  background:rgba(12,14,19,.96);border-color:rgba(255,255,255,.09);box-shadow:0 8px 30px rgba(0,0,0,.35)
+}
+.mobilebar button.active{background:rgba(105,217,255,.09);color:#fff}
+.toast{background:#151820;border-color:rgba(255,255,255,.10)}
+/* Existing legacy floating windows */
+.pw-window{
+  border:1px solid rgba(255,255,255,.09)!important;border-radius:16px!important;
+  background:#11141a!important;box-shadow:0 22px 70px rgba(0,0,0,.45)!important
+}
+.pw-title{background:#15181f!important;border-bottom:1px solid rgba(255,255,255,.07)!important}
+.pw-actions button{border:0!important;background:transparent!important;color:#9ba3b1!important}
+@media(max-width:900px){
+  .main{padding:18px 16px 92px}
+  .hero{padding:22px}.card{padding:16px}
+}
+@media(max-width:600px){
+  .main{padding:15px 12px 88px}.top{margin-bottom:16px}
+  .clock{font-size:19px}
+}
+</style></head>
 <body>
 <div class="app">
 <aside class="sidebar">
