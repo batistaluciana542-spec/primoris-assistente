@@ -2072,15 +2072,30 @@ window.speakText=function(text){
         return;
       }
       const u=new SpeechSynthesisUtterance(chunks[i++]);
-      u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
+      u.lang=(v&&v.lang)||'pt-BR';u.rate=Number.isFinite(s.rate)?s.rate:0.96;u.pitch=Number.isFinite(s.pitch)?s.pitch:0.92;u.volume=Number.isFinite(s.volume)?s.volume:1;
+      if(v && (primorisVoices||[]).some(x=>x.name===v.name && x.lang===v.lang))u.voice=v;
+      let retried=false;
       u.onstart=()=>{showOrb();pulse(.82);if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
       u.onboundary=(event)=>{pulse(event.name==='sentence'?1:.62);};
       u.onend=()=>{next();};
-      u.onerror=()=>{hideOrb();next();};
-      try{window.speechSynthesis.resume()}catch(e){}
+      u.onerror=(event)=>{
+        console.warn('Falha TTS:',event?.error||event);
+        if(!retried && (event?.error==='voice-unavailable'||event?.error==='language-unavailable'||event?.error==='synthesis-failed')){
+          retried=true;
+          try{window.speechSynthesis.cancel()}catch(e){}
+          const fallback=new SpeechSynthesisUtterance(u.text);
+          fallback.lang='pt-BR';fallback.rate=u.rate;fallback.pitch=u.pitch;fallback.volume=u.volume;
+          fallback.onstart=u.onstart;fallback.onboundary=u.onboundary;fallback.onend=u.onend;
+          fallback.onerror=()=>{hideOrb();next();};
+          setTimeout(()=>{try{window.speechSynthesis.resume();window.speechSynthesis.speak(fallback)}catch(e){hideOrb();next()}},120);
+          return;
+        }
+        hideOrb();next();
+      };
+      try{window.speechSynthesis.cancel();window.speechSynthesis.resume()}catch(e){}
       setTimeout(()=>{
-        try{window.speechSynthesis.speak(u)}catch(e){console.warn('Falha ao iniciar fala:',e);u.onerror&&u.onerror(e)}
-      },90);
+        try{window.speechSynthesis.speak(u)}catch(e){console.warn('Falha ao iniciar fala:',e);u.onerror({error:'synthesis-failed'})}
+      },120);
     };
     next();
   }catch(e){
