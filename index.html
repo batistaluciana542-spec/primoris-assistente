@@ -1500,7 +1500,22 @@ function renderStudies(){
 }
 function renderOpps(){
   const box=$('oppList');const arr=data.opportunities||[];
-  box.innerHTML=arr.length?arr.slice().reverse().map((x,i)=>`<div class="item"><b>${escapeHtml(x.title)}</b>${x.link?`<br><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:var(--cyan)">Abrir link</a>`:''}<br><small>${escapeHtml(x.notes||'')}</small></div>`).join(''):'<div class="muted">Nenhuma oportunidade salva.</div>';
+  box.innerHTML=arr.length?arr.slice().reverse().map((x,i)=>{
+    const originalIndex=arr.length-1-i;
+    return `<div class="item opp-item"><div class="opp-item-head"><div><b>${escapeHtml(x.title)}</b>${x.link?`<br><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:var(--cyan)">Abrir link</a>`:''}<br><small>${escapeHtml(x.notes||'')}</small></div><button type="button" class="opp-delete" onclick="deleteOpportunity(${originalIndex})" aria-label="Excluir oportunidade" title="Excluir oportunidade">×</button></div></div>`;
+  }).join(''):'<div class="muted">Nenhuma oportunidade salva.</div>';
+}
+function deleteOpportunity(index){
+  const arr=data.opportunities||[];
+  if(index<0||index>=arr.length)return;
+  const title=String(arr[index]?.title||'esta oportunidade');
+  if(!confirm(`Excluir a oportunidade “${title}”?`))return;
+  arr.splice(index,1);
+  data.opportunities=arr;
+  save();
+  render();
+  showPage('opportunities');
+  toast('Oportunidade excluída');
 }
 
 $('studyForm').onsubmit=e=>{e.preventDefault();data.studies.push({title:$('studyTitle').value,kind:$('studyKind').value,minutes:Number($('studyTime').value)||0,grade:$('studyGrade').value||null,notes:$('studyNotes').value,date:$('studyDate').value||new Date().toISOString().slice(0,10),createdAt:new Date().toISOString()});save();e.target.reset();render();toast('Estudo registrado')};
@@ -3291,4 +3306,15 @@ document.addEventListener('DOMContentLoaded',function(){
     box-shadow:inset 0 0 0 1px rgba(84,232,255,.15),0 0 20px rgba(84,232,255,.07)!important;
   }
 }
+</style>
+<style id="primoris-opportunity-delete-v1">
+.opp-item{padding:14px 15px!important}
+.opp-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.opp-delete{
+  flex:0 0 34px;width:34px;height:34px;display:grid;place-items:center;
+  border:1px solid rgba(255,100,124,.24);border-radius:10px;
+  background:rgba(255,100,124,.07);color:#ff8da0;font-size:22px;line-height:1;
+  transition:.2s ease
+}
+.opp-delete:hover{color:#fff;border-color:rgba(255,100,124,.55);background:rgba(255,100,124,.16);box-shadow:0 0 20px rgba(255,100,124,.12);transform:translateY(-1px)}
 </style>
