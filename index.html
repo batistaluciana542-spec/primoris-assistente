@@ -52,6 +52,10 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 .toast{position:fixed;right:18px;bottom:18px;background:#11162b;border:1px solid var(--line);padding:12px 15px;border-radius:13px;box-shadow:var(--shadow);z-index:50;display:none}.toast.show{display:block;animation:fade .2s}
 @media(max-width:900px){.sidebar{display:none}.main{margin-left:0;width:100%;padding:16px 14px 90px}.grid,.news{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.mobilebar{display:flex;position:fixed;z-index:30;bottom:10px;left:10px;right:10px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;background:rgba(10,12,25,.94);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:18px;padding:7px;gap:5px;box-shadow:var(--shadow)}.mobilebar button{flex:0 0 auto;min-width:58px;scroll-snap-align:start;border:0;background:transparent;color:#9ba4c2;padding:8px 5px;border-radius:11px;font-size:11px;white-space:nowrap}.mobilebar button.active{color:white;background:rgba(84,232,255,.1)}}
 @media(max-width:600px){.grid,.news{grid-template-columns:1fr}.top{align-items:flex-start}.clock{font-size:19px}.hero{padding:21px}.chat{height:54vh}.chatbar{position:sticky;bottom:0}.row{align-items:flex-start;flex-wrap:wrap}}
+
+.primoris-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid rgba(91,230,255,.45);box-shadow:0 0 14px rgba(123,55,255,.45)}
+.ai-bubble{display:flex;align-items:flex-start;gap:4px}
+.ai-bubble .bubble-text{flex:1}
 </style>
 
 <style id="primoris-os-skills-dev-css">
@@ -1082,8 +1086,8 @@ $('chatForm').onsubmit=async e=>{
     placeholder.textContent=visible;placeholder.className='bubble ai';speakText(visible);console.error('PRIMORIS AI:',err);
   }
 };
-function addChat(t,c){$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c}">${escapeHtml(t)}</div>`);$('chat').scrollTop=$('chat').scrollHeight}
-function clearChat(){$('chat').innerHTML='<div class="bubble ai">Olá, Anthony. PRIMORIS online. Pode falar.</div>'}
+function addChat(t,c){const avatar=c==='ai'?'<img class="primoris-avatar" src="/primoris-avatar.svg" alt="PRIMORIS">':'';$('chat').insertAdjacentHTML('beforeend',`<div class="bubble ${c} ${c==='ai'?'ai-bubble':''}">${avatar}<span class="bubble-text">${escapeHtml(t)}</span></div>`);$('chat').scrollTop=$('chat').scrollHeight}
+function clearChat(){$('chat').innerHTML='<div class="bubble ai ai-bubble"><img class="primoris-avatar" src="/primoris-avatar.svg" alt="PRIMORIS"><span class="bubble-text">Olá, Anthony. PRIMORIS online. Pode falar.</span></div>'}
 function localAI(q){
   const t=q.toLowerCase();
   if(/oi|olá|ola|bom dia|boa tarde|boa noite/.test(t))return 'Olá, Anthony. PRIMORIS online e pronto para ajudar.';
