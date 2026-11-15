@@ -503,11 +503,58 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <section id="page-memory" class="page"><h2>Memória inteligente</h2><div class="muted">Memórias categorizadas e incluídas no contexto enviado à IA.</div><div class="card" style="margin-top:15px"><form id="memoryForm" class="memory-form"><input id="memoryText" placeholder="Ex.: Prefiro respostas curtas" required><div class="memory-tools"><select id="memoryCategory"><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select><button class="btn primary" id="memorySubmit">Adicionar memória</button></div><button type="button" class="btn" id="memoryCancel" hidden onclick="cancelMemoryEdit()">Cancelar edição</button></form><div class="memory-tools"><input id="memorySearch" placeholder="Pesquisar memórias..." oninput="renderMemories()"><select id="memoryFilter" onchange="renderMemories()"><option value="">Todas as categorias</option><option>Preferências</option><option>Informações importantes</option><option>Estudos</option><option>Rotina</option><option>Observações</option></select></div><div id="memoryList" class="list"></div></div></section>
 
   <section id="page-integrations" class="page">
-    <h2>Integrações</h2><div class="muted">Conexões do sistema.</div>
-    <div class="grid2"><div class="card"><h3>Google Calendar</h3><p id="calendarStatus" class="muted">Verificando conexão...</p><div class="actions"><button class="btn primary" onclick="connectCalendar()">Conectar</button><button class="btn" onclick="syncCalendar()">Sincronizar</button></div></div>
-    <div class="card"><h3>Google News</h3><p class="muted">RSS de notícias por categoria.</p><button class="btn" onclick="showPage('news')">Abrir notícias</button></div></div>
-    <div class="card" style="margin-top:14px"><h3>WhatsApp</h3><p class="muted">Cadastre os nomes e números uma vez. Depois você pode dizer no Assistente, por exemplo: <b>“Manda uma mensagem para João dizendo oi, tudo bem?”</b> e o PRIMORIS abre diretamente a conversa certa no WhatsApp.</p>
-      <form id="whatsappContactForm" class="form" onsubmit="saveWhatsAppContact(event)">
+    <div class="row">
+      <div>
+        <div class="eyebrow">PRIMORIS // CENTRAL EXTERNA</div>
+        <h2>Central de Conexões</h2>
+        <div class="muted">Um único painel para serviços externos. Menos botões espalhados, menos caça ao tesouro pela interface.</div>
+      </div>
+      <button class="btn primary" type="button" onclick="refreshConnectionHub()">↻ Atualizar status</button>
+    </div>
+
+    <div class="card" style="margin-top:15px">
+      <div class="row"><div><h3>🌐 Serviços conectados</h3><div class="muted">As integrações Google usam a conta já conectada ao PRIMORIS quando a permissão necessária estiver disponível.</div></div><span id="connectionHubStatus" class="badge">VERIFICANDO</span></div>
+      <div class="grid2" style="margin-top:14px">
+        <div class="item"><div class="row"><div><b>📧 Gmail</b><small id="hubGmail">Verificando...</small></div><button class="btn" type="button" onclick="showPage('email')">Abrir</button></div></div>
+        <div class="item"><div class="row"><div><b>📅 Google Calendar</b><small id="hubCalendar">Verificando...</small></div><button class="btn" type="button" onclick="showPage('agenda')">Abrir</button></div></div>
+        <div class="item"><div class="row"><div><b>📁 Google Drive</b><small>Arquivos e pastas</small></div><button class="btn" type="button" onclick="openExternal('https://drive.google.com/')">Abrir Drive</button></div></div>
+        <div class="item"><div class="row"><div><b>📝 Google Docs</b><small>Documentos e textos</small></div><button class="btn" type="button" onclick="openExternal('https://docs.google.com/')">Abrir Docs</button></div></div>
+        <div class="item"><div class="row"><div><b>📊 Google Sheets</b><small>Planilhas e dados</small></div><button class="btn" type="button" onclick="openExternal('https://sheets.google.com/')">Abrir Sheets</button></div></div>
+        <div class="item"><div class="row"><div><b>🎓 Google Classroom</b><small>Turmas e atividades</small></div><button class="btn" type="button" onclick="openExternal('https://classroom.google.com/')">Abrir Classroom</button></div></div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:14px">
+      <div class="card">
+        <div class="row"><div><h3>💻 GitHub</h3><div class="muted">Acompanhe o projeto, repositórios e alterações.</div></div><span class="badge">EXTERNO</span></div>
+        <div class="actions" style="margin-top:12px">
+          <button class="btn primary" type="button" onclick="openExternal('https://github.com/batistaluciana542-spec/primoris-assistente')">Abrir PRIMORIS</button>
+          <button class="btn" type="button" onclick="openExternal('https://github.com/')">GitHub</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><div><h3>▶️ YouTube</h3><div class="muted">Pesquise vídeos diretamente pelo painel.</div></div><span class="badge">BUSCA</span></div>
+        <div class="actions" style="margin-top:12px">
+          <input id="hubYoutubeQuery" placeholder="Pesquisar no YouTube..." onkeydown="if(event.key==='Enter')searchExternalYoutube()">
+          <button class="btn primary" type="button" onclick="searchExternalYoutube()">Pesquisar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><div><h3>🗺️ Maps</h3><div class="muted">Pesquise locais, endereços e rotas.</div></div><span class="badge">BUSCA</span></div>
+        <div class="actions" style="margin-top:12px">
+          <input id="hubMapsQuery" placeholder="Pesquisar lugar ou endereço..." onkeydown="if(event.key==='Enter')searchExternalMaps()">
+          <button class="btn primary" type="button" onclick="searchExternalMaps()">Pesquisar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><div><h3>✈️ Telegram</h3><div class="muted">Acesso rápido ao Telegram. A automação por bot será adicionada separadamente quando houver credenciais.</div></div><span class="badge">EXTERNO</span></div>
+        <button class="btn primary" type="button" style="margin-top:12px" onclick="openExternal('https://web.telegram.org/')">Abrir Telegram</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="row"><div><h3>💬 WhatsApp</h3><div class="muted">Os contatos e o envio já ficam nesta mesma central.</div></div><span class="badge">ATIVO</span></div>
+      <form id="whatsappContactForm" class="form" style="margin-top:12px" onsubmit="saveWhatsAppContact(event)">
         <div class="grid2" style="margin-top:0">
           <input id="whatsappContactName" placeholder="Nome do contato" required>
           <input id="whatsappContactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="WhatsApp: 5562999999999" required>
@@ -518,16 +565,19 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
       <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:16px">
         <h3>Enviar manualmente</h3>
         <form id="whatsappForm" class="form" onsubmit="openWhatsAppMessage(event)">
-          <label for="whatsappPhone" class="muted">Número do WhatsApp com DDD e código do país</label>
-          <input id="whatsappPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex.: 5562999999999" required>
-          <label for="whatsappMessage" class="muted">Mensagem</label>
-          <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem que deseja enviar..." required></textarea>
+          <input id="whatsappPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="Número com código do país + DDD" required>
+          <textarea id="whatsappMessage" rows="4" placeholder="Digite a mensagem..." required></textarea>
           <div class="actions"><button class="btn primary" type="submit">Abrir WhatsApp com a mensagem</button></div>
         </form>
+        <p class="muted" style="margin-top:10px">O PRIMORIS prepara a conversa, mas o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
+        <p id="whatsappStatus" class="muted" aria-live="polite"></p>
+        <p><a id="whatsappFallbackLink" href="#" target="_self" hidden rel="noopener">Abrir conversa no WhatsApp</a></p>
       </div>
-      <p class="muted" style="margin-top:10px">Dica: no Brasil, informe 55 + DDD + número. O PRIMORIS abre a conversa e deixa o texto pronto. Por segurança, o toque final em “Enviar” continua sendo feito por você no WhatsApp.</p>
-      <p id="whatsappStatus" class="muted" aria-live="polite"></p>
-      <p><a id="whatsappFallbackLink" href="#" target="_self" hidden rel="noopener">Abrir conversa no WhatsApp</a></p>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>🧠 Próximo nível</h3>
+      <div class="muted">Drive, Docs, Sheets e Classroom já ficam reunidos aqui. Para leitura/escrita direta dentro do PRIMORIS, será necessário ampliar as permissões OAuth e ativar as APIs correspondentes no Google Cloud. O Google disponibiliza APIs dedicadas para esses serviços.</div>
     </div>
   </section>
 
