@@ -1701,7 +1701,6 @@ function initVoiceRecognition(){
    const input=document.getElementById('chatInput');
    if(input) input.value=shown;
    if(final.trim()){
-     voiceManualStop=true;
      clearTimeout(voiceStopTimer);
      try{voiceRecognition.stop()}catch(e){}
    }
@@ -1717,6 +1716,14 @@ function initVoiceRecognition(){
      if(input) input.value=text;
      const form=document.getElementById('chatForm');
      if(form) form.requestSubmit();
+   }
+   if(primorisVoiceModeActive && !voiceManualStop){
+     clearTimeout(voiceRestartTimer);
+     voiceRestartTimer=setTimeout(()=>{
+       if(!primorisVoiceModeActive || voiceManualStop || voiceListening)return;
+       voiceFinalText='';
+       try{voiceRecognition.start()}catch(e){console.warn('Reconexão do modo voz:',e)}
+     },450);
    }
  };
  return true;
