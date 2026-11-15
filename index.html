@@ -881,7 +881,10 @@ const PRIMORIS_SKILLS=[
 ];
 function loadSkills(){try{const x=JSON.parse(localStorage.getItem(PRIMORIS_SKILLS_KEY)||'{}');return PRIMORIS_SKILLS.reduce((o,s)=>{o[s.id]=x[s.id]!==false;return o},{});}catch{return Object.fromEntries(PRIMORIS_SKILLS.map(s=>[s.id,s.enabled]))}}
 function saveSkills(x){localStorage.setItem(PRIMORIS_SKILLS_KEY,JSON.stringify(x))}
-function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" data-skill-toggle="${s.id}"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div></div>`).join('');box.querySelectorAll('[data-skill-toggle]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleSkill(btn.getAttribute('data-skill-toggle'));});});}
+function isSkillEnabled(id){return !!loadSkills()[id]}
+function skillBlocked(id,label){if(isSkillEnabled(id))return false;toast('Skill desativada: '+label);return true}
+function skillForAction(type){return {task:'taskAgent',reminder:'taskAgent',event:'agenda',study:'study',opportunity:'study',note:'memory',expense:'finance',delete_task:'taskAgent'}[type]||null}
+function renderSkills(){const box=$('skillsGrid');if(!box)return;const active=loadSkills();const targets={assistant:'assistant',whatsapp:'integrations',gmail:'email',taskAgent:'tasks',memory:'memory',study:'studies',tasks:'tasks',agenda:'agenda',voice:'settings',search:'search',finance:'finance'};box.innerHTML=PRIMORIS_SKILLS.map(s=>`<div class="skill-card"><button class="skill-toggle ${active[s.id]?'on':''}" type="button" aria-label="Ativar ${escapeHtml(s.name)}" data-skill-toggle="${s.id}"><span></span></button><div class="skill-icon">${s.icon}</div><h3>${escapeHtml(s.name)}</h3><p class="muted">${escapeHtml(s.desc)}</p><div class="skill-status">● ${active[s.id]?'ATIVA':'DESATIVADA'}</div><button class="btn" type="button" data-skill-open="${s.id}">${active[s.id]?'Abrir módulo':'Ativar e abrir'}</button></div>`).join('');box.querySelectorAll('[data-skill-toggle]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleSkill(btn.getAttribute('data-skill-toggle'));});});box.querySelectorAll('[data-skill-open]').forEach(function(btn){btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const id=btn.getAttribute('data-skill-open');if(!isSkillEnabled(id)){const x=loadSkills();x[id]=true;saveSkills(x);renderSkills();devLog('Ativada e aberta skill: '+id)}showPage(targets[id]||'assistant');if(id==='voice')setTimeout(()=>document.getElementById('pvVoiceSelect')?.scrollIntoView({behavior:'smooth',block:'center'}),250);});});}
 function toggleSkill(id){const x=loadSkills();x[id]=!x[id];saveSkills(x);renderSkills();devLog((x[id]?'Ativada':'Desativada')+' skill: '+id);toast((x[id]?'Skill ativada: ':'Skill desativada: ')+id)}
 function resetSkills(){if(!confirm('Restaurar todas as skills?'))return;localStorage.removeItem(PRIMORIS_SKILLS_KEY);renderSkills();toast('Skills restauradas')}
 function devLog(message){try{const list=JSON.parse(localStorage.getItem(PRIMORIS_DEVLOG_KEY)||'[]');list.unshift({time:new Date().toISOString(),message:String(message)});localStorage.setItem(PRIMORIS_DEVLOG_KEY,JSON.stringify(list.slice(0,80)))}catch{}renderDevLog()}
@@ -1031,7 +1034,7 @@ function actionDateTime(date,time){
   return Number.isNaN(d.getTime())?null:d;
 }
 async function requestAIAction(q){
-  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
+  const r=await fetch('/api/ai/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,provider:getAIProvider(),context:{userProfile:{name:'Anthony'},userName:'Anthony',activeSkills:loadSkills(),tasks:data.tasks||[],events:data.events||[],studies:data.studies||[],opportunities:data.opportunities||[],memories:data.memories||[],recentChat:Array.from($('chat')?.children||[]).slice(-12).map(x=>({role:x.classList.contains('user')?'user':'assistant',text:x.textContent||''}))},currentDate:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok)throw new Error(j.details||j.error||'Não foi possível interpretar o comando.');
   if(j.clarification&&!j.action)return {clarification:j.clarification};
@@ -1039,6 +1042,8 @@ async function requestAIAction(q){
 }
 async function applyAIAction(a){
   if(!a||!a.type)return null;
+  const requiredSkill=skillForAction(a.type);
+  if(requiredSkill&&!isSkillEnabled(requiredSkill))return `A Skill necessária para isso está desativada. Ative "${PRIMORIS_SKILLS.find(s=>s.id===requiredSkill)?.name||requiredSkill}" em Skills.`;
   const id=()=>window.crypto?.randomUUID?crypto.randomUUID():`p-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   if(a.type==='study'){
     const title=(a.title||a.description||'').trim();if(!title)return 'Qual assunto devo adicionar aos estudos?';
@@ -1707,6 +1712,7 @@ function initVoiceRecognition(){
  return true;
 }
 function toggleVoiceRecognition(){
+ if(typeof isSkillEnabled==='function'&&!isSkillEnabled('voice')){toast('Ative a Skill Voz antes de usar o microfone.');return}
  if(!voiceSupported()){toast('Use o Google Chrome para reconhecimento de voz.');return}
  if(!voiceRecognition)initVoiceRecognition();
  if(voiceListening){voiceManualStop=true;try{voiceRecognition.stop()}catch(e){}return}
@@ -1981,6 +1987,7 @@ function isPrimorisInstalled(){
 
 /* Voz mais natural: divide respostas longas em blocos curtos e mantém os controles já salvos. */
 window.speakText=function(text){
+  if(typeof isSkillEnabled==='function'&&!isSkillEnabled('voice'))return;
   if(!speechSupported()||!text)return;
   let raf=0,energy=0;
   try{
