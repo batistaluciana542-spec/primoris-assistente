@@ -1902,12 +1902,17 @@ function testSelectedVoice(){
 function setSpeakingOrb(active,pulse){
  const overlay=document.getElementById('primorisSpeakingOverlay'),orb=document.getElementById('primorisSpeakingOrb');
  if(!overlay||!orb)return;
- overlay.classList.toggle('active',!!active);
- overlay.setAttribute('aria-hidden',active?'false':'true');
- if(active){
+ const shouldShow=!!active && !!primorisVoiceModeActive;
+ overlay.classList.toggle('active',shouldShow);
+ overlay.setAttribute('aria-hidden',shouldShow?'false':'true');
+ if(shouldShow){
    orb.style.transform='scale('+(pulse?'1.13':'1')+')';
    clearTimeout(window.__primorisOrbTimer);
    window.__primorisOrbTimer=setTimeout(()=>{if(overlay.classList.contains('active'))orb.style.transform='scale(1)'},150);
+ }else{
+   clearTimeout(window.__primorisOrbTimer);
+   orb.style.transform='scale(1)';
+   orb.style.filter='';
  }
 }
 function stopSpeaking(){
@@ -2005,7 +2010,7 @@ window.speakText=function(text){
     const overlay=document.getElementById('primorisSpeakingOverlay');
     const orb=document.getElementById('primorisSpeakingOrb');
     const showOrb=()=>{
-      if(!overlay)return;
+      if(!overlay||!primorisVoiceModeActive)return;
       overlay.classList.add('active');
       overlay.setAttribute('aria-hidden','false');
     };
@@ -2248,7 +2253,21 @@ function togglePrimorisVoiceMode(){
   }
 }
 function closePrimorisVoiceMode(){
-  if(primorisVoiceModeActive)togglePrimorisVoiceMode();
+  primorisVoiceModeActive=false;
+  const overlay=document.getElementById('primorisSpeakingOverlay');
+  const orb=document.getElementById('primorisSpeakingOrb');
+  if(overlay){
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden','true');
+  }
+  document.body.classList.remove('primoris-voice-mode-open');
+  try{voiceManualStop=true;clearTimeout(voiceRestartTimer);clearTimeout(voiceStopTimer);if(voiceRecognition&&voiceListening)voiceRecognition.stop();}catch(e){}
+  try{window.speechSynthesis?.cancel();}catch(e){}
+  voiceListening=false;
+  updateVoiceUI();
+  if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
+  const status=document.getElementById('voiceStatus');
+  if(status)status.textContent='🎙️ Microfone pronto';
 }
 </script>
 <script id="primoris-connection-hub-js">
