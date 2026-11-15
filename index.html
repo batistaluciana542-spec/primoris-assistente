@@ -607,6 +607,52 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     <div class="grid2"><div class="card"><h3>Dados</h3><div class="actions backup-actions"><button id="exportDataButton" class="btn" type="button" onclick="exportData()">📦 Exportar dados</button><button id="importDataButton" class="btn" type="button" onclick="document.getElementById('importFile').click()">📥 Importar dados</button><input id="importFile" type="file" accept=".json,application/json" hidden><button class="btn danger" type="button" onclick="resetData()">Apagar dados locais</button></div></div><div class="card"><h3>Sistema</h3><p id="systemStatus" class="muted">Verificando servidor...</p><button class="btn" type="button" onclick="testAI()">Testar IA</button></div></div>
     <div class="card dev-card" style="margin-top:14px"><div class="row"><div><h3>Modo desenvolvedor da IA</h3><p id="devStatus" class="muted">Verificando autorização...</p></div><span id="devBadge" class="badge">BLOQUEADO</span></div><div class="actions" style="margin-top:10px"><input id="devKeyInput" type="password" autocomplete="off" placeholder="Chave do modo desenvolvedor"><button class="btn primary" type="button" onclick="unlockDeveloperMode()">Ativar</button><button class="btn danger" type="button" onclick="lockDeveloperMode()">Bloquear</button></div><p class="muted" style="margin-top:8px">A chave fica somente nesta sessão do navegador e não é enviada ao Gemini. Depois de ativar, a IA poderá aplicar alterações no site pelos seus comandos.</p></div>
   </section>
+    <style id="primoris-voice-settings-panel">
+      #primorisVoiceSettings{margin-top:14px;padding:18px;border:1px solid rgba(84,232,255,.28);border-radius:20px;background:linear-gradient(145deg,rgba(8,11,25,.82),rgba(27,13,42,.78));box-shadow:0 0 28px rgba(84,232,255,.08)}
+      #primorisVoiceSettings .pv-title{font:800 18px Orbitron;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;color:transparent}
+      #primorisVoiceSettings .pv-sub{font-size:12px;color:var(--muted);margin-top:4px}
+      #primorisVoiceSettings .pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+      #primorisVoiceSettings .pv-field{display:grid;gap:7px}.pv-field.wide{grid-column:1/-1}.pv-label{font-size:11px;color:var(--muted)}
+      #primorisVoiceSettings .pv-range{display:grid;grid-template-columns:1fr 58px;gap:8px;align-items:center}
+      #primorisVoiceSettings input[type=range]{width:100%;accent-color:var(--cyan)}
+      #primorisVoiceSettings .pv-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+      #primorisVoiceSettings .pv-actions .btn{flex:1;min-width:115px}
+      #primorisVoiceSettings .pv-status{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:11px;color:var(--muted)}
+      #primorisVoiceSettings .pv-orb{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+    </style>
+    <div id="primorisVoiceSettings">
+      <div class="pv-title">🎙️ PRIMORIS VOICE</div>
+      <div class="pv-sub">Controle a voz do assistente diretamente pelas Configurações.</div>
+      <div class="pv-grid">
+        <label class="pv-field wide"><span class="pv-label">VOZ BASE</span><select id="pvVoiceSelect"></select></label>
+        <label class="pv-field"><span class="pv-label">PERSONALIDADE</span><select id="pvStyle"><option value="natural">Natural</option><option value="futuristic" selected>Futurista</option><option value="calm">Calma</option><option value="energetic">Energética</option></select></label>
+        <label class="pv-field"><span class="pv-label">IDIOMA</span><select id="pvLang"><option value="pt-BR" selected>Português (Brasil)</option><option value="pt-PT">Português (Portugal)</option></select></label>
+        <label class="pv-field wide"><span class="pv-label">VELOCIDADE</span><div class="pv-range"><input id="pvRate" type="range" min="0.65" max="1.35" step="0.05" value="0.96"><output id="pvRateValue">0.96x</output></div></label>
+        <label class="pv-field"><span class="pv-label">TOM</span><div class="pv-range"><input id="pvPitch" type="range" min="0.5" max="1.5" step="0.05" value="0.92"><output id="pvPitchValue">0.92</output></div></label>
+        <label class="pv-field"><span class="pv-label">VOLUME</span><div class="pv-range"><input id="pvVolume" type="range" min="0" max="1" step="0.05" value="1"><output id="pvVolumeValue">100%</output></div></label>
+        <label class="pv-field wide"><span class="pv-label">TEXTO DE TESTE</span><input id="pvTestText" value="Olá, Anthony. PRIMORIS online. Voz configurada com sucesso."></label>
+      </div>
+      <div class="pv-actions"><button class="btn primary" type="button" onclick="testPrimorisVoice()">▶ Testar voz</button><button class="btn" type="button" onclick="stopPrimorisVoice()">■ Parar</button><button class="btn" type="button" onclick="savePrimorisVoiceSettings()">✓ Salvar perfil</button></div>
+      <div class="pv-status"><span id="pvOrb" class="pv-orb"></span><span id="pvStatusText">PRIMORIS pronto</span><span id="pvVoiceInfo"></span></div>
+    </div>
+    <script id="primoris-voice-settings-js">
+    (function(){
+      const KEY='primoris_voice_profile_v2'; let voices=[]; const synth=window.speechSynthesis;
+      const $=id=>document.getElementById(id);
+      function settings(){try{return Object.assign({voice:'auto',style:'futuristic',lang:'pt-BR',rate:.96,pitch:.92,volume:1},JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return {voice:'auto',style:'futuristic',lang:'pt-BR',rate:.96,pitch:.92,volume:1}}}
+      function save(){const s={voice:$('pvVoiceSelect').value,style:$('pvStyle').value,lang:$('pvLang').value,rate:+$('pvRate').value,pitch:+$('pvPitch').value,volume:+$('pvVolume').value};localStorage.setItem(KEY,JSON.stringify(s));return s}
+      function preferred(s){if(!voices.length)return null; if(s.voice!=='auto')return voices.find(v=>v.name===s.voice)||null; const lang=s.lang.toLowerCase(); return voices.find(v=>(v.lang||'').toLowerCase()===lang)||voices.find(v=>(v.lang||'').toLowerCase().startsWith(lang.split('-')[0]))||voices.find(v=>v.default)||voices[0]}
+      function load(){if(!synth)return; voices=synth.getVoices()||[]; const sel=$('pvVoiceSelect'); if(!sel)return; const s=settings(); sel.innerHTML=''; const auto=document.createElement('option'); auto.value='auto'; auto.textContent='🤖 Automática'; sel.appendChild(auto); voices.filter(v=>(v.lang||'').toLowerCase().startsWith('pt')).forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';sel.appendChild(o)}); sel.value=(s.voice==='auto'||voices.some(v=>v.name===s.voice))?s.voice:'auto'; $('pvStyle').value=s.style; $('pvLang').value=s.lang; $('pvRate').value=s.rate; $('pvPitch').value=s.pitch; $('pvVolume').value=s.volume; updateRanges(); $('pvVoiceInfo').textContent=voices.length?' · '+voices.length+' vozes detectadas':'';}
+      function updateRanges(){$('pvRateValue').textContent=(+$('pvRate').value).toFixed(2)+'x';$('pvPitchValue').textContent=(+$('pvPitch').value).toFixed(2);$('pvVolumeValue').textContent=Math.round(+$('pvVolume').value*100)+'%';}
+      window.testPrimorisVoice=function(){const s=save();if(!synth){$('pvStatusText').textContent='Síntese de voz indisponível neste navegador.';return} synth.cancel(); const v=preferred(s); const u=new SpeechSynthesisUtterance($('pvTestText').value||'PRIMORIS online.');u.lang=s.lang;u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;u.onstart=()=>{$('pvStatusText').textContent='PRIMORIS falando...';$('pvOrb').style.boxShadow='0 0 20px var(--pink)';};u.onend=()=>{$('pvStatusText').textContent='PRIMORIS pronto';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};synth.speak(u)};
+      window.stopPrimorisVoice=function(){if(synth)synth.cancel();$('pvStatusText').textContent='PRIMORIS parado';$('pvOrb').style.boxShadow='0 0 12px var(--cyan)'};
+      window.savePrimorisVoiceSettings=function(){save();$('pvStatusText').textContent='Perfil de voz salvo neste aparelho.';if(typeof toast==='function')toast('Perfil de voz salvo.')};
+      ['pvRate','pvPitch','pvVolume'].forEach(id=>$(id)?.addEventListener('input',updateRanges));
+      $('pvVoiceSelect')?.addEventListener('change',save);$('pvStyle')?.addEventListener('change',save);$('pvLang')?.addEventListener('change',()=>{save();load()});
+      load(); if(synth&&'onvoiceschanged' in synth)synth.addEventListener('voiceschanged',load);
+    })();
+    </script>
+
 
 <section id="page-finance" class="page"><div class="panel-header"><div><div class="eyebrow">PRIMORIS // FINANCE</div><h1>Controle Financeiro</h1><p class="muted">Saldo, entradas, gastos, orçamento e dívidas.</p></div></div><div class="finance-grid"><div class="finance-card"><span>💰 TENHO / SALDO</span><strong id="finTenho">R$ 0,00</strong></div><div class="finance-card"><span>📉 GASTEI NO MÊS</span><strong id="finGastei">R$ 0,00</strong></div><div class="finance-card"><span>🟢 POSSO GASTAR</span><strong id="finPosso">R$ 0,00</strong></div><div class="finance-card"><span>🔴 DEVO</span><strong id="finDevo">R$ 0,00</strong></div></div><div class="card" style="margin-top:16px"><h3>Registrar movimentação</h3><form id="financeForm" class="finance-form"><input id="finDescription" class="wide" placeholder="Descrição" required><select id="finType"><option value="entrada">Entrada</option><option value="gasto">Gasto</option><option value="divida">Dívida</option><option value="pagamento">Pagamento de dívida</option></select><input id="finAmount" type="number" min="0.01" step="0.01" placeholder="Valor (R$)" required><input id="finCategory" placeholder="Categoria" required><input id="finDate" type="date" required><div class="wide actions"><button class="btn primary">Salvar movimentação</button><button class="btn" type="button" id="finCancel" hidden onclick="cancelFinanceEdit()">Cancelar edição</button></div></form></div><div class="grid2"><div class="card"><h3>Resumo mensal</h3><p id="finResumo" class="muted"></p><div id="financeChart" class="finance-chart"></div></div><div class="card"><h3>Histórico</h3><div id="financeHistory" class="list"></div></div></div><div class="finance-actions"><button type="button" class="btn" onclick="editarFinancas()">Ajustar saldo inicial</button><button type="button" class="btn danger" onclick="limparFinancas()">Limpar movimentações</button></div></section>
 
