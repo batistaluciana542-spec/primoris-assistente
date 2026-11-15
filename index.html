@@ -1991,7 +1991,7 @@ window.speakText=function(text){
     const overlay=document.getElementById('primorisSpeakingOverlay');
     const orb=document.getElementById('primorisSpeakingOrb');
     const showOrb=()=>{
-      if(!overlay)return;
+      if(!overlay || !primorisVoiceModeActive)return;
       overlay.classList.add('active');
       overlay.setAttribute('aria-hidden','false');
     };
@@ -2012,6 +2012,7 @@ window.speakText=function(text){
       raf=requestAnimationFrame(animate);
     };
     const pulse=(strength)=>{
+      if(!primorisVoiceModeActive)return;
       showOrb();
       energy=Math.min(1,Math.max(energy,strength||.7));
       if(!raf)raf=requestAnimationFrame(animate);
@@ -2038,7 +2039,7 @@ window.speakText=function(text){
       }
       const u=new SpeechSynthesisUtterance(chunks[i++]);
       u.lang=v?.lang||'pt-BR';u.rate=s.rate;u.pitch=s.pitch;u.volume=s.volume;if(v)u.voice=v;
-      u.onstart=()=>{showOrb();pulse(.82);if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
+      u.onstart=()=>{if(primorisVoiceModeActive){showOrb();pulse(.82);}if(voiceStatus){voiceStatus.textContent='🔊 PRIMORIS falando...';voiceStatus.classList.add('voice-speaking')}};
       u.onboundary=(event)=>{pulse(event.name==='sentence'?1:.62);};
       u.onend=next;
       u.onerror=()=>{hideOrb();next();};
