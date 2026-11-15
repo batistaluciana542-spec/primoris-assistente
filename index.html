@@ -418,7 +418,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 .pw-title{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 10px 0 15px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,rgba(84,232,255,.08),rgba(154,108,255,.08));cursor:grab;user-select:none}
 .pw-title:active{cursor:grabbing}.pw-title strong{font:700 13px Orbitron;letter-spacing:1px}.pw-actions{display:flex;gap:5px}.pw-actions button{width:31px;height:31px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.04);color:#fff}.pw-actions button:hover{border-color:var(--cyan)}
 .pw-body{padding:16px;max-height:calc(100vh - 130px);overflow:auto}.pw-body .btn{margin-top:8px}
-.pw-launcher{position:fixed;right:18px;bottom:18px;z-index:8999;display:flex;gap:8px;pointer-events:auto}.pw-launcher button{border:1px solid rgba(84,232,255,.3);background:rgba(10,13,29,.92);color:#fff;border-radius:14px;padding:10px 13px;box-shadow:0 10px 35px rgba(0,0,0,.35);backdrop-filter:blur(14px)}.pw-launcher button:hover{border-color:var(--cyan);transform:translateY(-1px)}
+.pw-launcher{position:fixed;right:18px;bottom:18px;z-index:8999;display:flex;gap:8px;pointer-events:auto}.pw-launcher button{border:1px solid rgba(84,232,255,.3);background:rgba(10,13,29,.92);color:#fff;border-radius:4px;padding:10px 13px;box-shadow:0 10px 35px rgba(0,0,0,.35);backdrop-filter:blur(14px)}.pw-launcher button:hover{border-color:var(--cyan);transform:translateY(-1px)}
 .pw-task-list{display:grid;gap:8px}.pw-task{padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}
 @media(max-width:700px){.pw-window{width:calc(100vw - 20px);left:10px!important;top:70px!important}.pw-launcher{right:10px;bottom:78px}.pw-launcher button{padding:9px 11px}.pw-title{height:46px}}
 </style></head>
@@ -750,7 +750,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
 </nav>
 <div id="toast" class="toast"></div><div id="primorisWindowLayer" aria-hidden="true"></div>
 <div class="pw-launcher" id="primorisWindowLauncher">
-  <button type="button" onclick="openPrimorisWindow('assistant')">◉ Janela IA</button>
+  
   <button type="button" onclick="openPrimorisWindow('tools')">▣ Ferramentas</button>
 </div>
 <div id="offlineIndicator" class="offline-indicator">⚠️ Sem conexão · modo offline</div>
