@@ -386,7 +386,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
   <nav class="nav">
     <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button data-page="skills">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
-  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
+  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button type="button" onclick="showPage('image-lab')" data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
 </aside>
 
 <main class="main">
@@ -414,7 +414,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   </section>
 
   <section id="page-assistant" class="page">
-    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><button class="btn" onclick="clearChat()">Limpar</button></div>
+    <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><div class="actions"><button class="btn" type="button" onclick="showPage('image-lab')">🖼️ Adicionar foto</button><button class="btn" onclick="clearChat()">Limpar</button></div></div>
     <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
   </section>
 
