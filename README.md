@@ -1,4 +1,4 @@
-# PRIMORIS v2.0
+# ORION v2.0
 
 Assistente pessoal com interface mobile, agenda local, estudos, oportunidades, memória, Google Calendar, Google News e integração opcional com IA.
 
