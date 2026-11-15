@@ -1160,6 +1160,19 @@ app.post("/api/ai/action", async (req,res)=>{
       return res.json({action:{type:"opportunity",title,notes:message}});
     }
   }
+  // Exclusão de oportunidades também é determinística: não depende do provedor de IA.
+  // Isso evita que um erro temporário do OpenRouter impeça uma ação local segura.
+  if(/\\b(?:exclua|excluir|apague|apagar|remova|remover|delete|deletar)\\b/i.test(q)&&/\\boportunidade(?:s)?\\b/i.test(q)){
+    let target=titleFrom([
+      /oportunidade(?:s)?\\s+(?:chamada?|nomeada?)\\s+(.+?)$/i,
+      /(?:oportunidade|oportunidades)\\s+(?:de|sobre|para)\\s+(.+?)$/i,
+      /(?:exclua|excluir|apague|apagar|remova|remover|delete|deletar)\\s+(?:a|a\\s+)?(?:oportunidade|oportunidades)(?:\\s+(?:de|sobre|para|chamada?|nomeada?))?\\s+(.+?)$/i
+    ]);
+    if(!target) target=message.replace(/.*?\\b(?:oportunidade(?:s)?)\\b/i,"").replace(/^\\s*(?:de|sobre|para|chamada?|nomeada?)\\s+/i,"").trim();
+    target=target.replace(/[.!?]+$/i,"").trim();
+    if(target)return res.json({action:{type:"delete_opportunity",target}});
+    return res.json({action:null,clarification:"Qual oportunidade você quer excluir? Informe o título."});
+  }
   // Interpretação semântica para frases não cobertas pelas regras determinísticas.
   // O modelo apenas propõe uma ação estruturada; a validação e gravação ficam no frontend.
   try {
