@@ -1215,6 +1215,25 @@ $('chatForm').onsubmit=async e=>{
   try{
     const whatsappResult=handleWhatsAppChatRequest(q);
     if(whatsappResult){placeholder.textContent=whatsappResult;placeholder.className='bubble ai';speakText(whatsappResult);return;}
+
+    // Finanças têm prioridade e são processadas localmente antes da IA.
+    // Assim comandos como "registre uma entrada de dez reais" não dependem
+    // do provedor de IA nem de isPotentialActionRequest().
+    const directFinance=parseLocalFinanceAction(q);
+    if(directFinance){
+      if(directFinance.clarification){
+        placeholder.textContent=directFinance.clarification;
+        placeholder.className='bubble ai';
+        speakText(directFinance.clarification);
+        return;
+      }
+      const financeResult=await applyAIAction(directFinance);
+      placeholder.textContent=financeResult||'Movimentação financeira registrada.';
+      placeholder.className='bubble ai';
+      speakText(placeholder.textContent);
+      return;
+    }
+
     const pending=data.pendingAppointment;
     const actionQuery=pending?`${pending.original} ${q}`:q;
     if(pending){delete data.pendingAppointment;save();}
