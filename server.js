@@ -1155,7 +1155,9 @@ app.post("/api/ai/action", async (req,res)=>{
   // O modelo apenas propõe uma ação estruturada; a validação e gravação ficam no frontend.
   try {
     const context=req.body?.context||{};
+    const activeSkills=context.activeSkills||{};
     const prompt=`Interprete o comando do usuário para o PRIMORIS. Data/hora local: ${String(req.body?.currentDate||"não informada")}.
+Skills ativas: ${JSON.stringify(activeSkills)}. Nunca proponha uma ação que dependa de uma Skill desativada. Mapeamento: task/reminder=taskAgent, event=agenda, study/opportunity=study, note=memory, expense=finance, delete_task=taskAgent.
 Responda SOMENTE JSON válido neste formato: {"action":{"type":"task|reminder|event|study|opportunity|note|expense|delete_task","title":"...","target":"...","description":"...","date":"YYYY-MM-DD ou vazio","time":"HH:MM ou vazio","minutes":0,"kind":"...","amount":0,"category":"...","notes":"..."},"clarification":""}.
 Se faltar informação essencial ou houver ambiguidade, action deve ser null e clarification deve perguntar apenas o dado necessário.
 Não invente datas, horários, valores ou títulos. Para tarefas, use priority=alta quando o usuário indicar urgente/importante/alta prioridade, priority=baixa quando indicar baixa prioridade, e media nos demais casos. Para apagar uma tarefa, use delete_task e identifique target usando a lista disponível; se houver mais de uma candidata, peça esclarecimento.
