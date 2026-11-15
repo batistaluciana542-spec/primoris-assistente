@@ -744,6 +744,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 </style></head>
 <body>
 <div class="app">
+<button id="navMenuButton" class="nav-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="togglePrimorisSidebar()"><span></span><span></span><span></span></button>
+<div id="navSidebarBackdrop" class="nav-sidebar-backdrop" aria-hidden="true" onclick="togglePrimorisSidebar(false)"></div>
 <aside class="sidebar">
   <div class="logo">
     <div class="nav-brand-mark">P</div>
@@ -3315,3 +3317,85 @@ document.addEventListener('DOMContentLoaded',function(){
 }
 .opp-delete:hover{color:#fff;border-color:rgba(255,100,124,.55);background:rgba(255,100,124,.16);box-shadow:0 0 20px rgba(255,100,124,.12);transform:translateY(-1px)}
 </style>
+<style id="primoris-sidebar-drawer-v1">
+/* Menu lateral móvel: fechado por padrão e aberto pelas três barras. */
+.nav-menu-button{
+  display:none;
+  position:fixed;
+  top:14px;
+  left:14px;
+  z-index:70;
+  width:44px;height:44px;
+  border:1px solid rgba(84,232,255,.24);
+  border-radius:13px;
+  background:rgba(8,10,23,.88);
+  backdrop-filter:blur(18px);
+  box-shadow:0 10px 30px rgba(0,0,0,.32),0 0 22px rgba(84,232,255,.06);
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:5px;
+}
+.nav-menu-button span{
+  width:19px;height:2px;border-radius:3px;
+  background:linear-gradient(90deg,var(--cyan),#b47cff);
+  box-shadow:0 0 8px rgba(84,232,255,.25);
+  transition:.2s ease;
+}
+.nav-sidebar-backdrop{display:none}
+@media(max-width:900px){
+  .nav-menu-button{display:flex}
+  .sidebar{
+    display:block!important;
+    position:fixed!important;
+    top:0!important;
+    left:0!important;
+    bottom:0!important;
+    width:min(292px,86vw)!important;
+    height:100vh!important;
+    z-index:65!important;
+    transform:translateX(-105%)!important;
+    transition:transform .28s cubic-bezier(.2,.8,.2,1)!important;
+    box-shadow:18px 0 60px rgba(0,0,0,.58)!important;
+  }
+  body.primoris-sidebar-open .sidebar{transform:translateX(0)!important}
+  .nav-sidebar-backdrop{
+    position:fixed;
+    inset:0;
+    z-index:60;
+    display:block;
+    background:rgba(2,4,12,.58);
+    backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  body.primoris-sidebar-open .nav-sidebar-backdrop{
+    opacity:1;
+    pointer-events:auto;
+  }
+  body.primoris-sidebar-open .nav-menu-button span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.primoris-sidebar-open .nav-menu-button span:nth-child(2){opacity:0}
+  body.primoris-sidebar-open .nav-menu-button span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .main{padding-top:72px!important}
+}
+@media(min-width:901px){
+  .nav-menu-button,.nav-sidebar-backdrop{display:none!important}
+}
+</style>
+
+<script id="primoris-sidebar-drawer-js">
+function togglePrimorisSidebar(force){
+  const open=typeof force==='boolean'?force:!document.body.classList.contains('primoris-sidebar-open');
+  document.body.classList.toggle('primoris-sidebar-open',open);
+  const btn=document.getElementById('navMenuButton');
+  if(btn)btn.setAttribute('aria-expanded',String(open));
+}
+document.addEventListener('click',function(e){
+  const navBtn=e.target.closest?.('.sidebar button[data-page]');
+  if(navBtn&&window.innerWidth<=900) togglePrimorisSidebar(false);
+});
+window.addEventListener('resize',function(){
+  if(window.innerWidth>900)togglePrimorisSidebar(false);
+});
+</script>
