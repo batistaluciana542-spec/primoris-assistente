@@ -1166,10 +1166,10 @@ app.post("/api/ai/action", async (req,res)=>{
     const context=req.body?.context||{};
     const activeSkills=context.activeSkills||{};
     const prompt=`Interprete o comando do usuário para o PRIMORIS. Data/hora local: ${String(req.body?.currentDate||"não informada")}.
-Skills ativas: ${JSON.stringify(activeSkills)}. Nunca proponha uma ação que dependa de uma Skill desativada. Mapeamento: task/reminder=taskAgent, event=agenda, study/opportunity=study, note=memory, expense=finance, delete_task=taskAgent.
-Responda SOMENTE JSON válido neste formato: {"action":{"type":"task|reminder|event|study|opportunity|note|expense|delete_task","title":"...","target":"...","description":"...","date":"YYYY-MM-DD ou vazio","time":"HH:MM ou vazio","minutes":0,"kind":"...","amount":0,"category":"...","notes":"..."},"clarification":""}.
+Skills ativas: ${JSON.stringify(activeSkills)}. Nunca proponha uma ação que dependa de uma Skill desativada. Mapeamento: task/reminder=taskAgent, event=agenda, study/opportunity=study, note=memory, expense=finance, delete_task=taskAgent, delete_opportunity=study.
+Responda SOMENTE JSON válido neste formato: {"action":{"type":"task|reminder|event|study|opportunity|note|expense|delete_task|delete_opportunity","title":"...","target":"...","description":"...","date":"YYYY-MM-DD ou vazio","time":"HH:MM ou vazio","minutes":0,"kind":"...","amount":0,"category":"...","notes":"..."},"clarification":""}.
 Se faltar informação essencial ou houver ambiguidade, action deve ser null e clarification deve perguntar apenas o dado necessário.
-Não invente datas, horários, valores ou títulos. Para tarefas, use priority=alta quando o usuário indicar urgente/importante/alta prioridade, priority=baixa quando indicar baixa prioridade, e media nos demais casos. Para apagar uma tarefa, use delete_task e identifique target usando a lista disponível; se houver mais de uma candidata, peça esclarecimento.
+Não invente datas, horários, valores ou títulos. Para tarefas, use priority=alta quando o usuário indicar urgente/importante/alta prioridade, priority=baixa quando indicar baixa prioridade, e media nos demais casos. Para apagar uma tarefa, use delete_task e identifique target usando a lista disponível; se houver mais de uma candidata, peça esclarecimento. Para apagar uma oportunidade, use delete_opportunity e identifique target pelo título usando a lista disponível; se houver mais de uma candidata, peça esclarecimento. Nunca transforme um pedido de exclusão em criação.
 Contexto existente: ${JSON.stringify(context).slice(0,12000)}
 Comando: ${message}`;
     const requested=String(req.body?.provider||"openai").toLowerCase();
@@ -1180,7 +1180,7 @@ Comando: ${message}`;
       try{
         const cleaned=result.text.replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
         const parsed=JSON.parse(cleaned);
-        const allowed=["task","reminder","event","study","opportunity","note","expense","delete_task"];
+        const allowed=["task","reminder","event","study","opportunity","note","expense","delete_task","delete_opportunity"];
         if(parsed?.action&&allowed.includes(parsed.action.type))return res.json({action:parsed.action});
         if(parsed?.clarification)return res.json({action:null,clarification:String(parsed.clarification).slice(0,500)});
       }catch(parseError){console.warn("Ação IA retornou JSON inválido:",parseError.message);}
