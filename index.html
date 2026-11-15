@@ -741,7 +741,25 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 .pw-title{background:linear-gradient(90deg,rgba(84,232,255,.07),rgba(255,79,216,.05))!important;border-bottom-color:rgba(84,232,255,.14)!important}
 @media(max-width:900px){.main{padding:18px 16px 92px}}
 @media(max-width:600px){.main{padding:15px 12px 88px}}
-</style></head>
+</style>
+<style id="primoris-ai-eye-v1">
+/* Identidade visual: Olho digital do PRIMORIS */
+.primoris-ai-eye{position:relative;width:clamp(170px,28vw,290px);aspect-ratio:1/1;margin:0 auto 22px;display:grid;place-items:center;filter:drop-shadow(0 0 28px rgba(84,232,255,.16));}
+.primoris-ai-eye .eye-core{position:relative;width:46%;height:46%;border-radius:50%;background:radial-gradient(circle,#f8ffff 0 4%,#54e8ff 9%,#3d63ff 28%,#8e3cff 52%,#12052d 76%,#04040d 100%);box-shadow:0 0 18px rgba(84,232,255,.95),0 0 48px rgba(154,108,255,.65),inset 0 0 22px rgba(255,79,216,.45);z-index:3;animation:primorisEyePulse 2.6s ease-in-out infinite}
+.primoris-ai-eye .eye-ring{position:absolute;border-radius:50%;border:1px solid rgba(84,232,255,.55);box-shadow:0 0 18px rgba(84,232,255,.18),inset 0 0 18px rgba(154,108,255,.08)}
+.primoris-ai-eye .r1{inset:17%;border-color:rgba(255,79,216,.42);animation:primorisEyeSpin 7s linear infinite}
+.primoris-ai-eye .r2{inset:6%;border-style:dashed;border-color:rgba(84,232,255,.48);animation:primorisEyeSpinReverse 11s linear infinite}
+.primoris-ai-eye .r3{inset:-6%;border-color:rgba(154,108,255,.30);box-shadow:0 0 35px rgba(154,108,255,.14);animation:primorisEyePulseRing 3s ease-in-out infinite}
+.primoris-ai-eye .eye-ray{position:absolute;width:2px;height:15%;background:linear-gradient(var(--cyan),transparent);top:0;left:50%;transform-origin:50% 100%;opacity:.7;box-shadow:0 0 8px var(--cyan)}
+.primoris-ai-eye .ray2{transform:rotate(60deg)}.primoris-ai-eye .ray3{transform:rotate(120deg)}.primoris-ai-eye .ray4{transform:rotate(180deg)}.primoris-ai-eye .ray5{transform:rotate(240deg)}.primoris-ai-eye .ray6{transform:rotate(300deg)}
+.primoris-ai-eye .eye-label{position:absolute;bottom:-2px;color:var(--cyan);font:800 8px Orbitron;letter-spacing:2px;text-shadow:0 0 10px rgba(84,232,255,.6);opacity:.75}
+@keyframes primorisEyePulse{0%,100%{transform:scale(.96);filter:brightness(.92)}50%{transform:scale(1.05);filter:brightness(1.18)}}
+@keyframes primorisEyeSpin{to{transform:rotate(360deg)}}
+@keyframes primorisEyeSpinReverse{to{transform:rotate(-360deg)}}
+@keyframes primorisEyePulseRing{0%,100%{transform:scale(.97);opacity:.45}50%{transform:scale(1.04);opacity:.9}}
+@media(max-width:600px){.primoris-ai-eye{width:190px;margin-bottom:15px}}
+</style>
+</head>
 <body>
 <div class="app">
 <button id="navMenuButton" class="nav-menu-button" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="togglePrimorisSidebar()"><span></span><span></span><span></span></button>
@@ -900,6 +918,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 </style>
 <section id="page-assistant" class="page primoris-ai-page">
   <div class="ai-shell">
+<div class="primoris-ai-eye" aria-label="PRIMORIS AI">
+  <div class="eye-ray"></div><div class="eye-ray ray2"></div><div class="eye-ray ray3"></div><div class="eye-ray ray4"></div><div class="eye-ray ray5"></div><div class="eye-ray ray6"></div>
+  <div class="eye-ring r3"></div><div class="eye-ring r2"></div><div class="eye-ring r1"></div>
+  <div class="eye-core"></div><div class="eye-label">PRIMORIS AI</div>
+</div>
+
     <div class="ai-topbar">
       <div class="ai-identity">
         <div class="ai-mark"><span>✦</span></div>
