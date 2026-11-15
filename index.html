@@ -2296,9 +2296,27 @@ function markNotificationRead(nid){data.notifications=(data.notifications||[]).m
 function clearNotifications(){data.notifications=[];save();renderDashboard();toast('Notificações limpas')}
 async function enableNotifications(){
   if(!('Notification' in window)){toast('Este navegador não oferece notificações.');return}
-  try{const p=await Notification.requestPermission();toast(p==='granted'?'Notificações ativadas.':'Permissão de notificações não concedida.');checkSmartNotifications()}catch(e){toast('Não foi possível ativar as notificações.')}
+  try{
+    const p=await Notification.requestPermission();
+    if(p!=='granted'){toast('Permissão de notificações não concedida.');return}
+    toast('Notificações ativadas.');
+    await showBrowserNotification('ORION · Notificações ativadas','O ORION agora pode enviar alertas para você.');
+    checkSmartNotifications();
+  }catch(e){toast('Não foi possível ativar as notificações.')}
 }
-function showBrowserNotification(title,message){if(!('Notification' in window)||Notification.permission!=='granted')return;try{new Notification(title,{body:message,tag:'primoris-'+title})}catch(e){}}
+async function showBrowserNotification(title,message){
+  if(!('Notification' in window)||Notification.permission!=='granted')return false;
+  try{
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.ready;
+      if(reg?.showNotification){
+        await reg.showNotification(title,{body:message,tag:'orion-'+title,icon:'/icon.svg',badge:'/icon.svg'});
+        return true;
+      }
+    }
+  }catch(e){}
+  try{new Notification(title,{body:message,tag:'orion-'+title,icon:'/icon.svg'});return true}catch(e){return false}
+}
 function checkSmartNotifications(){
   const now=new Date();
   (data.tasks||[]).filter(t=>!t.done).forEach(t=>{
