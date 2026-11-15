@@ -2215,21 +2215,35 @@ let primorisVoiceModeActive=false;
 function togglePrimorisVoiceMode(){
   const overlay=document.getElementById('primorisSpeakingOverlay');
   const orb=document.getElementById('primorisSpeakingOrb');
-  if(!overlay)return;
+  if(!overlay){toast('Modo voz indisponível nesta versão.');return;}
   primorisVoiceModeActive=!primorisVoiceModeActive;
   overlay.classList.toggle('active',primorisVoiceModeActive);
   overlay.setAttribute('aria-hidden',primorisVoiceModeActive?'false':'true');
   document.body.classList.toggle('primoris-voice-mode-open',primorisVoiceModeActive);
+  const status=document.getElementById('voiceStatus');
   if(primorisVoiceModeActive){
     if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
-    const status=document.getElementById('voiceStatus');
-    if(status)status.textContent='🎙️ Modo voz ativo · fale com o PRIMORIS';
-    if(typeof toggleVoiceRecognition==='function' && !voiceListening) toggleVoiceRecognition();
+    if(status)status.textContent='🎙️ Modo voz ativo · toque no microfone para falar';
+    if(typeof initVoiceRecognition==='function' && !voiceRecognition) initVoiceRecognition();
+    setTimeout(function(){
+      if(typeof voiceSupported==='function' && voiceSupported() && !voiceListening){
+        try{
+          voiceManualStop=false;
+          voiceFinalText='';
+          window.speechSynthesis?.resume();
+          voiceRecognition.start();
+        }catch(e){
+          console.warn('Modo voz:',e);
+          if(status)status.textContent='🎙️ Toque novamente para ativar o microfone';
+        }
+      }else if(typeof voiceSupported==='function' && !voiceSupported()){
+        if(status)status.textContent='🎙️ Reconhecimento de voz não disponível neste navegador';
+      }
+    },120);
   }else{
-    try{if(voiceListening){voiceManualStop=true;voiceRecognition?.stop();}}catch(e){}
+    try{voiceManualStop=true;if(voiceRecognition)voiceRecognition.stop();}catch(e){}
     try{window.speechSynthesis?.cancel();}catch(e){}
     if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
-    const status=document.getElementById('voiceStatus');
     if(status)status.textContent='🎙️ Microfone pronto';
   }
 }
