@@ -745,10 +745,44 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="logo"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
-  <nav class="nav">
-    <button data-page="home">⌂ Hoje</button><button data-page="assistant">◉ Assistente</button><button data-page="agenda">◷ Agenda</button><button data-page="tasks">✓ Tarefas</button><button data-page="studies">▣ Estudos</button><button data-page="opportunities">◇ Oportunidades</button><button data-page="news">◈ Informações</button><button data-page="email">✉ E-mails</button><button data-page="memory">♢ Memória</button><button data-page="integrations">⌁ Integrações</button><button data-page="settings">⚙ Configurações</button><button data-page="search">⌕ Busca</button><button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;">🧩 Skills</button><button data-page="os">◈ PRIMORIS OS</button><button data-page="devpanel">🛠️ Dev Panel</button>
-  <button type="button" onclick="showPage('finance')" data-page="finance">💰 Finanças</button><button type="button" onclick="showPage('image-lab')" data-page="image-lab">🖼️ Imagem IA</button><button data-page="diagnostics">⌁ Diagnóstico</button></nav>
+  <div class="logo">
+    <div class="nav-brand-mark">P</div>
+    <div class="nav-brand-copy"><strong>PRIMORIS</strong><small>PERSONAL CORE // v4.0</small></div>
+  </div>
+
+  <div class="nav-caption">NAVEGAÇÃO</div>
+  <nav class="nav" aria-label="Navegação principal">
+    <div class="nav-group">
+      <div class="nav-group-title">Principal</div>
+      <button data-page="home"><span class="nav-ico">⌂</span><span>Hoje</span></button>
+      <button data-page="assistant"><span class="nav-ico">✦</span><span>Assistente</span><b class="nav-live">AI</b></button>
+      <button data-page="agenda"><span class="nav-ico">◷</span><span>Agenda</span></button>
+      <button data-page="tasks"><span class="nav-ico">✓</span><span>Tarefas</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Seu espaço</div>
+      <button data-page="studies"><span class="nav-ico">▣</span><span>Estudos</span></button>
+      <button data-page="opportunities"><span class="nav-ico">◇</span><span>Oportunidades</span></button>
+      <button data-page="finance"><span class="nav-ico">¤</span><span>Finanças</span></button>
+      <button data-page="email"><span class="nav-ico">✉</span><span>E-mails</span></button>
+      <button data-page="memory"><span class="nav-ico">♢</span><span>Memória</span></button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Ferramentas</div>
+      <button data-page="news"><span class="nav-ico">◈</span><span>Informações</span></button>
+      <button data-page="search"><span class="nav-ico">⌕</span><span>Busca</span></button>
+      <button id="skillsNavButton" data-page="skills" type="button" onclick="openSkillsPage();return false;"><span class="nav-ico">✦</span><span>Skills</span></button>
+      <button data-page="image-lab"><span class="nav-ico">⌁</span><span>Imagem IA</span></button>
+      <button data-page="integrations"><span class="nav-ico">⌘</span><span>Integrações</span></button>
+    </div>
+    <div class="nav-group nav-group-system">
+      <div class="nav-group-title">Sistema</div>
+      <button data-page="os"><span class="nav-ico">◉</span><span>PRIMORIS OS</span></button>
+      <button data-page="settings"><span class="nav-ico">⚙</span><span>Configurações</span></button>
+      <button data-page="diagnostics"><span class="nav-ico">⌁</span><span>Diagnóstico</span></button>
+      <button data-page="devpanel"><span class="nav-ico">⌘</span><span>Dev Panel</span></button>
+    </div>
+  </nav>
 </aside>
 
 <main class="main">
@@ -3112,3 +3146,149 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script></body>
 </html>
+
+<style id="primoris-nav-redesign-v8">
+/* Navegação PRIMORIS: hierarquia clara, neon controlado e foco no item ativo. */
+.sidebar{
+  width:258px!important;
+  padding:18px 12px 16px!important;
+  background:
+    radial-gradient(circle at 20% 0%,rgba(84,232,255,.08),transparent 28%),
+    radial-gradient(circle at 100% 28%,rgba(255,79,216,.07),transparent 30%),
+    linear-gradient(180deg,rgba(8,10,23,.97),rgba(7,8,18,.94))!important;
+  border-right:1px solid rgba(84,232,255,.15)!important;
+  box-shadow:14px 0 55px rgba(0,0,0,.28)!important;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(84,232,255,.28) transparent;
+}
+.logo{
+  display:flex!important;
+  align-items:center;
+  gap:11px;
+  padding:6px 8px 18px!important;
+  margin-bottom:4px;
+}
+.nav-brand-mark{
+  width:42px;height:42px;flex:0 0 42px;border-radius:13px;
+  display:grid;place-items:center;
+  font:800 20px Orbitron;
+  color:#07101a;
+  background:linear-gradient(135deg,var(--cyan),#8d7cff 58%,var(--pink));
+  box-shadow:0 0 26px rgba(84,232,255,.20),0 0 34px rgba(255,79,216,.10);
+}
+.nav-brand-copy{min-width:0}
+.nav-brand-copy strong{
+  display:block;
+  font:800 20px Orbitron!important;
+  letter-spacing:2.4px!important;
+}
+.nav-brand-copy small{font-size:9px!important;letter-spacing:1.2px!important;white-space:nowrap}
+.nav-caption{
+  margin:0 8px 9px;
+  color:#66708f;
+  font:700 9px Orbitron;
+  letter-spacing:2px;
+}
+.nav{display:flex!important;flex-direction:column;gap:10px!important}
+.nav-group{display:grid;gap:4px}
+.nav-group-title{
+  padding:4px 9px 5px;
+  color:#687393;
+  font:700 9px Orbitron;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.nav button{
+  position:relative;
+  display:flex!important;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-height:42px;
+  padding:8px 10px!important;
+  border:1px solid transparent!important;
+  border-radius:13px!important;
+  color:#9ea8c7!important;
+  background:transparent!important;
+  text-align:left;
+  box-shadow:none!important;
+  transform:none!important;
+}
+.nav button .nav-ico{
+  width:28px;height:28px;flex:0 0 28px;
+  display:grid;place-items:center;
+  border:1px solid rgba(126,147,255,.10);
+  border-radius:9px;
+  color:#7f8bad;
+  background:rgba(255,255,255,.025);
+  font-size:14px;
+  transition:.2s ease;
+}
+.nav button>span:nth-child(2){font-size:13px;font-weight:650;letter-spacing:.1px}
+.nav button:hover{
+  color:#f5f7ff!important;
+  background:linear-gradient(90deg,rgba(84,232,255,.075),rgba(154,108,255,.055))!important;
+  border-color:rgba(84,232,255,.13)!important;
+}
+.nav button:hover .nav-ico{
+  color:var(--cyan);
+  border-color:rgba(84,232,255,.22);
+  background:rgba(84,232,255,.07);
+}
+.nav button.active{
+  color:#fff!important;
+  background:linear-gradient(100deg,rgba(84,232,255,.14),rgba(154,108,255,.10) 58%,rgba(255,79,216,.08))!important;
+  border-color:rgba(84,232,255,.23)!important;
+  box-shadow:inset 3px 0 var(--cyan),0 8px 24px rgba(84,232,255,.055)!important;
+}
+.nav button.active .nav-ico{
+  color:#06121a;
+  border-color:rgba(84,232,255,.42);
+  background:linear-gradient(135deg,var(--cyan),#8c8bff);
+  box-shadow:0 0 15px rgba(84,232,255,.16);
+}
+.nav-live{
+  margin-left:auto;
+  padding:3px 6px;
+  border:1px solid rgba(84,232,255,.24);
+  border-radius:999px;
+  color:var(--cyan);
+  background:rgba(84,232,255,.05);
+  font:800 8px Orbitron;
+  letter-spacing:.7px;
+}
+.nav-group-system{
+  padding-top:8px;
+  margin-top:2px;
+  border-top:1px solid rgba(126,147,255,.09);
+}
+@media(max-width:900px){
+  .mobilebar{
+    left:12px!important;right:12px!important;bottom:12px!important;
+    padding:6px!important;
+    gap:4px!important;
+    border-radius:20px!important;
+    background:rgba(8,10,23,.88)!important;
+    border-color:rgba(84,232,255,.18)!important;
+    box-shadow:0 18px 55px rgba(0,0,0,.48),0 0 28px rgba(84,232,255,.05)!important;
+  }
+  .mobilebar button{
+    min-width:64px!important;
+    min-height:54px!important;
+    padding:6px 8px!important;
+    border-radius:15px!important;
+    color:#7f89a9!important;
+    font-size:10px!important;
+    font-weight:700;
+    line-height:1.15;
+    transition:.2s ease;
+  }
+  .mobilebar button::first-line{font-size:16px}
+  .mobilebar button.active{
+    color:#fff!important;
+    background:linear-gradient(145deg,rgba(84,232,255,.15),rgba(154,108,255,.12))!important;
+    box-shadow:inset 0 0 0 1px rgba(84,232,255,.15),0 0 20px rgba(84,232,255,.07)!important;
+  }
+}
+</style>
