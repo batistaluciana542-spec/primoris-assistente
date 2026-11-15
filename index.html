@@ -439,24 +439,111 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
   </header>
 
   <section id="page-home" class="page">
-    <div class="hero"><div class="eyebrow">PERSONAL COMMAND CENTER</div><h1>Seu dia, sem bagunça.</h1><p class="muted">Agenda, tarefas, estudos, notícias e memória em um único painel. A humanidade finalmente inventou um lugar para guardar as coisas que esquece.</p><div class="actions"><button class="btn primary" onclick="showPage('assistant')">Falar com PRIMORIS</button><button class="btn" onclick="syncCalendar()">Sincronizar agenda</button></div></div>
-    <div class="grid">
-      <div class="card"><span class="badge">TAREFAS</span><div class="stat" id="statTasks">0</div><div class="muted">pendentes</div></div>
-      <div class="card"><span class="badge">EVENTOS</span><div class="stat" id="statEvents">0</div><div class="muted">sincronizados</div></div>
-      <div class="card"><span class="badge">ESTUDOS</span><div class="stat" id="statStudies">0</div><div class="muted">registros</div></div>
+  <div class="dash-hero">
+    <div class="dash-hero-main">
+      <div class="dash-kicker">PRIMORIS // CENTRAL</div>
+      <h1>Seu dia, <span>sob controle.</span></h1>
+      <p>Uma visão rápida do que importa agora. Menos caixas, menos ruído, mais informação útil.</p>
+      <div class="dash-actions">
+        <button class="dash-btn dash-primary" onclick="showPage('assistant')">✦ Falar com PRIMORIS</button>
+        <button class="dash-btn" onclick="syncCalendar()">↻ Sincronizar agenda</button>
+      </div>
     </div>
-    <div class="card" style="margin-top:15px"><div class="row"><h3>Tarefas</h3><span class="muted">Criadas aqui ou pelo assistente</span></div><div id="taskList" class="list"></div></div>
-    <div class="card" style="margin-top:15px"><div class="row"><h3>🔔 Notificações inteligentes</h3><button class="btn" type="button" onclick="enableNotifications()">Ativar</button></div><div id="notificationList" class="list"><div class="muted">Nenhuma notificação pendente.</div></div></div>
-    <div class="dashboard-columns">
-      <div class="card"><h3>Próximos compromissos</h3><div id="dashEvents" class="list"></div></div>
-      <div class="card"><h3>Próximos lembretes</h3><div id="dashReminders" class="list"></div></div>
-      <div class="card"><h3>Resumo financeiro</h3><p id="dashFinance" class="muted">Sem movimentações registradas.</p></div>
-      <div class="card"><h3>Estudos</h3><div id="dashStudies" class="list"></div></div>
-    </div>
-    <div class="grid2"><div class="card"><h3>Resumo rápido</h3><p id="brief" class="muted">Carregando seu painel...</p></div><div class="card"><h3>Estado do sistema</h3><p class="muted">IA conectada ao servidor · PWA ativo · Google Calendar disponível · Notícias online</p></div></div>
-  </section>
+    <div class="dash-orbit" aria-hidden="true"><div class="dash-orbit-core">P</div></div>
+  </div>
 
-  <section id="page-assistant" class="page">
+  <div class="dash-status-row">
+    <div><i></i><span>PRIMORIS ONLINE</span></div>
+    <div><i></i><span>PWA ATIVO</span></div>
+    <div><i></i><span>GOOGLE CONECTADO</span></div>
+    <div class="dash-time"><span id="dashboardGreeting">HOJE</span><strong id="dashboardClock">--:--</strong></div>
+  </div>
+
+  <div class="dash-bento">
+    <button class="dash-card dash-card-big dash-finance-card" onclick="showPage('finance')">
+      <div class="dash-card-head"><span>FINANÇAS</span><b>›</b></div>
+      <div class="dash-finance-value" id="dashFinanceValue">R$ 0,00</div>
+      <div class="dash-finance-label">saldo disponível</div>
+      <div class="dash-mini-stats">
+        <div><small>ENTRADAS</small><strong id="dashFinanceIn">R$ 0,00</strong></div>
+        <div><small>GASTOS</small><strong id="dashFinanceOut">R$ 0,00</strong></div>
+        <div><small>DÍVIDAS</small><strong id="dashFinanceDebt">R$ 0,00</strong></div>
+      </div>
+    </button>
+
+    <button class="dash-card" onclick="showPage('tasks')">
+      <div class="dash-card-head"><span>TAREFAS</span><b>›</b></div>
+      <div class="dash-number" id="statTasks">0</div>
+      <p>pendentes</p>
+      <div id="dashTaskPreview" class="dash-preview">Nenhuma tarefa pendente.</div>
+    </button>
+
+    <button class="dash-card" onclick="showPage('agenda')">
+      <div class="dash-card-head"><span>AGENDA</span><b>›</b></div>
+      <div class="dash-number" id="statEvents">0</div>
+      <p>eventos próximos</p>
+      <div id="dashEvents" class="dash-preview">Nenhum compromisso próximo.</div>
+    </button>
+
+    <div class="dash-card dash-card-wide">
+      <div class="dash-card-head"><span>ACESSO RÁPIDO</span><em>PRIMORIS OS</em></div>
+      <div class="dash-shortcuts">
+        <button onclick="showPage('assistant')"><strong>✦</strong><span>IA</span></button>
+        <button onclick="showPage('email')"><strong>✉</strong><span>Gmail</span></button>
+        <button onclick="showPage('integrations')"><strong>◉</strong><span>WhatsApp</span></button>
+        <button onclick="showPage('memory')"><strong>◇</strong><span>Memória</span></button>
+        <button onclick="showPage('studies')"><strong>⌘</strong><span>Estudos</span></button>
+        <button onclick="showPage('news')"><strong>◌</strong><span>Notícias</span></button>
+      </div>
+    </div>
+
+    <div class="dash-card dash-card-wide">
+      <div class="dash-card-head"><span>SEU DIA</span><em id="dashboardDate">CARREGANDO</em></div>
+      <div class="dash-two">
+        <div><small>PRÓXIMO COMPROMISSO</small><div id="dashNextEvent" class="dash-large-text">Nenhum</div></div>
+        <div><small>PRÓXIMA TAREFA</small><div id="dashNextTask" class="dash-large-text">Nenhuma</div></div>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <div class="dash-card-head"><span>ESTUDOS</span><b>›</b></div>
+      <div class="dash-number" id="statStudies">0</div>
+      <p>registros</p>
+      <div id="dashStudies" class="dash-preview">Nenhum estudo registrado.</div>
+    </div>
+
+    <div class="dash-card">
+      <div class="dash-card-head"><span>SISTEMA</span><span class="dash-live">● ONLINE</span></div>
+      <div class="dash-system-list">
+        <div><span>IA</span><b>OPERACIONAL</b></div>
+        <div><span>VOZ</span><b>PRONTA</b></div>
+        <div><span>DADOS</span><b>LOCAL</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-notify card">
+    <div><div><span class="dash-kicker">INTELIGÊNCIA</span><h3>Notificações</h3></div><button class="btn" type="button" onclick="enableNotifications()">Ativar</button></div>
+    <div id="notificationList" class="list"><div class="muted">Nenhuma notificação pendente.</div></div>
+  </div>
+  <div class="dash-bottom-grid">
+    <div class="card"><h3>Resumo rápido</h3><p id="brief" class="muted">Carregando seu painel...</p></div>
+    <div class="card"><h3>Próximos lembretes</h3><div id="dashReminders" class="list"></div></div>
+  </div>
+</section>
+
+<style id="primoris-dashboard-redesign">
+.dash-hero{position:relative;overflow:hidden;min-height:285px;padding:34px;border:1px solid rgba(117,135,255,.2);border-radius:30px;background:radial-gradient(circle at 75% 20%,rgba(84,232,255,.12),transparent 26%),radial-gradient(circle at 95% 90%,rgba(255,79,216,.12),transparent 30%),linear-gradient(135deg,#11162b,#090c18 72%);box-shadow:0 24px 70px rgba(0,0,0,.3)}
+.dash-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.025),transparent 70%);pointer-events:none}
+.dash-hero-main{position:relative;z-index:2;max-width:720px}.dash-kicker{font:700 11px Orbitron;letter-spacing:2.5px;color:var(--cyan);text-transform:uppercase}.dash-hero h1{font-size:clamp(32px,5vw,58px);line-height:1.04;margin:12px 0}.dash-hero h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet),var(--pink));-webkit-background-clip:text;color:transparent}.dash-hero p{max-width:610px;color:#a9b1ca;font-size:17px;line-height:1.5;margin:0}.dash-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.dash-btn{border:1px solid rgba(122,143,255,.25);border-radius:13px;padding:12px 17px;background:rgba(255,255,255,.035);color:white;font-weight:800}.dash-btn:hover{border-color:var(--cyan);transform:translateY(-1px)}.dash-primary{background:linear-gradient(135deg,rgba(84,232,255,.18),rgba(154,108,255,.2));box-shadow:0 8px 28px rgba(84,232,255,.08)}
+.dash-orbit{position:absolute;right:7%;top:50%;transform:translateY(-50%);width:205px;height:205px;border-radius:50%;border:1px solid rgba(84,232,255,.16);box-shadow:0 0 80px rgba(84,232,255,.08),inset 0 0 60px rgba(154,108,255,.08)}.dash-orbit:before,.dash-orbit:after{content:"";position:absolute;inset:22px;border-radius:50%;border:1px solid rgba(154,108,255,.2)}.dash-orbit:after{inset:48px;border-color:rgba(255,79,216,.2)}.dash-orbit-core{position:absolute;inset:67px;border-radius:50%;display:grid;place-items:center;font:800 35px Orbitron;color:white;background:radial-gradient(circle,#684cff,#221548 65%,#090711);box-shadow:0 0 35px rgba(119,80,255,.55)}
+.dash-status-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:12px 2px 18px;color:#7f8aaa;font-size:11px;font-weight:800;letter-spacing:1px}.dash-status-row>div{display:flex;align-items:center;gap:7px}.dash-status-row i{width:7px;height:7px;border-radius:50%;background:#5dffae;box-shadow:0 0 10px #5dffae}.dash-status-row .dash-time{margin-left:auto;gap:10px}.dash-time strong{font:700 17px Orbitron;color:white}
+.dash-bento{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:14px}.dash-card{min-height:190px;padding:19px;border:1px solid rgba(126,147,255,.15);border-radius:21px;background:linear-gradient(145deg,rgba(17,21,42,.94),rgba(9,12,25,.96));box-shadow:0 12px 40px rgba(0,0,0,.2);color:white;text-align:left;transition:.22s;position:relative;overflow:hidden}.dash-card:hover{transform:translateY(-3px);border-color:rgba(84,232,255,.3);box-shadow:0 16px 45px rgba(84,232,255,.06)}.dash-card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font:700 11px Orbitron;letter-spacing:1.4px;color:#929dbb}.dash-card-head b{font-size:20px;color:#6f7895}.dash-card-head em{font-style:normal;font-size:9px;color:#66708e}.dash-number{font:800 42px Orbitron;margin-top:20px}.dash-card p{margin:4px 0;color:#747f9f}.dash-preview{margin-top:17px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);color:#b3bad0;font-size:13px}.dash-card-big{grid-row:span 2;min-height:394px}.dash-finance-value{font:800 clamp(28px,4vw,43px) Orbitron;margin-top:30px;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;color:transparent}.dash-finance-label{color:#7d87a5;margin-top:5px}.dash-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:50px}.dash-mini-stats div{padding-top:11px;border-top:1px solid rgba(255,255,255,.07)}.dash-mini-stats small,.dash-two small{display:block;color:#68738f;font-size:9px;font-weight:800;letter-spacing:1px}.dash-mini-stats strong{display:block;margin-top:6px;font-size:13px}.dash-card-wide{grid-column:span 2;min-height:155px}.dash-shortcuts{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:17px}.dash-shortcuts button{border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.025);color:#cbd1e4;border-radius:14px;padding:11px 5px;display:grid;place-items:center;gap:6px}.dash-shortcuts button:hover{border-color:rgba(84,232,255,.3);background:rgba(84,232,255,.06)}.dash-shortcuts strong{font-size:20px;color:var(--cyan)}.dash-shortcuts span{font-size:11px}.dash-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:25px}.dash-two>div{padding:13px;border-radius:14px;background:rgba(255,255,255,.025)}.dash-large-text{font-weight:700;font-size:16px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dash-live{color:#5dffae!important}.dash-system-list{display:grid;gap:11px;margin-top:23px}.dash-system-list div{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:8px;font-size:12px;color:#858faa}.dash-system-list b{font-size:10px;color:#5dffae}.dash-notify{margin-top:14px;padding:18px}.dash-notify>div:first-child{display:flex;justify-content:space-between;align-items:center;gap:12px}.dash-notify h3{margin:5px 0 0}.dash-bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media(max-width:1000px){.dash-orbit{right:3%;opacity:.55}.dash-bento{grid-template-columns:1fr 1fr}.dash-card-big{grid-row:span 2}.dash-card-wide{grid-column:span 2}}
+@media(max-width:700px){.dash-hero{min-height:330px;padding:24px}.dash-orbit{width:125px;height:125px;right:-12px;top:auto;bottom:-25px;transform:none;opacity:.45}.dash-orbit-core{inset:43px;font-size:23px}.dash-status-row{gap:10px}.dash-status-row>div:not(.dash-time){display:none}.dash-status-row .dash-time{margin-left:0;width:100%;justify-content:space-between}.dash-bento{grid-template-columns:1fr}.dash-card-big,.dash-card-wide{grid-column:auto;grid-row:auto;min-height:180px}.dash-card-big{min-height:330px}.dash-mini-stats{margin-top:35px}.dash-shortcuts{grid-template-columns:repeat(3,1fr)}.dash-two,.dash-bottom-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.dash-card,.dash-btn{transition:none}}
+</style>
+<section id="page-assistant" class="page">
     <div class="row"><div><h2>Assistente</h2><div class="muted">Converse normalmente. Sem comandos mágicos de videogame.</div></div><div class="actions"><button class="btn" type="button" onclick="showPage('image-lab')">🖼️ Adicionar foto</button><button class="btn primary" type="button" onclick="togglePrimorisVoiceMode()">🔵 Modo voz</button><button class="btn" onclick="clearChat()">Limpar</button></div></div>
     <div class="card" style="margin-top:15px"><div id="chat" class="chat"></div><div id="voiceStatus" class="voice-status">🎙️ Microfone pronto</div><form id="chatForm" class="chatbar"><input id="chatInput" autocomplete="off" placeholder="Digite ou toque no microfone para falar..."><button id="voiceButton" class="voice-btn" type="button" onclick="toggleVoiceRecognition()" aria-label="Falar com o PRIMORIS">🎙️</button><button class="btn primary" type="submit">Enviar</button></form><div class="voice-auto-note">Toque no microfone, fale seu comando e o PRIMORIS responderá automaticamente em voz alta.</div></div>
   </section>
