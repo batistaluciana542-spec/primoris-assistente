@@ -2221,7 +2221,7 @@ function togglePrimorisVoiceMode(){
   overlay.setAttribute('aria-hidden',primorisVoiceModeActive?'false':'true');
   document.body.classList.toggle('primoris-voice-mode-open',primorisVoiceModeActive);
   if(primorisVoiceModeActive){
-    if(orb)orb.style.transform='scale(1)';
+    if(orb){orb.style.transform='scale(1)';orb.style.filter='';}
     const status=document.getElementById('voiceStatus');
     if(status)status.textContent='🎙️ Modo voz ativo · fale com o PRIMORIS';
     if(typeof toggleVoiceRecognition==='function' && !voiceListening) toggleVoiceRecognition();
