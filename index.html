@@ -56,6 +56,8 @@ input,textarea,select{width:100%;border:1px solid var(--line);background:#080a15
 .primoris-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid rgba(91,230,255,.45);box-shadow:0 0 14px rgba(123,55,255,.45)}
 .ai-bubble{display:flex;align-items:flex-start;gap:4px}
 .ai-bubble .bubble-text{flex:1}
+</style><style id="connection-hub-active-below-style">
+.hub-active-below{display:flex;flex-direction:row;align-items:center;width:max-content;margin-top:6px}
 </style><style id="connection-hub-active-style">
 .hub-active-status{display:inline-flex;align-items:center;gap:7px;color:#7dff9b;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
 .hub-active-status i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#35ff68;box-shadow:0 0 8px rgba(53,255,104,.85)}
@@ -516,7 +518,7 @@ body.theme-clean main,body.theme-clean .app-main,body.theme-clean .content{backg
     </div>
 
     <div class="card" style="margin-top:15px">
-      <div class="row"><div><h3>🌐 Serviços conectados</h3><div class="muted">As integrações Google usam a conta já conectada ao PRIMORIS quando a permissão necessária estiver disponível.</div></div><span id="connectionHubStatus" class="hub-active-status"><i></i> ATIVO</span></div>
+      <div class="row"><div><h3>🌐 Serviços conectados</h3><div class="muted">As integrações Google usam a conta já conectada ao PRIMORIS quando a permissão necessária estiver disponível.</div></div><span id="connectionHubStatus" class="hub-active-status hub-active-below"><i></i> ATIVO</span></div>
       <div class="grid2" style="margin-top:14px">
         <div class="item"><div class="row"><div><b>📧 Gmail</b><small id="hubGmail" class="hub-active-status"><i></i> ATIVO</small></div><button class="btn" type="button" onclick="showPage('email')">Abrir</button></div></div>
         <div class="item"><div class="row"><div><b>📅 Google Calendar</b><small id="hubCalendar" class="hub-active-status"><i></i> ATIVO</small></div><button class="btn" type="button" onclick="showPage('agenda')">Abrir</button></div></div>
