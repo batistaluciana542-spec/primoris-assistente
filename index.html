@@ -2354,5 +2354,35 @@ document.addEventListener('DOMContentLoaded',function(){
   var btn=document.getElementById('skillsNavButton');
   if(btn) btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openSkillsPage();},true);
 });
-</script></body>
+</script><script id="clean-ai-markdown">
+(function(){
+  function cleanAIText(text){
+    return String(text??'')
+      .replace(/\*\*([^*]+)\*\*/g,'$1')
+      .replace(/__([^_]+)__/g,'$1')
+      .replace(/^\s*#{1,6}\s+/gm,'')
+      .replace(/^\s*[-*+]\s+/gm,'• ')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'$1')
+      .replace(/\*([^*\n]+)\*/g,'$1')
+      .replace(/_([^_\n]+)_/g,'$1');
+  }
+  window.cleanAIText=cleanAIText;
+  document.addEventListener('DOMContentLoaded',function(){
+    const root=document.querySelector('#page-assistant');
+    if(!root)return;
+    const obs=new MutationObserver(function(){
+      root.querySelectorAll('.message,.chat-message,.assistant-message,.ai-message').forEach(function(el){
+        if(el.dataset.markdownCleaned)return;
+        const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+        const nodes=[];
+        while(walker.nextNode())nodes.push(walker.currentNode);
+        nodes.forEach(n=>{n.nodeValue=cleanAIText(n.nodeValue);});
+        el.dataset.markdownCleaned='1';
+      });
+    });
+    obs.observe(root,{subtree:true,childList:true});
+  });
+})();
+</script>
+</body>
 </html>
