@@ -3618,6 +3618,7 @@ document.addEventListener('DOMContentLoaded',function(){
       const j=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível enviar a mensagem.');
       input.value='';
+      if(j.message)gcRenderMessage(j.message);
       if(status)status.textContent=globalChatAdmin?'Mensagem enviada pelo ADM.':'Mensagem enviada.';
     }catch(err){if(status)status.textContent=err.message||'Falha ao enviar.';}
   }
