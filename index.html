@@ -3579,7 +3579,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   function gcConnect(){
     if(globalChatSource)globalChatSource.close();
-    globalChatSource=new EventSource('/api/global-chat/stream');
+    globalChatSource=new EventSource('/api/global-chat/stream',{withCredentials:true});
     globalChatSource.onopen=()=>gcSetConnection(true,'Online');
     globalChatSource.onerror=()=>gcSetConnection(false,'Reconectando...');
     globalChatSource.onmessage=e=>{
@@ -3635,7 +3635,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(!key)return toast('Digite a chave ADM.');
     const status=gc$('globalChatAdminStatus');if(status)status.textContent='Verificando acesso ADM...';
     try{
-      const r=await fetch('/api/global-chat/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key})});
+      const r=await fetch('/api/global-chat/admin/login',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({key})});
       const j=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível entrar como ADM.');
       globalChatAdmin=true;globalChatAdminName=String(j.name||'Anthony ADM');
@@ -3646,7 +3646,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }catch(e){if(status)status.textContent=e.message||'Falha no acesso ADM.';}
   };
   window.globalChatAdminLogout=async function(){
-    try{await fetch('/api/global-chat/admin/logout',{method:'POST'});}catch(_){}
+    try{await fetch('/api/global-chat/admin/logout',{method:'POST',credentials:'include'});}catch(_){}
     globalChatAdmin=false;
     gcApplyAccess();gcRefreshDeleteButtons();
     if(gc$('globalChatStatus'))gc$('globalChatStatus').textContent='Você saiu do modo ADM.';
@@ -3654,7 +3654,7 @@ document.addEventListener('DOMContentLoaded',function(){
   window.globalChatDeleteMessage=async function(id){
     if(!globalChatAdmin)return;
     try{
-      const r=await fetch('/api/global-chat/messages/'+encodeURIComponent(id),{method:'DELETE'});
+      const r=await fetch('/api/global-chat/messages/'+encodeURIComponent(id),{method:'DELETE',credentials:'include'});
       const j=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível excluir.');
     }catch(e){toast(e.message||'Falha ao excluir mensagem.');}
@@ -3663,7 +3663,7 @@ document.addEventListener('DOMContentLoaded',function(){
     if(!globalChatAdmin)return;
     if(!confirm('Tem certeza que deseja apagar todas as mensagens do Chat Global?'))return;
     try{
-      const r=await fetch('/api/global-chat/admin/clear',{method:'POST'});
+      const r=await fetch('/api/global-chat/admin/clear',{method:'POST',credentials:'include'});
       const j=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível limpar o chat.');
     }catch(e){toast(e.message||'Falha ao limpar o chat.');}
