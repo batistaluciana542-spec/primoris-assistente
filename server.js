@@ -1349,7 +1349,7 @@ function isGlobalChatAdmin(req){
   return req.session?.globalChatAdmin === true;
 }
 function broadcastGlobalChat(message){
-  const payload='data: '+JSON.stringify(message)+'\\n\\n';
+  const payload='data: '+JSON.stringify(message)+'\n\n';
   for(const client of globalChatClients){
     try{client.write(payload);}catch(e){globalChatClients.delete(client);}
   }
@@ -1387,10 +1387,10 @@ app.get("/api/global-chat/stream",(req,res)=>{
     "X-Accel-Buffering":"no"
   });
   if(res.flushHeaders)res.flushHeaders();
-  res.write('retry: 3000\\n\\n');
-  res.write('event: admin-state\\ndata: '+JSON.stringify({admin:isGlobalChatAdmin(req),adminName:GLOBAL_CHAT_ADMIN_NAME})+'\\n\\n');
+  res.write('retry: 3000\n\n');
+  res.write('event: admin-state\ndata: '+JSON.stringify({admin:isGlobalChatAdmin(req),adminName:GLOBAL_CHAT_ADMIN_NAME})+'\n\n');
   globalChatClients.add(res);
-  const heartbeat=setInterval(()=>{try{res.write(': ping\\n\\n');}catch(e){}},25000);
+  const heartbeat=setInterval(()=>{try{res.write(': ping\n\n');}catch(e){}},25000);
   req.on("close",()=>{clearInterval(heartbeat);globalChatClients.delete(res);});
 });
 
