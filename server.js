@@ -1333,6 +1333,70 @@ app.get("/health", (req, res) => {
 });
 
 // =====================================================
+// CHAT GLOBAL // ORION
+// =====================================================
+const globalChatMessages = [];
+const globalChatClients = new Set();
+const globalChatRate = new Map();
+const GLOBAL_CHAT_MAX = 120;
+
+function cleanGlobalChatText(value, max=500){
+  return String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,'').trim().slice(0,max);
+}
+function broadcastGlobalChat(message){
+  const payload='data: '+JSON.stringify(message)+'\\n\\n';
+  for(const client of globalChatClients){
+    try{client.write(payload);}catch(e){globalChatClients.delete(client);}
+  }
+}
+function pushGlobalChatMessage(name,text){
+  const message={
+    id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),
+    name:cleanGlobalChatText(name,30)||'Visitante',
+    text:cleanGlobalChatText(text,500),
+    createdAt:new Date().toISOString()
+  };
+  if(!message.text)return null;
+  globalChatMessages.push(message);
+  while(globalChatMessages.length>GLOBAL_CHAT_MAX)globalChatMessages.shift();
+  broadcastGlobalChat({type:'message',message});
+  return message;
+}
+
+app.get("/api/global-chat/messages",(req,res)=>{
+  res.set("Cache-Control","no-store");
+  res.json({ok:true,messages:globalChatMessages.slice(-80)});
+});
+
+app.get("/api/global-chat/stream",(req,res)=>{
+  res.set({
+    "Content-Type":"text/event-stream; charset=utf-8",
+    "Cache-Control":"no-cache, no-transform",
+    "Connection":"keep-alive",
+    "X-Accel-Buffering":"no"
+  });
+  if(res.flushHeaders)res.flushHeaders();
+  res.write('retry: 3000\\n\\n');
+  globalChatClients.add(res);
+  const heartbeat=setInterval(()=>{try{res.write(': ping\\n\\n');}catch(e){}},25000);
+  req.on("close",()=>{clearInterval(heartbeat);globalChatClients.delete(res);});
+});
+
+app.post("/api/global-chat/messages",(req,res)=>{
+  const ip=String(req.headers["x-forwarded-for"]||req.socket.remoteAddress||"").split(",")[0].trim();
+  const now=Date.now();
+  const last=globalChatRate.get(ip)||0;
+  if(now-last<700)return res.status(429).json({error:"rate_limited",details:"Espere um instante antes de enviar outra mensagem."});
+  const name=cleanGlobalChatText(req.body?.name,30);
+  const text=cleanGlobalChatText(req.body?.text,500);
+  if(!name)return res.status(400).json({error:"name_required",details:"Escolha um nome para entrar no chat."});
+  if(!text)return res.status(400).json({error:"message_required",details:"Digite uma mensagem."});
+  globalChatRate.set(ip,now);
+  const message=pushGlobalChatMessage(name,text);
+  res.status(201).json({ok:true,message});
+});
+
+// =====================================================
 // FALLBACK DO SITE
 // =====================================================
 
