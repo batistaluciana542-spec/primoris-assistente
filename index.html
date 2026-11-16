@@ -759,6 +759,51 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 @keyframes primorisEyePulseRing{0%,100%{transform:scale(.97);opacity:.45}50%{transform:scale(1.04);opacity:.9}}
 @media(max-width:600px){.primoris-ai-eye{width:190px;margin-bottom:15px}}
 </style>
+<style id="primoris-global-chat-css">
+.global-chat-shell{max-width:1180px;margin:0 auto;padding-bottom:35px}
+.global-chat-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:15px}
+.global-chat-head h2{margin:5px 0 4px;font-size:30px}
+.global-chat-head p{margin:0}
+.global-chat-live{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid rgba(84,232,255,.18);border-radius:999px;background:rgba(84,232,255,.05);color:#a9b7d6;font-size:11px;white-space:nowrap}
+.global-chat-live span{width:8px;height:8px;border-radius:50%;background:#ffd45c;box-shadow:0 0 10px rgba(255,212,92,.6)}
+.global-chat-live.online span{background:var(--green);box-shadow:0 0 10px var(--green)}
+.global-chat-profile{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px}
+.global-chat-profile strong{font:700 13px Orbitron}
+.global-chat-profile-controls{display:flex;gap:8px;width:min(100%,430px)}
+.global-chat-profile-controls input{flex:1}
+.global-chat-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+.global-chat-card{padding:12px;min-height:560px;display:flex;flex-direction:column}
+.global-chat-messages{height:480px;overflow:auto;padding:8px 5px;display:flex;flex-direction:column;gap:9px}
+.global-chat-empty{margin:auto;text-align:center;color:#697592;padding:30px}
+.global-chat-message{max-width:82%;padding:10px 12px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.global-chat-message.me{align-self:flex-end;background:linear-gradient(135deg,rgba(84,232,255,.11),rgba(154,108,255,.13));border-color:rgba(84,232,255,.22)}
+.global-chat-message .meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:#8290b2}
+.global-chat-message .meta b{color:var(--cyan)}
+.global-chat-message.me .meta b{color:#f4c8ff}
+.global-chat-message .text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:14px;color:#eef2ff}
+.global-chat-composer{display:flex;gap:8px;margin-top:8px}
+.global-chat-composer input{flex:1}
+.global-chat-status{font-size:11px;text-align:center;padding:7px 0 1px}
+.global-chat-info{height:max-content}
+.global-chat-info-icon{font-size:38px;margin-bottom:8px}
+.global-chat-info h3{margin-bottom:5px}
+.global-chat-rules{display:grid;gap:9px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-size:12px;color:#9ca8c6;line-height:1.45}
+@media(max-width:800px){
+ .global-chat-head{align-items:flex-start;flex-direction:column}
+ .global-chat-profile{align-items:flex-start;flex-direction:column}
+ .global-chat-profile-controls{width:100%}
+ .global-chat-layout{grid-template-columns:1fr}
+ .global-chat-info{display:none}
+ .global-chat-card{min-height:calc(100vh - 270px)}
+ .global-chat-messages{height:calc(100vh - 405px);min-height:330px}
+}
+@media(max-width:520px){
+ .global-chat-profile-controls{flex-direction:column}
+ .global-chat-profile-controls .btn{width:100%}
+ .global-chat-composer .btn{padding-left:12px;padding-right:12px}
+ .global-chat-message{max-width:90%}
+}
+</style>
 </head>
 <body>
 <style id="primoris-launch-v2">
@@ -857,6 +902,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       <div class="nav-group-title">Principal</div>
       <button data-page="home"><span class="nav-ico">⌂</span><span>Hoje</span></button>
       <button data-page="assistant"><span class="nav-ico">✦</span><span>Assistente</span><b class="nav-live">AI</b></button>
+      <button data-page="global-chat"><span class="nav-ico">◉</span><span>Chat Global</span><b class="nav-live">LIVE</b></button>
       <button data-page="agenda"><span class="nav-ico">◷</span><span>Agenda</span></button>
       <button data-page="tasks"><span class="nav-ico">✓</span><span>Tarefas</span></button>
     </div>
@@ -1042,6 +1088,53 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
     </form>
   </div>
 </section>
+
+  <section id="page-global-chat" class="page">
+    <div class="global-chat-shell">
+      <div class="global-chat-head">
+        <div>
+          <div class="eyebrow">ORION // COMUNIDADE</div>
+          <h2>Chat Global</h2>
+          <p class="muted">Converse em tempo real com outras pessoas que estiverem no ORION.</p>
+        </div>
+        <div class="global-chat-live"><span></span><b id="globalChatConnection">Conectando...</b></div>
+      </div>
+
+      <div class="global-chat-profile card">
+        <div>
+          <strong>Seu nome no chat</strong>
+          <div class="muted">Use um apelido. Não coloque informações pessoais.</div>
+        </div>
+        <div class="global-chat-profile-controls">
+          <input id="globalChatName" maxlength="30" placeholder="Seu apelido">
+          <button class="btn" type="button" onclick="saveGlobalChatName()">Salvar nome</button>
+        </div>
+      </div>
+
+      <div class="global-chat-layout">
+        <div class="card global-chat-card">
+          <div id="globalChatMessages" class="global-chat-messages">
+            <div class="global-chat-empty">Entrando no Chat Global...</div>
+          </div>
+          <form id="globalChatForm" class="global-chat-composer">
+            <input id="globalChatInput" maxlength="500" autocomplete="off" placeholder="Escreva uma mensagem..." aria-label="Mensagem do Chat Global">
+            <button class="btn primary" type="submit">Enviar</button>
+          </form>
+          <div id="globalChatStatus" class="muted global-chat-status">Mensagens aparecem aqui em tempo real.</div>
+        </div>
+        <aside class="card global-chat-info">
+          <div class="global-chat-info-icon">🌐</div>
+          <h3>Todos no mesmo lugar</h3>
+          <p class="muted">As mensagens são compartilhadas com as pessoas conectadas ao Chat Global.</p>
+          <div class="global-chat-rules">
+            <div>• Respeite as outras pessoas.</div>
+            <div>• Não compartilhe endereço, telefone ou outras informações pessoais.</div>
+            <div>• O ORION pode remover mensagens inadequadas no futuro com ferramentas de moderação.</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
 
   <section id="page-image-lab" class="page">
     <div class="row"><div><h2>Imagem IA</h2><div class="muted">Envie uma foto, diga o que precisa e deixe a IA analisar o conteúdo.</div></div></div>
@@ -3358,7 +3451,103 @@ document.addEventListener('DOMContentLoaded',function(){
  window.minimizePrimorisWindow=function(type){const w=$('pw-'+type);if(w)w.classList.add('hidden')};
  window.closePrimorisWindow=function(type){const w=$('pw-'+type);if(w)w.remove()};
 })();
-</script></body>
+</script><script id="primoris-global-chat-js">
+(function(){
+  let globalChatSource=null;
+  let globalChatLoaded=false;
+  const NAME_KEY='orion_global_chat_name';
+
+  function gc$(id){return document.getElementById(id)}
+  function gcEscape(value){
+    const d=document.createElement('div');d.textContent=String(value??'');return d.innerHTML;
+  }
+  function gcName(){
+    let name=String(localStorage.getItem(NAME_KEY)||'').trim().slice(0,30);
+    if(!name){
+      name='Visitante-'+Math.floor(1000+Math.random()*9000);
+      localStorage.setItem(NAME_KEY,name);
+    }
+    return name;
+  }
+  function gcSetConnection(online,text){
+    const box=gc$('globalChatConnection'),pill=box?.parentElement;
+    if(box)box.textContent=text;
+    if(pill)pill.classList.toggle('online',!!online);
+  }
+  function gcRenderMessage(m){
+    const box=gc$('globalChatMessages');if(!box)return;
+    const empty=box.querySelector('.global-chat-empty');if(empty)empty.remove();
+    if(box.querySelector('[data-message-id="'+CSS.escape(String(m.id))+'"]'))return;
+    const mine=m.name===gcName();
+    const el=document.createElement('div');
+    el.className='global-chat-message'+(mine?' me':'');
+    el.dataset.messageId=String(m.id);
+    const when=new Date(m.createdAt);
+    const time=Number.isNaN(when.getTime())?'':when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    el.innerHTML='<div class="meta"><b>'+gcEscape(m.name)+'</b><span>'+time+'</span></div><div class="text">'+gcEscape(m.text)+'</div>';
+    box.appendChild(el);
+    while(box.children.length>120)box.firstElementChild.remove();
+    box.scrollTop=box.scrollHeight;
+  }
+  async function gcLoad(){
+    try{
+      const r=await fetch('/api/global-chat/messages',{cache:'no-store'});
+      const j=await r.json();
+      if(!r.ok)throw new Error(j.details||j.error||'Não foi possível carregar o chat.');
+      const box=gc$('globalChatMessages');if(box)box.innerHTML='';
+      (j.messages||[]).forEach(gcRenderMessage);
+      globalChatLoaded=true;
+    }catch(e){
+      const box=gc$('globalChatMessages');if(box)box.innerHTML='<div class="global-chat-empty">'+gcEscape(e.message||'Não foi possível carregar o Chat Global.')+'</div>';
+    }
+  }
+  function gcConnect(){
+    if(globalChatSource)globalChatSource.close();
+    globalChatSource=new EventSource('/api/global-chat/stream');
+    globalChatSource.onopen=()=>gcSetConnection(true,'Online');
+    globalChatSource.onerror=()=>gcSetConnection(false,'Reconectando...');
+    globalChatSource.onmessage=e=>{
+      try{const data=JSON.parse(e.data);if(data.type==='message')gcRenderMessage(data.message);}catch(_){}
+    };
+  }
+  async function gcSend(e){
+    e?.preventDefault();
+    const input=gc$('globalChatInput'),status=gc$('globalChatStatus');
+    const text=String(input?.value||'').trim();
+    if(!text)return;
+    const name=gcName();
+    if(status)status.textContent='Enviando...';
+    try{
+      const r=await fetch('/api/global-chat/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,text})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.details||j.error||'Não foi possível enviar a mensagem.');
+      input.value='';
+      if(status)status.textContent='Mensagem enviada.';
+    }catch(err){if(status)status.textContent=err.message||'Falha ao enviar.';}
+  }
+  window.saveGlobalChatName=function(){
+    const input=gc$('globalChatName'),name=String(input?.value||'').trim().slice(0,30);
+    if(!name)return toast('Digite um apelido para entrar no chat.');
+    localStorage.setItem(NAME_KEY,name);
+    if(gc$('globalChatStatus'))gc$('globalChatStatus').textContent='Nome salvo como '+name+'.';
+    gcLoad();
+  };
+  window.initGlobalChat=function(){
+    const nameInput=gc$('globalChatName');
+    if(!nameInput)return;
+    nameInput.value=gcName();
+    if(!globalChatLoaded)gcLoad();
+    gcConnect();
+  };
+  document.addEventListener('submit',e=>{if(e.target?.id==='globalChatForm')gcSend(e);});
+  document.addEventListener('DOMContentLoaded',()=>{
+    const form=gc$('globalChatForm');
+    if(form)window.initGlobalChat();
+  });
+  window.addEventListener('beforeunload',()=>{if(globalChatSource)globalChatSource.close();});
+})();
+</script>
+</body>
 </html>
 
 <style id="primoris-nav-redesign-v8">
