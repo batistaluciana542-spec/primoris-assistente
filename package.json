@@ -15,6 +15,7 @@
     "express": "latest",
     "express-session": "latest",
     "googleapis": "latest",
-    "rss-parser": "latest"
+    "rss-parser": "latest",
+    "@supabase/supabase-js": "latest"
   }
 }
