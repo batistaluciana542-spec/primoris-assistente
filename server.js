@@ -1335,48 +1335,143 @@ app.get("/health", (req, res) => {
 // =====================================================
 // CHAT GLOBAL // ORION
 // =====================================================
-const globalChatMessages = [];
 const globalChatClients = new Set();
 const globalChatRate = new Map();
 const GLOBAL_CHAT_MAX = 120;
 const GLOBAL_CHAT_ADMIN_NAME = process.env.ORION_ADMIN_NAME || "Anthony ADM";
 const GLOBAL_CHAT_ADMIN_KEY = String(process.env.ORION_ADMIN_KEY || "").trim();
+const SUPABASE_URL = String(process.env.SUPABASE_URL || "").replace(/\\/$/, "");
+const SUPABASE_SECRET_KEY = String(process.env.SUPABASE_SECRET_KEY || "").trim();
+let supabase = null;
 
-function cleanGlobalChatText(value, max=500){
-  return String(value||'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').trim().slice(0,max);
+if(SUPABASE_URL && SUPABASE_SECRET_KEY){
+  try{
+    const { createClient } = require("@supabase/supabase-js");
+    supabase = createClient(SUPABASE_URL,SUPABASE_SECRET_KEY,{
+      auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}
+    });
+    console.log("Supabase conectado para o Chat Global.");
+  }catch(e){
+    console.error("Falha ao inicializar Supabase:",e.message);
+  }
+}else{
+  console.warn("SUPABASE_URL/SUPABASE_SECRET_KEY não configuradas. Chat Global usará apenas memória.");
+}
+
+const globalChatMemory = [];
+
+function cleanGlobalChatText(value,max=500){
+  return String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,'').trim().slice(0,max);
 }
 function isGlobalChatAdmin(req){
   return req.session?.globalChatAdmin === true;
 }
+function normalizeGlobalChatRow(row){
+  if(!row)return null;
+  return {
+    id:String(row.id),
+    name:cleanGlobalChatText(row.name,30)||'Visitante',
+    text:cleanGlobalChatText(row.text,500),
+    role:row.role==="admin"?"admin":"user",
+    createdAt:row.created_at||new Date().toISOString()
+  };
+}
 function broadcastGlobalChat(message){
-  const payload='data: '+JSON.stringify(message)+'\n\n';
+  const payload='data: '+JSON.stringify(message)+'\\n\\n';
   for(const client of globalChatClients){
     try{client.write(payload);}catch(e){globalChatClients.delete(client);}
   }
 }
-function pushGlobalChatMessage(name,text,role="user"){
-  const message={
-    id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),
-    name:cleanGlobalChatText(name,30)||'Visitante',
-    text:cleanGlobalChatText(text,500),
+function rememberGlobalChatMessage(message){
+  globalChatMemory.push(message);
+  while(globalChatMemory.length>GLOBAL_CHAT_MAX)globalChatMemory.shift();
+}
+async function getGlobalChatMessages(){
+  if(supabase){
+    const {data,error}=await supabase
+      .from("global_chat_messages")
+      .select("id,name,text,role,created_at")
+      .order("created_at",{ascending:false})
+      .limit(80);
+    if(error)throw error;
+    return (data||[]).reverse().map(normalizeGlobalChatRow).filter(Boolean);
+  }
+  return globalChatMemory.slice(-80);
+}
+async function insertGlobalChatMessage(name,text,role="user"){
+  const cleanName=cleanGlobalChatText(name,30)||"Visitante";
+  const cleanText=cleanGlobalChatText(text,500);
+  if(!cleanText)return null;
+
+  if(supabase){
+    const {data,error}=await supabase
+      .from("global_chat_messages")
+      .insert({
+        id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8),
+        name:cleanName,
+        text:cleanText,
+        role:role==="admin"?"admin":"user"
+      })
+      .select("id,name,text,role,created_at")
+      .single();
+    if(error)throw error;
+    return normalizeGlobalChatRow(data);
+  }
+
+  return {
+    id:Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8),
+    name:cleanName,
+    text:cleanText,
     role:role==="admin"?"admin":"user",
     createdAt:new Date().toISOString()
   };
-  if(!message.text)return null;
-  globalChatMessages.push(message);
-  while(globalChatMessages.length>GLOBAL_CHAT_MAX)globalChatMessages.shift();
-  broadcastGlobalChat({type:'message',message});
-  return message;
+}
+async function deleteGlobalChatMessage(id){
+  if(supabase){
+    const {data,error}=await supabase
+      .from("global_chat_messages")
+      .delete()
+      .eq("id",String(id))
+      .select("id,name,text,role,created_at")
+      .maybeSingle();
+    if(error)throw error;
+    return normalizeGlobalChatRow(data);
+  }
+  const index=globalChatMemory.findIndex(m=>String(m.id)===String(id));
+  if(index<0)return null;
+  return globalChatMemory.splice(index,1)[0]||null;
+}
+async function clearGlobalChatMessages(){
+  if(supabase){
+    const {error}=await supabase
+      .from("global_chat_messages")
+      .delete()
+      .not("id","is",null);
+    if(error)throw error;
+    return;
+  }
+  globalChatMemory.length=0;
 }
 
-app.get("/api/global-chat/messages",(req,res)=>{
+app.get("/api/global-chat/messages",async(req,res)=>{
   res.set("Cache-Control","no-store");
-  res.json({
-    ok:true,
-    admin:isGlobalChatAdmin(req),
-    adminName:GLOBAL_CHAT_ADMIN_NAME,
-    messages:globalChatMessages.slice(-80)
-  });
+  try{
+    const messages=await getGlobalChatMessages();
+    res.json({
+      ok:true,
+      persistent:!!supabase,
+      admin:isGlobalChatAdmin(req),
+      adminName:GLOBAL_CHAT_ADMIN_NAME,
+      messages
+    });
+  }catch(e){
+    console.error("Global chat load:",e);
+    res.status(503).json({
+      error:"global_chat_storage_unavailable",
+      details:"Não foi possível carregar o histórico do Chat Global.",
+      persistent:false
+    });
+  }
 });
 
 app.get("/api/global-chat/stream",(req,res)=>{
@@ -1387,10 +1482,10 @@ app.get("/api/global-chat/stream",(req,res)=>{
     "X-Accel-Buffering":"no"
   });
   if(res.flushHeaders)res.flushHeaders();
-  res.write('retry: 3000\n\n');
-  res.write('event: admin-state\ndata: '+JSON.stringify({admin:isGlobalChatAdmin(req),adminName:GLOBAL_CHAT_ADMIN_NAME})+'\n\n');
+  res.write('retry: 3000\\n\\n');
+  res.write('event: admin-state\\ndata: '+JSON.stringify({admin:isGlobalChatAdmin(req),adminName:GLOBAL_CHAT_ADMIN_NAME})+'\\n\\n');
   globalChatClients.add(res);
-  const heartbeat=setInterval(()=>{try{res.write(': ping\n\n');}catch(e){}},25000);
+  const heartbeat=setInterval(()=>{try{res.write(': ping\\n\\n');}catch(e){}},25000);
   req.on("close",()=>{clearInterval(heartbeat);globalChatClients.delete(res);});
 });
 
@@ -1426,22 +1521,31 @@ function requireGlobalChatAdmin(req,res,next){
   next();
 }
 
-app.delete("/api/global-chat/messages/:id",requireGlobalChatAdmin,(req,res)=>{
-  const id=String(req.params.id||"");
-  const index=globalChatMessages.findIndex(m=>String(m.id)===id);
-  if(index<0)return res.status(404).json({error:"message_not_found",details:"Mensagem não encontrada."});
-  const [removed]=globalChatMessages.splice(index,1);
-  broadcastGlobalChat({type:'delete',messageId:removed.id});
-  res.json({ok:true});
+app.delete("/api/global-chat/messages/:id",requireGlobalChatAdmin,async(req,res)=>{
+  try{
+    const removed=await deleteGlobalChatMessage(String(req.params.id||""));
+    if(!removed)return res.status(404).json({error:"message_not_found",details:"Mensagem não encontrada."});
+    broadcastGlobalChat({type:"delete",messageId:removed.id});
+    res.json({ok:true});
+  }catch(e){
+    console.error("Global chat delete:",e);
+    res.status(503).json({error:"global_chat_delete_failed",details:"Não foi possível excluir a mensagem do banco."});
+  }
 });
 
-app.post("/api/global-chat/admin/clear",requireGlobalChatAdmin,(req,res)=>{
-  globalChatMessages.length=0;
-  broadcastGlobalChat({type:'clear'});
-  res.json({ok:true});
+app.post("/api/global-chat/admin/clear",requireGlobalChatAdmin,async(req,res)=>{
+  try{
+    await clearGlobalChatMessages();
+    globalChatMemory.length=0;
+    broadcastGlobalChat({type:"clear"});
+    res.json({ok:true});
+  }catch(e){
+    console.error("Global chat clear:",e);
+    res.status(503).json({error:"global_chat_clear_failed",details:"Não foi possível limpar o histórico do banco."});
+  }
 });
 
-app.post("/api/global-chat/messages",(req,res)=>{
+app.post("/api/global-chat/messages",async(req,res)=>{
   const ip=String(req.headers["x-forwarded-for"]||req.socket.remoteAddress||"").split(",")[0].trim();
   const now=Date.now();
   const last=globalChatRate.get(ip)||0;
@@ -1455,10 +1559,21 @@ app.post("/api/global-chat/messages",(req,res)=>{
   if(!text)return res.status(400).json({error:"message_required",details:"Digite uma mensagem."});
 
   globalChatRate.set(ip,now);
-  const message=pushGlobalChatMessage(name,text,admin?"admin":"user");
-  res.status(201).json({ok:true,message});
+  try{
+    const message=await insertGlobalChatMessage(name,text,admin?"admin":"user");
+    if(!message)return res.status(400).json({error:"message_required",details:"Digite uma mensagem."});
+    rememberGlobalChatMessage(message);
+    while(globalChatMemory.length>GLOBAL_CHAT_MAX)globalChatMemory.shift();
+    broadcastGlobalChat({type:"message",message});
+    res.status(201).json({ok:true,persistent:!!supabase,message});
+  }catch(e){
+    console.error("Global chat insert:",e);
+    res.status(503).json({
+      error:"global_chat_storage_unavailable",
+      details:"Não foi possível salvar a mensagem. Verifique a conexão com o Supabase e a tabela global_chat_messages."
+    });
+  }
 });
-
 // =====================================================
 // FALLBACK DO SITE
 // =====================================================
