@@ -767,40 +767,54 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 .global-chat-live{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid rgba(84,232,255,.18);border-radius:999px;background:rgba(84,232,255,.05);color:#a9b7d6;font-size:11px;white-space:nowrap}
 .global-chat-live span{width:8px;height:8px;border-radius:50%;background:#ffd45c;box-shadow:0 0 10px rgba(255,212,92,.6)}
 .global-chat-live.online span{background:var(--green);box-shadow:0 0 10px var(--green)}
-.global-chat-profile{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px}
+.global-chat-profile,.global-chat-admin-login,.global-chat-admin-panel{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
 .global-chat-profile strong{font:700 13px Orbitron}
-.global-chat-profile-controls{display:flex;gap:8px;width:min(100%,430px)}
-.global-chat-profile-controls input{flex:1}
+.global-chat-profile-controls,.global-chat-admin-controls{display:flex;gap:8px;width:min(100%,500px)}
+.global-chat-profile-controls input,.global-chat-admin-controls input{flex:1;min-width:0}
+.global-chat-admin-login{border-color:rgba(255,79,216,.18);background:linear-gradient(135deg,rgba(255,79,216,.05),rgba(84,232,255,.035))}
+.global-chat-admin-title{font:800 12px Orbitron;letter-spacing:1px;color:#ff9dea;text-shadow:0 0 12px rgba(255,79,216,.45);margin-bottom:4px}
+.global-chat-admin-title span{color:#fff}
+.global-chat-admin-badge{display:inline-block;margin-bottom:5px;padding:5px 9px;border-radius:999px;border:1px solid rgba(255,79,216,.45);color:#fff;text-shadow:0 0 8px #ff4fd8,0 0 18px rgba(84,232,255,.8);box-shadow:0 0 14px rgba(255,79,216,.18),inset 0 0 12px rgba(84,232,255,.06);font:800 10px Orbitron;letter-spacing:1.5px;animation:globalAdmGlow 1.8s ease-in-out infinite}
+.global-chat-admin-panel{border-color:rgba(255,79,216,.28);background:radial-gradient(circle at 0 0,rgba(255,79,216,.08),transparent 35%),rgba(255,255,255,.02)}
+.global-chat-admin-panel strong{display:block;font:800 12px Orbitron;margin-bottom:4px}
 .global-chat-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
 .global-chat-card{padding:12px;min-height:560px;display:flex;flex-direction:column}
 .global-chat-messages{height:480px;overflow:auto;padding:8px 5px;display:flex;flex-direction:column;gap:9px}
 .global-chat-empty{margin:auto;text-align:center;color:#697592;padding:30px}
-.global-chat-message{max-width:82%;padding:10px 12px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.global-chat-message{position:relative;max-width:82%;padding:10px 12px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025)}
 .global-chat-message.me{align-self:flex-end;background:linear-gradient(135deg,rgba(84,232,255,.11),rgba(154,108,255,.13));border-color:rgba(84,232,255,.22)}
+.global-chat-message.admin{border-color:rgba(255,79,216,.48);background:linear-gradient(135deg,rgba(255,79,216,.09),rgba(84,232,255,.06));box-shadow:0 0 20px rgba(255,79,216,.08)}
 .global-chat-message .meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:#8290b2}
 .global-chat-message .meta b{color:var(--cyan)}
 .global-chat-message.me .meta b{color:#f4c8ff}
+.global-chat-message.admin .meta b{color:#fff;text-shadow:0 0 7px #54e8ff,0 0 14px #ff4fd8,0 0 25px rgba(84,232,255,.75);animation:globalAdmNameGlow 1.6s ease-in-out infinite}
 .global-chat-message .text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:14px;color:#eef2ff}
+.global-chat-admin-label{font-size:9px!important;color:#ff9dea!important;letter-spacing:1px}
+.global-chat-delete{margin-left:auto;padding:2px 6px;border:1px solid rgba(255,95,125,.28);border-radius:7px;background:rgba(255,95,125,.06);color:#ff9cac;cursor:pointer;font-size:10px}
+.global-chat-delete:hover{background:rgba(255,95,125,.15)}
 .global-chat-composer{display:flex;gap:8px;margin-top:8px}
 .global-chat-composer input{flex:1}
+.global-chat-composer input:disabled,.global-chat-composer button:disabled{opacity:.45;cursor:not-allowed}
 .global-chat-status{font-size:11px;text-align:center;padding:7px 0 1px}
 .global-chat-info{height:max-content}
 .global-chat-info-icon{font-size:38px;margin-bottom:8px}
 .global-chat-info h3{margin-bottom:5px}
 .global-chat-rules{display:grid;gap:9px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);font-size:12px;color:#9ca8c6;line-height:1.45}
+.hidden{display:none!important}
+@keyframes globalAdmGlow{0%,100%{filter:brightness(.95);box-shadow:0 0 12px rgba(255,79,216,.16),inset 0 0 10px rgba(84,232,255,.04)}50%{filter:brightness(1.25);box-shadow:0 0 24px rgba(255,79,216,.35),0 0 34px rgba(84,232,255,.12),inset 0 0 14px rgba(84,232,255,.08)}}
+@keyframes globalAdmNameGlow{0%,100%{filter:brightness(.95)}50%{filter:brightness(1.3)}}
 @media(max-width:800px){
  .global-chat-head{align-items:flex-start;flex-direction:column}
- .global-chat-profile{align-items:flex-start;flex-direction:column}
- .global-chat-profile-controls{width:100%}
+ .global-chat-profile,.global-chat-admin-login,.global-chat-admin-panel{align-items:flex-start;flex-direction:column}
+ .global-chat-profile-controls,.global-chat-admin-controls{width:100%}
  .global-chat-layout{grid-template-columns:1fr}
  .global-chat-info{display:none}
- .global-chat-card{min-height:calc(100vh - 270px)}
- .global-chat-messages{height:calc(100vh - 405px);min-height:330px}
+ .global-chat-card{min-height:calc(100vh - 320px)}
+ .global-chat-messages{height:calc(100vh - 455px);min-height:330px}
 }
 @media(max-width:520px){
- .global-chat-profile-controls{flex-direction:column}
- .global-chat-profile-controls .btn{width:100%}
- .global-chat-composer .btn{padding-left:12px;padding-right:12px}
+ .global-chat-profile-controls,.global-chat-admin-controls{flex-direction:column}
+ .global-chat-profile-controls .btn,.global-chat-admin-controls .btn,.global-chat-admin-panel .btn{width:100%}
  .global-chat-message{max-width:90%}
 }
 </style>
@@ -1102,25 +1116,46 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 
       <div class="global-chat-profile card">
         <div>
-          <strong>Seu nome no chat</strong>
-          <div class="muted">Use um apelido. Não coloque informações pessoais.</div>
+          <strong>Seu apelido</strong>
+          <div class="muted">Você precisa definir um apelido antes de enviar mensagens.</div>
         </div>
         <div class="global-chat-profile-controls">
-          <input id="globalChatName" maxlength="30" placeholder="Seu apelido">
-          <button class="btn" type="button" onclick="saveGlobalChatName()">Salvar nome</button>
+          <input id="globalChatName" maxlength="30" placeholder="Digite seu apelido" autocomplete="nickname">
+          <button id="globalChatNameSave" class="btn" type="button" onclick="saveGlobalChatName()">Entrar no chat</button>
         </div>
+      </div>
+
+      <div class="global-chat-admin-login card">
+        <div>
+          <div class="global-chat-admin-title"><span>✦</span> Área ADM</div>
+          <div id="globalChatAdminStatus" class="muted">Entre como administrador para moderar o chat.</div>
+        </div>
+        <div class="global-chat-admin-controls">
+          <input id="globalChatAdminKey" type="password" maxlength="200" placeholder="Chave ADM" autocomplete="current-password">
+          <button id="globalChatAdminLogin" class="btn" type="button" onclick="globalChatAdminLogin()">Entrar como ADM</button>
+          <button id="globalChatAdminLogout" class="btn hidden" type="button" onclick="globalChatAdminLogout()">Sair do ADM</button>
+        </div>
+      </div>
+
+      <div id="globalChatAdminPanel" class="card global-chat-admin-panel hidden">
+        <div>
+          <div class="global-chat-admin-badge">✦ ANTHONY ADM</div>
+          <strong>Central de moderação</strong>
+          <div class="muted">Você pode excluir mensagens ou limpar todo o histórico atual do chat.</div>
+        </div>
+        <button class="btn danger" type="button" onclick="globalChatClearAll()">Limpar chat inteiro</button>
       </div>
 
       <div class="global-chat-layout">
         <div class="card global-chat-card">
           <div id="globalChatMessages" class="global-chat-messages">
-            <div class="global-chat-empty">Entrando no Chat Global...</div>
+            <div class="global-chat-empty">Defina um apelido para entrar no Chat Global.</div>
           </div>
           <form id="globalChatForm" class="global-chat-composer">
-            <input id="globalChatInput" maxlength="500" autocomplete="off" placeholder="Escreva uma mensagem..." aria-label="Mensagem do Chat Global">
-            <button class="btn primary" type="submit">Enviar</button>
+            <input id="globalChatInput" maxlength="500" autocomplete="off" placeholder="Defina um apelido acima para começar..." aria-label="Mensagem do Chat Global" disabled>
+            <button id="globalChatSend" class="btn primary" type="submit" disabled>Enviar</button>
           </form>
-          <div id="globalChatStatus" class="muted global-chat-status">Mensagens aparecem aqui em tempo real.</div>
+          <div id="globalChatStatus" class="muted global-chat-status">Primeiro escolha seu apelido.</div>
         </div>
         <aside class="card global-chat-info">
           <div class="global-chat-info-icon">🌐</div>
@@ -1128,8 +1163,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
           <p class="muted">As mensagens são compartilhadas com as pessoas conectadas ao Chat Global.</p>
           <div class="global-chat-rules">
             <div>• Respeite as outras pessoas.</div>
-            <div>• Não compartilhe endereço, telefone ou outras informações pessoais.</div>
-            <div>• O ORION pode remover mensagens inadequadas no futuro com ferramentas de moderação.</div>
+            <div>• Use um apelido, sem dados pessoais.</div>
+            <div>• Mensagens podem ser removidas pelo ADM.</div>
           </div>
         </aside>
       </div>
@@ -3455,48 +3490,89 @@ document.addEventListener('DOMContentLoaded',function(){
 (function(){
   let globalChatSource=null;
   let globalChatLoaded=false;
+  let globalChatAdmin=false;
+  let globalChatAdminName='Anthony ADM';
   const NAME_KEY='orion_global_chat_name';
 
   function gc$(id){return document.getElementById(id)}
   function gcEscape(value){
     const d=document.createElement('div');d.textContent=String(value??'');return d.innerHTML;
   }
-  function gcName(){
-    let name=String(localStorage.getItem(NAME_KEY)||'').trim().slice(0,30);
-    if(!name){
-      name='Visitante-'+Math.floor(1000+Math.random()*9000);
-      localStorage.setItem(NAME_KEY,name);
-    }
-    return name;
-  }
+  function gcName(){return String(localStorage.getItem(NAME_KEY)||'').trim().slice(0,30)}
   function gcSetConnection(online,text){
     const box=gc$('globalChatConnection'),pill=box?.parentElement;
     if(box)box.textContent=text;
     if(pill)pill.classList.toggle('online',!!online);
   }
+  function gcApplyAccess(){
+    const name=gcName();
+    const ready=globalChatAdmin||!!name;
+    const input=gc$('globalChatInput'),send=gc$('globalChatSend'),nameInput=gc$('globalChatName'),save=gc$('globalChatNameSave');
+    if(globalChatAdmin){
+      if(nameInput){nameInput.value=globalChatAdminName;nameInput.disabled=true}
+      if(save){save.textContent='ADM ativo';save.disabled=true}
+    }else if(nameInput){
+      nameInput.disabled=false;
+      nameInput.value=name;
+      if(save){save.textContent=name?'Atualizar apelido':'Entrar no chat';save.disabled=false}
+    }
+    if(input){
+      input.disabled=!ready;
+      input.placeholder=ready?'Escreva uma mensagem...':'Defina um apelido acima para começar...';
+    }
+    if(send)send.disabled=!ready;
+    const status=gc$('globalChatStatus');
+    if(status&&!ready)status.textContent='Primeiro escolha seu apelido.';
+    if(status&&ready&&globalChatAdmin)status.textContent='ADM ativo: você pode moderar as mensagens.';
+    const panel=gc$('globalChatAdminPanel'),login=gc$('globalChatAdminLogin'),logout=gc$('globalChatAdminLogout'),key=gc$('globalChatAdminKey'),adminStatus=gc$('globalChatAdminStatus');
+    panel?.classList.toggle('hidden',!globalChatAdmin);
+    login?.classList.toggle('hidden',globalChatAdmin);
+    logout?.classList.toggle('hidden',!globalChatAdmin);
+    if(key){key.classList.toggle('hidden',globalChatAdmin);if(globalChatAdmin)key.value=''}
+    if(adminStatus)adminStatus.textContent=globalChatAdmin?'ADM conectado como '+globalChatAdminName+'.':'Entre como administrador para moderar o chat.';
+  }
   function gcRenderMessage(m){
     const box=gc$('globalChatMessages');if(!box)return;
     const empty=box.querySelector('.global-chat-empty');if(empty)empty.remove();
-    if(box.querySelector('[data-message-id="'+CSS.escape(String(m.id))+'"]'))return;
-    const mine=m.name===gcName();
+    const existing=box.querySelector('[data-message-id="'+CSS.escape(String(m.id))+'"]');
+    if(existing)return;
+    const mine=(m.role==='admin'&&globalChatAdmin)||(m.role!=='admin'&&m.name===gcName());
     const el=document.createElement('div');
-    el.className='global-chat-message'+(mine?' me':'');
+    el.className='global-chat-message'+(mine?' me':'')+(m.role==='admin'?' admin':'');
     el.dataset.messageId=String(m.id);
     const when=new Date(m.createdAt);
     const time=Number.isNaN(when.getTime())?'':when.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    el.innerHTML='<div class="meta"><b>'+gcEscape(m.name)+'</b><span>'+time+'</span></div><div class="text">'+gcEscape(m.text)+'</div>';
+    const adminLabel=m.role==='admin'?'<span class="global-chat-admin-label">✦ ADM</span>':'';
+    const deleteButton=globalChatAdmin?'<button class="global-chat-delete" type="button" onclick="globalChatDeleteMessage('+JSON.stringify(String(m.id))+')">Excluir</button>':'';
+    el.innerHTML='<div class="meta"><b>'+gcEscape(m.name)+'</b>'+adminLabel+'<span>'+time+'</span>'+deleteButton+'</div><div class="text">'+gcEscape(m.text)+'</div>';
     box.appendChild(el);
     while(box.children.length>120)box.firstElementChild.remove();
     box.scrollTop=box.scrollHeight;
+  }
+  function gcRefreshDeleteButtons(){
+    document.querySelectorAll('.global-chat-message').forEach(el=>{
+      const meta=el.querySelector('.meta');
+      if(!meta)return;
+      const old=meta.querySelector('.global-chat-delete');if(old)old.remove();
+      if(globalChatAdmin){
+        const id=el.dataset.messageId;
+        meta.insertAdjacentHTML('beforeend','<button class="global-chat-delete" type="button" onclick="globalChatDeleteMessage('+JSON.stringify(String(id))+')">Excluir</button>');
+      }
+    });
   }
   async function gcLoad(){
     try{
       const r=await fetch('/api/global-chat/messages',{cache:'no-store'});
       const j=await r.json();
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível carregar o chat.');
+      globalChatAdmin=!!j.admin;
+      globalChatAdminName=String(j.adminName||'Anthony ADM');
       const box=gc$('globalChatMessages');if(box)box.innerHTML='';
-      (j.messages||[]).forEach(gcRenderMessage);
+      if((j.messages||[]).length)(j.messages||[]).forEach(gcRenderMessage);
+      else if(box)box.innerHTML='<div class="global-chat-empty">Nenhuma mensagem ainda. Seja o primeiro.</div>';
       globalChatLoaded=true;
+      gcApplyAccess();
+      gcRefreshDeleteButtons();
     }catch(e){
       const box=gc$('globalChatMessages');if(box)box.innerHTML='<div class="global-chat-empty">'+gcEscape(e.message||'Não foi possível carregar o Chat Global.')+'</div>';
     }
@@ -3509,33 +3585,93 @@ document.addEventListener('DOMContentLoaded',function(){
     globalChatSource.onmessage=e=>{
       try{const data=JSON.parse(e.data);if(data.type==='message')gcRenderMessage(data.message);}catch(_){}
     };
+    globalChatSource.addEventListener('admin-state',e=>{
+      try{
+        const data=JSON.parse(e.data);
+        globalChatAdmin=!!data.admin;
+        globalChatAdminName=String(data.adminName||'Anthony ADM');
+        gcApplyAccess();
+        gcRefreshDeleteButtons();
+      }catch(_){}
+    });
+    globalChatSource.addEventListener('delete',e=>{
+      try{const data=JSON.parse(e.data);const el=document.querySelector('[data-message-id="'+CSS.escape(String(data.messageId))+'"]');el?.remove();}catch(_){}
+    });
+    globalChatSource.addEventListener('clear',()=>{
+      const box=gc$('globalChatMessages');if(box)box.innerHTML='<div class="global-chat-empty">O ADM limpou o chat. Nenhuma mensagem no momento.</div>';
+    });
   }
   async function gcSend(e){
     e?.preventDefault();
     const input=gc$('globalChatInput'),status=gc$('globalChatStatus');
     const text=String(input?.value||'').trim();
-    if(!text)return;
     const name=gcName();
+    if(!globalChatAdmin&&!name){
+      if(status)status.textContent='Escolha um apelido antes de enviar.';
+      gcApplyAccess();
+      return;
+    }
+    if(!text)return;
     if(status)status.textContent='Enviando...';
     try{
       const r=await fetch('/api/global-chat/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,text})});
       const j=await r.json().catch(()=>({}));
       if(!r.ok)throw new Error(j.details||j.error||'Não foi possível enviar a mensagem.');
       input.value='';
-      if(status)status.textContent='Mensagem enviada.';
+      if(status)status.textContent=globalChatAdmin?'Mensagem enviada pelo ADM.':'Mensagem enviada.';
     }catch(err){if(status)status.textContent=err.message||'Falha ao enviar.';}
   }
   window.saveGlobalChatName=function(){
+    if(globalChatAdmin)return;
     const input=gc$('globalChatName'),name=String(input?.value||'').trim().slice(0,30);
     if(!name)return toast('Digite um apelido para entrar no chat.');
     localStorage.setItem(NAME_KEY,name);
-    if(gc$('globalChatStatus'))gc$('globalChatStatus').textContent='Nome salvo como '+name+'.';
-    gcLoad();
+    gcApplyAccess();
+    if(gc$('globalChatStatus'))gc$('globalChatStatus').textContent='Apelido salvo como '+name+'.';
+  };
+  window.globalChatAdminLogin=async function(){
+    const key=String(gc$('globalChatAdminKey')?.value||'');
+    if(!key)return toast('Digite a chave ADM.');
+    const status=gc$('globalChatAdminStatus');if(status)status.textContent='Verificando acesso ADM...';
+    try{
+      const r=await fetch('/api/global-chat/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key})});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.details||j.error||'Não foi possível entrar como ADM.');
+      globalChatAdmin=true;globalChatAdminName=String(j.name||'Anthony ADM');
+      localStorage.setItem(NAME_KEY,globalChatAdminName);
+      gcApplyAccess();gcRefreshDeleteButtons();
+      if(status)status.textContent='ADM conectado como '+globalChatAdminName+'.';
+      gcLoad();
+    }catch(e){if(status)status.textContent=e.message||'Falha no acesso ADM.';}
+  };
+  window.globalChatAdminLogout=async function(){
+    try{await fetch('/api/global-chat/admin/logout',{method:'POST'});}catch(_){}
+    globalChatAdmin=false;
+    gcApplyAccess();gcRefreshDeleteButtons();
+    if(gc$('globalChatStatus'))gc$('globalChatStatus').textContent='Você saiu do modo ADM.';
+  };
+  window.globalChatDeleteMessage=async function(id){
+    if(!globalChatAdmin)return;
+    try{
+      const r=await fetch('/api/global-chat/messages/'+encodeURIComponent(id),{method:'DELETE'});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.details||j.error||'Não foi possível excluir.');
+    }catch(e){toast(e.message||'Falha ao excluir mensagem.');}
+  };
+  window.globalChatClearAll=async function(){
+    if(!globalChatAdmin)return;
+    if(!confirm('Tem certeza que deseja apagar todas as mensagens do Chat Global?'))return;
+    try{
+      const r=await fetch('/api/global-chat/admin/clear',{method:'POST'});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.details||j.error||'Não foi possível limpar o chat.');
+    }catch(e){toast(e.message||'Falha ao limpar o chat.');}
   };
   window.initGlobalChat=function(){
     const nameInput=gc$('globalChatName');
     if(!nameInput)return;
     nameInput.value=gcName();
+    gcApplyAccess();
     if(!globalChatLoaded)gcLoad();
     gcConnect();
   };
