@@ -3583,7 +3583,18 @@ document.addEventListener('DOMContentLoaded',function(){
     globalChatSource.onopen=()=>gcSetConnection(true,'Online');
     globalChatSource.onerror=()=>gcSetConnection(false,'Reconectando...');
     globalChatSource.onmessage=e=>{
-      try{const data=JSON.parse(e.data);if(data.type==='message')gcRenderMessage(data.message);}catch(_){}
+      try{
+        const data=JSON.parse(e.data);
+        if(data.type==='message')gcRenderMessage(data.message);
+        if(data.type==='delete'){
+          const el=document.querySelector('[data-message-id="'+CSS.escape(String(data.messageId))+'"]');
+          el?.remove();
+        }
+        if(data.type==='clear'){
+          const box=gc$('globalChatMessages');
+          if(box)box.innerHTML='<div class="global-chat-empty">O ADM limpou o chat. Nenhuma mensagem no momento.</div>';
+        }
+      }catch(_){}
     };
     globalChatSource.addEventListener('admin-state',e=>{
       try{
