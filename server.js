@@ -1339,9 +1339,14 @@ const globalChatMessages = [];
 const globalChatClients = new Set();
 const globalChatRate = new Map();
 const GLOBAL_CHAT_MAX = 120;
+const GLOBAL_CHAT_ADMIN_NAME = process.env.ORION_ADMIN_NAME || "Anthony ADM";
+const GLOBAL_CHAT_ADMIN_KEY = String(process.env.ORION_ADMIN_KEY || "").trim();
 
 function cleanGlobalChatText(value, max=500){
-  return String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,'').trim().slice(0,max);
+  return String(value||'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').trim().slice(0,max);
+}
+function isGlobalChatAdmin(req){
+  return req.session?.globalChatAdmin === true;
 }
 function broadcastGlobalChat(message){
   const payload='data: '+JSON.stringify(message)+'\\n\\n';
@@ -1349,11 +1354,12 @@ function broadcastGlobalChat(message){
     try{client.write(payload);}catch(e){globalChatClients.delete(client);}
   }
 }
-function pushGlobalChatMessage(name,text){
+function pushGlobalChatMessage(name,text,role="user"){
   const message={
     id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),
     name:cleanGlobalChatText(name,30)||'Visitante',
     text:cleanGlobalChatText(text,500),
+    role:role==="admin"?"admin":"user",
     createdAt:new Date().toISOString()
   };
   if(!message.text)return null;
@@ -1365,7 +1371,12 @@ function pushGlobalChatMessage(name,text){
 
 app.get("/api/global-chat/messages",(req,res)=>{
   res.set("Cache-Control","no-store");
-  res.json({ok:true,messages:globalChatMessages.slice(-80)});
+  res.json({
+    ok:true,
+    admin:isGlobalChatAdmin(req),
+    adminName:GLOBAL_CHAT_ADMIN_NAME,
+    messages:globalChatMessages.slice(-80)
+  });
 });
 
 app.get("/api/global-chat/stream",(req,res)=>{
@@ -1377,9 +1388,57 @@ app.get("/api/global-chat/stream",(req,res)=>{
   });
   if(res.flushHeaders)res.flushHeaders();
   res.write('retry: 3000\\n\\n');
+  res.write('event: admin-state\\ndata: '+JSON.stringify({admin:isGlobalChatAdmin(req),adminName:GLOBAL_CHAT_ADMIN_NAME})+'\\n\\n');
   globalChatClients.add(res);
   const heartbeat=setInterval(()=>{try{res.write(': ping\\n\\n');}catch(e){}},25000);
   req.on("close",()=>{clearInterval(heartbeat);globalChatClients.delete(res);});
+});
+
+app.post("/api/global-chat/admin/login",(req,res)=>{
+  if(!GLOBAL_CHAT_ADMIN_KEY){
+    return res.status(503).json({error:"admin_not_configured",details:"O acesso ADM ainda não foi configurado no servidor."});
+  }
+  const supplied=String(req.body?.key||"");
+  const a=Buffer.from(supplied);
+  const b=Buffer.from(GLOBAL_CHAT_ADMIN_KEY);
+  if(a.length!==b.length || !crypto.timingSafeEqual(a,b)){
+    return res.status(401).json({error:"invalid_admin_key",details:"Chave ADM inválida."});
+  }
+  req.session.regenerate(err=>{
+    if(err)return res.status(500).json({error:"admin_session_error"});
+    req.session.globalChatAdmin=true;
+    req.session.globalChatAdminName=GLOBAL_CHAT_ADMIN_NAME;
+    req.session.save(saveErr=>{
+      if(saveErr)return res.status(500).json({error:"admin_session_error"});
+      res.json({ok:true,admin:true,name:GLOBAL_CHAT_ADMIN_NAME});
+    });
+  });
+});
+
+app.post("/api/global-chat/admin/logout",(req,res)=>{
+  req.session.globalChatAdmin=false;
+  req.session.globalChatAdminName=null;
+  req.session.save(()=>res.json({ok:true,admin:false}));
+});
+
+function requireGlobalChatAdmin(req,res,next){
+  if(!isGlobalChatAdmin(req))return res.status(403).json({error:"admin_required",details:"Acesso restrito ao ADM."});
+  next();
+}
+
+app.delete("/api/global-chat/messages/:id",requireGlobalChatAdmin,(req,res)=>{
+  const id=String(req.params.id||"");
+  const index=globalChatMessages.findIndex(m=>String(m.id)===id);
+  if(index<0)return res.status(404).json({error:"message_not_found",details:"Mensagem não encontrada."});
+  const [removed]=globalChatMessages.splice(index,1);
+  broadcastGlobalChat({type:'delete',messageId:removed.id});
+  res.json({ok:true});
+});
+
+app.post("/api/global-chat/admin/clear",requireGlobalChatAdmin,(req,res)=>{
+  globalChatMessages.length=0;
+  broadcastGlobalChat({type:'clear'});
+  res.json({ok:true});
 });
 
 app.post("/api/global-chat/messages",(req,res)=>{
@@ -1387,12 +1446,16 @@ app.post("/api/global-chat/messages",(req,res)=>{
   const now=Date.now();
   const last=globalChatRate.get(ip)||0;
   if(now-last<700)return res.status(429).json({error:"rate_limited",details:"Espere um instante antes de enviar outra mensagem."});
-  const name=cleanGlobalChatText(req.body?.name,30);
+
+  const admin=isGlobalChatAdmin(req);
+  const name=admin?GLOBAL_CHAT_ADMIN_NAME:cleanGlobalChatText(req.body?.name,30);
   const text=cleanGlobalChatText(req.body?.text,500);
-  if(!name)return res.status(400).json({error:"name_required",details:"Escolha um nome para entrar no chat."});
+
+  if(!name)return res.status(400).json({error:"name_required",details:"Escolha um apelido para entrar no chat."});
   if(!text)return res.status(400).json({error:"message_required",details:"Digite uma mensagem."});
+
   globalChatRate.set(ip,now);
-  const message=pushGlobalChatMessage(name,text);
+  const message=pushGlobalChatMessage(name,text,admin?"admin":"user");
   res.status(201).json({ok:true,message});
 });
 
