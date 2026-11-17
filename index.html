@@ -759,6 +759,20 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
 @keyframes primorisEyePulseRing{0%,100%{transform:scale(.97);opacity:.45}50%{transform:scale(1.04);opacity:.9}}
 @media(max-width:600px){.primoris-ai-eye{width:190px;margin-bottom:15px}}
 </style>
+<style id="orion-public-chat-css">
+.public-chat-hero{display:flex;align-items:center;gap:24px;min-height:300px;padding:28px;background:
+radial-gradient(circle at 12% 20%,rgba(84,232,255,.14),transparent 30%),
+radial-gradient(circle at 88% 80%,rgba(255,79,216,.12),transparent 34%),
+linear-gradient(145deg,rgba(16,20,39,.96),rgba(8,10,22,.96));}
+.public-chat-orb{flex:0 0 150px;width:150px;height:150px;border-radius:50%;display:grid;place-items:center;font:800 86px Orbitron;color:var(--cyan);
+border:1px solid rgba(84,232,255,.38);box-shadow:0 0 35px rgba(84,232,255,.18),inset 0 0 35px rgba(154,108,255,.14);
+background:radial-gradient(circle,rgba(84,232,255,.2),rgba(154,108,255,.08) 42%,rgba(255,79,216,.04) 70%,transparent 72%);}
+.public-chat-copy{max-width:760px}.public-chat-copy h3{font:800 25px Orbitron;margin:6px 0 8px}.public-chat-copy p{line-height:1.55}
+.public-chat-warning{display:flex;gap:10px;align-items:flex-start;margin:16px 0;padding:12px 14px;border:1px solid rgba(255,210,92,.22);border-radius:14px;background:rgba(255,210,92,.05);color:#dfe5f8;font-size:13px;line-height:1.45}.public-chat-warning strong{color:#ffd45c;white-space:nowrap}
+.public-chat-actions{margin-top:14px}.public-chat-actions a{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.public-chat-grid{margin-top:15px}.public-chat-grid .btn{display:inline-flex;text-decoration:none;margin-top:10px}
+@media(max-width:600px){.public-chat-hero{display:block;padding:21px}.public-chat-orb{margin:0 auto 20px;width:120px;height:120px;font-size:68px}.public-chat-actions{display:grid;grid-template-columns:1fr}.public-chat-actions a{width:100%}.public-chat-warning{display:block}.public-chat-warning strong{display:block;margin-bottom:5px}}
+</style>
 <style id="primoris-global-chat-css">
 .global-chat-shell{max-width:1180px;margin:0 auto;padding-bottom:35px}
 .global-chat-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:15px}
@@ -916,7 +930,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
       <div class="nav-group-title">Principal</div>
       <button data-page="home"><span class="nav-ico">⌂</span><span>Hoje</span></button>
       <button data-page="assistant"><span class="nav-ico">✦</span><span>Assistente</span><b class="nav-live">AI</b></button>
-      <button data-page="global-chat"><span class="nav-ico">◉</span><span>Chat Global</span><b class="nav-live">LIVE</b></button>
+      <button data-page="global-chat"><span class="nav-ico">◉</span><span>Chat Interno</span><b class="nav-live">LIVE</b></button>
+      <button data-page="public-chat"><span class="nav-ico">◎</span><span>Chat Global</span><b class="nav-live">PÚBLICO</b></button>
       <button data-page="agenda"><span class="nav-ico">◷</span><span>Agenda</span></button>
       <button data-page="tasks"><span class="nav-ico">✓</span><span>Tarefas</span></button>
     </div>
@@ -1103,13 +1118,62 @@ input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 
   </div>
 </section>
 
+  <section id="page-public-chat" class="page">
+    <div class="global-chat-shell">
+      <div class="global-chat-head">
+        <div>
+          <div class="eyebrow">ORION // COMUNIDADE PÚBLICA</div>
+          <h2>Chat Interno</h2>
+          <p class="muted">Entre em uma sala pública do Matrix para conversar com pessoas de fora do ORION.</p>
+        </div>
+        <div class="global-chat-live online"><span></span><b>PÚBLICO</b></div>
+      </div>
+
+      <div class="card public-chat-hero">
+        <div class="public-chat-orb">◎</div>
+        <div class="public-chat-copy">
+          <div class="badge">COMUNIDADE EXTERNA</div>
+          <h3>Pessoas de fora do ORION</h3>
+          <p class="muted">
+            Este chat é diferente do <strong>Chat Interno</strong>. Aqui a conversa acontece em uma
+            sala pública do Matrix, uma rede de comunicação que possui salas públicas e comunidades.
+          </p>
+          <div class="public-chat-warning">
+            <strong>⚠️ Atenção</strong>
+            <span>Esta sala não é administrada pelo ORION. Não compartilhe nome completo, endereço,
+            telefone, escola, senhas ou outras informações pessoais.</span>
+          </div>
+          <div class="actions public-chat-actions">
+            <a class="btn primary" href="https://app.element.io/#/room/#community:matrix.org" target="_blank" rel="noopener noreferrer">Abrir Chat Global</a>
+            <a class="btn" href="https://matrix.to/#/#community:matrix.org" target="_blank" rel="noopener noreferrer">Abrir no Matrix</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2 public-chat-grid">
+        <div class="card">
+          <div class="badge">CHAT INTERNO</div>
+          <h3>Converse com usuários do ORION</h3>
+          <p class="muted">Use o Chat Interno quando quiser conversar somente com as pessoas que estão usando o seu site.</p>
+          <button class="btn" type="button" onclick="showPage('global-chat')">Ir para o Chat Interno</button>
+        </div>
+        <div class="card">
+          <div class="badge">CHAT GLOBAL</div>
+          <h3>Conversa pública</h3>
+          <p class="muted">O Matrix possui salas públicas que podem ser encontradas e acessadas por pessoas de diferentes comunidades.</p>
+          <a class="btn" href="https://matrix.org/docs/chat_basics/public-rooms/" target="_blank" rel="noopener noreferrer">Como funcionam as salas públicas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="page-global-chat" class="page">
     <div class="global-chat-shell">
       <div class="global-chat-head">
         <div>
-          <div class="eyebrow">ORION // COMUNIDADE</div>
+          <div class="eyebrow">ORION // CHAT INTERNO</div>
           <h2>Chat Global</h2>
-          <p class="muted">Converse em tempo real com outras pessoas que estiverem no ORION.</p>
+          <p class="muted">Converse em tempo real com as pessoas que estiverem usando o ORION.</p>
         </div>
         <div class="global-chat-live"><span></span><b id="globalChatConnection">Conectando...</b></div>
       </div>
