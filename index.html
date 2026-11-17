@@ -798,8 +798,8 @@ background:radial-gradient(circle,rgba(84,232,255,.2),rgba(154,108,255,.08) 42%,
 .global-chat-message{position:relative;max-width:82%;padding:10px 12px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025)}
 .global-chat-message.me{align-self:flex-end;background:linear-gradient(135deg,rgba(84,232,255,.11),rgba(154,108,255,.13));border-color:rgba(84,232,255,.22)}
 .global-chat-message.admin{border-color:rgba(255,79,216,.48);background:linear-gradient(135deg,rgba(255,79,216,.09),rgba(84,232,255,.06));box-shadow:0 0 20px rgba(255,79,216,.08)}
-.global-chat-message .meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:#8290b2}
-.global-chat-message .meta b{color:var(--cyan)}
+.global-chat-message .meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:#8290b2;min-width:0;overflow:visible}
+.global-chat-message .meta b{color:var(--cyan);display:inline-block;flex:0 0 auto;min-width:max-content;padding-left:2px;overflow:visible}
 .global-chat-message.me .meta b{color:#f4c8ff}
 .global-chat-message.admin .meta b{color:#fff;text-shadow:0 0 7px #54e8ff,0 0 14px #ff4fd8,0 0 25px rgba(84,232,255,.75);animation:globalAdmNameGlow 1.6s ease-in-out infinite}
 .global-chat-message .text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:14px;color:#eef2ff}
