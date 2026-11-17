@@ -1361,7 +1361,7 @@ if(SUPABASE_URL && SUPABASE_SECRET_KEY){
 const globalChatMemory = [];
 
 function cleanGlobalChatText(value,max=500){
-  return String(value||'').replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]/g,'').trim().slice(0,max);
+  return String(value||'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'').trim().slice(0,max);
 }
 function isGlobalChatAdmin(req){
   return req.session?.globalChatAdmin === true;
