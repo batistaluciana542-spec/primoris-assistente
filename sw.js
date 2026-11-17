@@ -1,4 +1,4 @@
-const CACHE='orion-v9';
+const CACHE='orion-v10';
 const ASSETS=['/','/index.html','/manifest.webmanifest','/icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('message',e=>{
