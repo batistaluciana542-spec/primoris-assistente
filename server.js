@@ -1340,7 +1340,7 @@ const globalChatRate = new Map();
 const GLOBAL_CHAT_MAX = 120;
 const GLOBAL_CHAT_ADMIN_NAME = process.env.ORION_ADMIN_NAME || "Anthony ADM";
 const GLOBAL_CHAT_ADMIN_KEY = String(process.env.ORION_ADMIN_KEY || "").trim();
-const SUPABASE_URL = String(process.env.SUPABASE_URL || "").replace(/\\/$/, "");
+const SUPABASE_URL = String(process.env.SUPABASE_URL || "").replace(/\/$/, "");
 const SUPABASE_SECRET_KEY = String(process.env.SUPABASE_SECRET_KEY || "").trim();
 let supabase = null;
 
