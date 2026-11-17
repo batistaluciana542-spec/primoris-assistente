@@ -793,16 +793,16 @@ background:radial-gradient(circle,rgba(84,232,255,.2),rgba(154,108,255,.08) 42%,
 .global-chat-admin-panel strong{display:block;font:800 12px Orbitron;margin-bottom:4px}
 .global-chat-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
 .global-chat-card{padding:12px;min-height:560px;display:flex;flex-direction:column}
-.global-chat-messages{height:480px;overflow:auto;padding:8px 5px;display:flex;flex-direction:column;gap:9px}
+.global-chat-messages{height:480px;overflow:auto;padding:8px 12px;display:flex;flex-direction:column;gap:9px;overflow-x:visible}
 .global-chat-empty{margin:auto;text-align:center;color:#697592;padding:30px}
-.global-chat-message{position:relative;max-width:82%;padding:10px 12px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.global-chat-message{position:relative;z-index:2;max-width:82%;padding:10px 14px;border:1px solid rgba(126,147,255,.16);border-radius:15px;background:rgba(255,255,255,.025);overflow:visible;box-sizing:border-box}
 .global-chat-message.me{align-self:flex-end;background:linear-gradient(135deg,rgba(84,232,255,.11),rgba(154,108,255,.13));border-color:rgba(84,232,255,.22)}
 .global-chat-message.admin{border-color:rgba(255,79,216,.48);background:linear-gradient(135deg,rgba(255,79,216,.09),rgba(84,232,255,.06));box-shadow:0 0 20px rgba(255,79,216,.08)}
 .global-chat-message .meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:11px;color:#8290b2;min-width:0;overflow:visible;flex-wrap:wrap;padding-left:3px}
 .global-chat-message .meta b{color:var(--cyan);display:block;flex:0 0 auto;width:max-content;min-width:max-content;max-width:none;padding:0 2px 0 3px;overflow:visible;white-space:nowrap}
 .global-chat-message.me .meta b{color:#f4c8ff}
 .global-chat-message.admin .meta b{color:#fff;text-shadow:0 0 7px #54e8ff,0 0 14px #ff4fd8,0 0 25px rgba(84,232,255,.75);animation:globalAdmNameGlow 1.6s ease-in-out infinite}
-.global-chat-message .text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:14px;color:#eef2ff}
+.global-chat-message .text{display:block;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45;font-size:14px;color:#eef2ff;padding-left:3px;overflow:visible;box-sizing:border-box}
 .global-chat-admin-label{font-size:9px!important;color:#ff9dea!important;letter-spacing:1px}
 .global-chat-delete{margin-left:auto;padding:2px 6px;border:1px solid rgba(255,95,125,.28);border-radius:7px;background:rgba(255,95,125,.06);color:#ff9cac;cursor:pointer;font-size:10px}
 .global-chat-delete:hover{background:rgba(255,95,125,.15)}
